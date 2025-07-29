@@ -86,4 +86,4 @@ defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest auto
 
 define('PHOTO_DOMAIN', 'http://localhost/make-kit/photos/');
 define('COMPANY_NAME', 'Make Kit');
-define('COMPANY_COMMON_EMAIL_ID', 'info@arbolsoft.com');
+define('COMPANY_COMMON_EMAIL_ID', 'support@makekit.co.il');
