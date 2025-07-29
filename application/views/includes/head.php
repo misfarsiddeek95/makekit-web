@@ -1,6 +1,30 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MakeKit</title>
+
+<?php
+    switch ($activePage) {
+        case 'HOME':
+            $title = 'Makekit';
+            break;
+        case 'CLASS':
+            $title = 'תכניות חוגים – Makekit';
+            break;
+        case 'WHOLESALE':
+            $title = 'מוצרים בסיטונאות – Makekit';
+            break;
+        case 'DRAWINGS':
+            $title = 'ציורים להדפסה – Makekit';
+            break;
+        case 'CONTACT':
+            $title = 'צרו קשר – Makekit';
+            break;
+        default:
+            $title = 'Makekit';
+            break;
+    }
+?>
+
+<title><?=$title?></title>
 
 <!-- Bootstrap 5.3 CSS for layout and toggler functionality -->
 <link href="<?=base_url()?>assets/css/bootstrap.min.css" rel="stylesheet">
