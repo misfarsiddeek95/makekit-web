@@ -27,7 +27,8 @@ class FrontController extends Base_Controller {
   public function makeitClasses() {
     $data['activePage'] = 'CLASS';
     
-    // $data['pageMain'] = $this->Front_model->fetchPage(20);
+    $data['pageMain'] = $this->Front_model->fetchPage(5);
+    $data['classContentList'] = $this->Front_model->fetchPageManyPics(6);
 
     $this->load->view('classes', $data);
   }
