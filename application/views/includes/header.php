@@ -1,104 +1,102 @@
-<!-- Main Header -->
-<header class="main-header header-style-two">
-    <!-- Header Top -->
-    <?php if($activePage == 'HOME') { ?>
-    <div class="header-top">
-        <div class="text">
-            <span class="icon">
-                <img src="<?=base_url()?>assets/images/icons/header-top_icon.png" alt="" />
-            </span>
-            Unlock Seamless Conversations!
-            <a href="#">
-                Get Started Today <i class="fa-solid fa-angle-right fa-fw"></i>
-            </a>
-        </div>
-        <span class="header-top_cross fa-solid fa-xmark fa-fw"></span>
-    </div>
-    <?php } ?>
-
-    <!-- Header Lower -->
-    <div class="header-lower">
-        <div class="auto-container">
-            <div class="inner-container">
-                <div class="d-flex align-items-center justify-content-between flex-wrap">
-                    <div class="nav-outer d-flex align-items-center flex-wrap">
-                        <div class="logo-box">
-                            <div class="logo">
-                                <a href="<?=base_url()?>">
-                                    <img src="<?=base_url()?>assets/images/as-logo.png" alt="" title="" />
-                                </a>
-                            </div>
-                        </div>
-                        <!-- Main Menu -->
-                        <nav class="main-menu navbar-expand-md">
-                            <div class="navbar-header">
-                                <!-- Toggle Button -->
-                                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                </button>
-                            </div>
-
-                            <div class="navbar-collapse collapse clearfix" id="navbarSupportedContent">
-                                <ul class="navigation clearfix">
-                                    <li class="<?=$activePage == 'HOME' ? 'current' : '' ?>" ><a href="<?=base_url()?>">Home</a></li>
-                                    <li class="<?=$activePage == 'ABOUT' ? 'current' : '' ?>" ><a href="<?=base_url()?>about-us">About</a></li>
-                                    <li class="<?=$activePage == 'SERVICE' ? 'current' : '' ?>" ><a href="<?=base_url()?>services">Services</a></li>
-                                    <li class="<?=$activePage == 'PRODUCT' ? 'current' : '' ?>"><a href="<?=base_url()?>products">Products</a></li>
-                                    <li class="<?=$activePage == 'WORK' ? 'current' : '' ?>"><a href="<?=base_url()?>works">Works</a></li>
-                                    <li class="<?=$activePage == 'CONTACT' ? 'current' : '' ?>"><a href="<?=base_url()?>contact-us">Contact</a></li>
-                                </ul>
-                            </div>
-                        </nav>
+<header class="site-header">
+    <!-- ============================================= -->
+    <!-- ============== DESKTOP HEADER =============== -->
+    <!-- ============================================= -->
+    <div class="desktop-header d-none d-lg-block">
+        <!-- Top White Nav -->
+        <div class="desktop-top-nav">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-between align-items-center">
+                    <!-- Left Side: Logo -->
+                    <div>
+                        <a class="navbar-brand" href="#">
+                            <img src="https://makesmart.co.il/wp-content/uploads/2023/08/logo.png" alt="MakeKit Logo" class="desktop-logo">
+                        </a>
                     </div>
+                    
+                    
+                    <!-- Right Side: Icons and Menu -->
+                    <div class="d-flex align-items-center">
+                        <ul class="desktop-main-menu flex-row-reverse">
+                            <li><a class="nav-link" href="contact-us.html">צור קשר</a></li>
+                            <li><a class="nav-link" href="drawings.html">ציודים להדפסה</a></li>
+                            <li><a class="nav-link" href="wholesale.html">מוצרים בסיטונאות</a></li>
+                            <li><a class="nav-link" href="classes.html">תכניות חוגים</a></li>
+                            <li><a class="nav-link active" href="index.html">ראשי</a></li>
+                        </ul>
 
-                    <!-- Main Menu End-->
-                    <div class="outer-box d-flex align-items-center flex-wrap">
-                        <!-- Button Box -->
-                        <div class="main-header_buttons">
-                            <a href="<?=base_url()?>get-a-quote" class="template-btn btn-style-two">
-                                <span class="btn-wrap">
-                                    <span class="text-one">Get A Quote</span>
-                                    <span class="text-two">Get A Quote</span>
-                                </span>
-                            </a>
-                        </div>
-
-                        <!-- Mobile Navigation Toggler -->
-                        <div class="mobile-nav-toggler">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-menu-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M4 6l16 0" />
-                                <path d="M4 12l16 0" />
-                                <path d="M4 18l16 0" />
-                            </svg>
+                        <div class="desktop-header-icons">
+                            <a href="#" class="icon"><i class="fa-regular fa-user"></i></a>
+                            <a href="#" class="icon"><i class="fa-solid fa-shopping-basket"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <!-- Bottom Red Nav -->
+        <div class="desktop-bottom-nav">
+            <div class="container-fluid">
+                <ul class="desktop-bottom-menu">
+                    <li><a class="nav-link" href="#">מדעים</a></li>
+                    <li><a class="nav-link" href="#">מייקסמארט – משחקי כישורי חיים</a></li>
+                    <li><a class="nav-link" href="#">מייק קיט – קיטים להלחמה</a></li>
+                    <li><a class="nav-link" href="#">הרכבה – קיטים ללא הלחמה</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
-    <!--End Header Lower-->
 
-    <!-- Mobile Menu  -->
-    <div class="mobile-menu">
-        <div class="menu-backdrop"></div>
-        <div class="close-btn">
-            <span class="icon fa-solid fa-xmark fa-fw"></span>
+    <!-- ============================================= -->
+    <!-- =============== MOBILE HEADER =============== -->
+    <!-- ============================================= -->
+    <div class="d-lg-none">
+        <!-- Mobile Main Header (Logo and top icons) -->
+        <div class="mobile-header-top">
+            <a class="navbar-brand mobile-logo-link" href="#">
+                    <img src="https://makesmart.co.il/wp-content/uploads/2023/08/logo.png" alt="MakeKit Logo" class="mobile-logo">
+            </a>
+            <div class="mobile-icons-top">
+                <!-- Non-scrolled order (Toggler on right in RTL) -->
+                <button class="navbar-toggler mobile-main-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenuMobile" aria-controls="mainMenuMobile" aria-expanded="false" aria-label="Toggle main navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <a href="#" class="mobile-icon icon-user"><i class="fa-regular fa-user"></i></a>
+                <a href="#" class="mobile-icon icon-basket"><i class="fa-solid fa-shopping-basket"></i></a>
+            </div>
+        </div>
+        <!-- MENU 1: Fullscreen Overlay -->
+        <div class="collapse" id="mainMenuMobile">
+                <button class="main-menu-close-btn" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenuMobile" aria-controls="mainMenuMobile" aria-expanded="true" aria-label="Close main navigation">
+                <i class="fa-solid fa-times"></i>
+                </button>
+                <ul class="main-menu-mobile-content">
+                <li><a class="nav-link active" href="index.html">ראשי</a></li>
+                <li><a class="nav-link" href="classes.html">תכניות חוגים</a></li>
+                <li><a class="nav-link" href="wholesale.html">מוצרים בסיטונאות</a></li>
+                <li><a class="nav-link" href="#">ציודים להדפסה</a></li>
+                <li><a class="nav-link" href="#">צור קשר</a></li>
+                </ul>
         </div>
 
-        <nav class="menu-box">
-            <div class="nav-logo">
-                <a href="<?=base_url()?>">
-                    <img src="<?=base_url()?>assets/images/as-mobile-logo.png" alt="" title="" />
-                </a>
-            </div>
-            <div class="menu-outer">
-                <!--Here Menu Will Come Automatically Via Javascript / Same Menu as in Header-->
-            </div>
-        </nav>
+        <!-- Mobile Bottom Nav -->
+        <div class="mobile-bottom-nav">
+                <!-- TOGGLER 2 -->
+            <a class="mobile-store-toggler collapsed" data-bs-toggle="collapse" href="#storeMenuMobile" role="button" aria-expanded="false" aria-controls="storeMenuMobile">
+                <span>חנויות</span>
+                <span>
+                    <i class="fa-solid fa-bars"></i>
+                    <i class="fa-solid fa-times"></i>
+                </span>
+            </a>
+        </div>
+            <!-- MENU 2: Dropdown -->
+            <div class="collapse store-menu-collapse" id="storeMenuMobile">
+            <ul>
+                <li><a class="nav-link" href="#">הרכבה – קיטים ללא הלחמה</a></li>
+                <li><a class="nav-link" href="#">מייק קיט – קיטים להלחמה</a></li>
+                <li><a class="nav-link" href="#">מייקסמארט – משחקי כישורי חיים</a></li>
+                <li><a class="nav-link" href="#">מדעים</a></li>
+            </ul>
+        </div>
     </div>
-    <!-- End Mobile Menu -->
 </header>
-<!-- End Main Header -->

@@ -1,0 +1,674 @@
+/* =================================== */
+/* =========== GLOBAL STYLES ========= */
+/* =================================== */
+:root {
+    --brand-grey-light: #f7f7f7;
+    --brand-grey-medium: #eeeeee;
+
+    --contrast: #757575;
+    --contrast-2: #575760;
+    --contrast-3: #b2b2be;
+    --base: #efeded;
+    --base-2: #f7f8f9;
+    --base-3: #f8f8f8;
+    --lapis-lazuli: #296094;
+    --dingy-dungeon: #CF2B52;
+    --royal-orange: #FD8C44;
+    --crayolas-maize: #FEC04F;
+    --light-sea-green: #2DA4A8;
+    --american-purple: #3F1F56;
+}
+body {
+    font-family: 'Assistant', sans-serif;
+    background-color: #fff;
+    color: var(--american-purple);
+    font-size: 20px;
+    font-weight: 400;
+    text-transform: none;
+    line-height: 1.5;
+}
+a {
+    text-decoration: none;
+    color: var(--lapis-lazuli);
+}
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+h2 {
+    line-height: 1.2em;
+    font-weight: 400;
+    text-transform: none;
+    font-style: inherit;
+    border: 0;
+}
+
+/* =================================== */
+/* ======== DESKTOP HEADER STYLES ==== */
+/* =================================== */
+.desktop-header {
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.desktop-top-nav {
+    background-color: #fff;
+    padding: 0.75rem 2rem; /* Adjusted padding */
+    transition: padding 0.3s ease;
+}
+.desktop-logo {
+    height: 70px;
+    /*height: 40px;*/
+    transition: height 0.3s ease;
+}
+.desktop-main-menu {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+.desktop-main-menu .nav-link {
+    color: var(--contrast);
+    font-weight: 400;
+    font-size: 1.25rem;
+    padding: 0.5rem 1rem; /* Adjusted padding */
+}
+.desktop-main-menu .nav-link.active {
+    background-color: var(--crayolas-maize);
+    color: var(--base-3);
+}
+.desktop-main-menu .nav-link:hover {
+    background-color: var(--crayolas-maize);
+    color: var(--base-3);
+}
+.desktop-header-icons {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-right: 2rem; /* Added margin to separate from menu */
+}
+.desktop-header-icons .icon {
+    color: var(--dingy-dungeon);
+    font-size: 1.5rem;
+}
+.desktop-bottom-nav {
+    background-color: var(--dingy-dungeon);
+    transition: all 0.3s ease;
+}
+.desktop-bottom-menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.desktop-bottom-menu .nav-link {
+    color: var(--base-3);
+    font-weight: 400;
+    font-size: 1.25rem;
+    padding: 0.8rem 1.5rem;
+}
+.desktop-bottom-menu .nav-link:hover {
+    color: #ffffff;
+    background-color: #303030;
+}
+
+/* =================================== */
+/* ======== MOBILE HEADER STYLES ===== */
+/* =================================== */
+.mobile-header-top {
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; 
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    background-color: #fff;
+    transition: all 0.3s ease-in-out;
+}
+.mobile-logo-link {
+    text-align: right; 
+}
+.mobile-logo {
+    height: 45px;
+    margin-bottom: 0.75rem;
+    transition: all 0.3s ease-in-out;
+}
+.mobile-icons-top {
+    display: flex;
+    justify-content: flex-end; 
+    align-items: center;
+    gap: 2.5rem;
+    width: 100%; 
+}
+.mobile-icon {
+    color: var(--dingy-dungeon);
+    font-size: 1.75rem;
+}
+.mobile-main-toggler {
+    padding: 0.5rem 0.75rem;
+    border: none;
+    background-color: var(--brand-grey-light);
+    border-radius: 4px;
+}
+.mobile-main-toggler .navbar-toggler-icon {
+    width: 1.2em;
+    height: 1.2em;
+    /* FIXED: Explicitly set a dark icon color to contrast with the light background */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(51, 51, 51, 0.75)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+.mobile-main-toggler:focus {
+    box-shadow: none;
+}
+
+.mobile-bottom-nav {
+    background-color: var(--dingy-dungeon);
+    transition: all 0.3s ease-in-out;
+}
+.mobile-store-toggler {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 0.8rem 1rem;
+    color: var(--base-3);
+    font-size: 1.25rem;
+    font-weight: 400;
+    gap: 0.5rem;
+}
+/* Icon swap for store toggler */
+.mobile-store-toggler .fa-times { display: none; }
+.mobile-store-toggler:not(.collapsed) .fa-times { display: inline-block; }
+.mobile-store-toggler:not(.collapsed) .fa-bars { display: none; }
+
+
+/* --- Main Mobile Menu (Fullscreen Overlay) --- */
+#mainMenuMobile.collapsing {
+    transition: opacity 0.3s ease;
+}
+#mainMenuMobile.collapse:not(.show) {
+    display: none;
+}
+#mainMenuMobile.collapse.show {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #fff;
+    z-index: 1050;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    opacity: 1;
+}
+.main-menu-close-btn {
+    position: absolute;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2.5rem;
+    color: var(--contrast);
+    background: none;
+    border: none;
+}
+.main-menu-mobile-content .nav-link {
+    color: var(--contrast);
+    font-size: 1.5rem;
+    font-weight: 400;
+    padding: 1rem;
+    text-align: center;
+    display: block;
+}
+.main-menu-mobile-content .nav-link.active {
+    background-color: var(--crayolas-maize);
+    color: var(--base-3);
+    padding-left: 2rem;
+    padding-right: 2rem;
+    border-radius: 6px;
+}
+
+/* --- Store Mobile Menu (Dropdown) --- */
+.store-menu-collapse {
+    background-color: var(--dingy-dungeon);
+    padding: 1rem;
+}
+.store-menu-collapse .nav-link {
+    display: block;
+    color: var(--base-3);
+    font-weight: 400;
+    padding: 0.75rem;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+/* =================================== */
+/* ========== SCROLLED STATE STYLES == */
+/* =================================== */
+
+/* Desktop Scrolled State */
+.site-header.scrolled .desktop-top-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 0.5rem 2rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.site-header.scrolled .desktop-logo {
+    height: 35px;
+}
+.site-header.scrolled .desktop-bottom-nav {
+    display: none;
+}
+
+/* Mobile Scrolled State */
+.site-header.scrolled .mobile-header-top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    align-items: center; 
+}
+.site-header.scrolled .mobile-logo {
+    height: 35px;
+    margin-bottom: 0;
+}
+.site-header.scrolled .mobile-icons-top {
+    gap: 1.5rem;
+    width: auto; 
+    justify-content: flex-start;
+}
+/* Re-order icons for scrolled state to move toggler to the left in RTL */
+.site-header.scrolled .icon-basket { order: 2; }
+.site-header.scrolled .icon-user { order: 1; }
+.site-header.scrolled .mobile-main-toggler { order: 3; }
+
+
+/* =================================== */
+/* =========== HERO SECTION ========== */
+/* =================================== */
+.hero-section {
+    background-image: url('https://makekit.co.il/wp-content/uploads/2023/08/home.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    padding: 10rem 0;
+    color: var(--american-purple);
+}
+.hero-text-col h2 {
+    font-weight: 400;
+    margin-bottom: 20px;
+    font-size: 35px;
+    line-height: 1.5em;
+    text-transform: none;
+
+}
+.hero-text-col .btn-hero {
+    display: inline-flex;
+    background-color: var(--dingy-dungeon);
+    color: white;
+    padding: 15px 20px;
+    font-size: 20px;
+    transition: background-color 0.3s ease;
+}
+.hero-text-col .btn-hero:hover {
+    background-color: rgba(41, 96, 148, 0.85);
+    color: var(--base-3);
+}
+.hero-carousel-col .carousel {
+    max-width: 550px; /* Control size of carousel */
+    margin: 0 auto;
+}
+.hero-carousel-col .carousel .carousel-item img {
+    max-width: 100%;
+    display: block;
+    height: auto;
+    margin: 0 auto;
+    -webkit-user-drag: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* =================================== */
+/* ======== COMMON ELEMENTS STYLES === */
+/* =================================== */
+.curved-button {
+    border-radius: 75px 75px 50px 50px;
+    color: var(--base-3);
+}
+.curved-button:hover {
+    background-color: rgba(41, 96, 148, 0.85) !important;
+    color: var(--base-3) !important;
+}
+.container-underline {
+    width: 50px;
+    height: 10px;
+    margin-top: -25px;
+    margin-bottom: 20px;
+    background-color: var(--crayolas-maize);
+}
+
+.underline-heading-1 {
+    font-size: 42px;
+    margin-bottom: 20px;
+    line-height: 1.2em;
+    font-weight: 400;
+    text-transform: none;
+}
+
+.w-15 {
+    width: 15%;
+}
+
+.w-20 {
+    width: 20%;
+}
+
+/* =================================== */
+/* =========== ICON SECTION ========== */
+/* =================================== */
+.icon-section {
+    background-color: var(--base-2);
+}
+.feature-icon {
+    transition: transform 0.3s ease; /* ADDED */
+}
+.feature-icon:hover {
+    transform: translateY(-5px); /* ADDED */
+}
+.feature-icon h4 {
+    font-weight: 700;
+    color: var(--icon-text-color);
+    margin-top: 1rem;
+}
+.feature-icon .icon-circle {
+    padding: 47px;
+    border-radius: 75px 50px;
+    background-color: var(--icon-bg-color);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+}
+
+/* =================================== */
+/* ==== HOME MIDDLE BANNER STYLES ==== */
+/* =================================== */
+.middle-banner-section {
+    background-color: var(--base-2);
+}
+.middle-banner-section .text-col p {
+    line-height: 1.8;
+    margin-bottom: 1.5em;
+}
+.middle-banner-section .btn-middle {
+    background-color: var(--lapis-lazuli);
+    color: white;
+    padding: 0.6rem 2rem;
+}
+.middle-banner-section .btn-middle:hover {
+    background-color: rgba(41, 96, 148, 0.85);
+    color: var(--base-3);
+}
+.middle-banner-section .right-image-col {
+    position: relative;
+    min-height: 400px; /* Give height for the background to show */
+}
+.middle-banner-section .right-image-col::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 100%;
+    height: 100%;
+    background-image: url(https://makekit.co.il/wp-content/uploads/2023/09/dots_blue.svg);
+    background-repeat: no-repeat;
+    background-position: top right;
+    background-size: 50%;
+    z-index: 1;
+}
+.middle-banner-section .main-image {
+    position: relative;
+    z-index: 2;
+    border-radius: 80px 200px 100px 30px;
+    vertical-align: middle;
+}
+
+/* =================================== */
+/* ========= PRODUCT SECTION ========= */
+/* =================================== */
+.products {
+    margin: 0;
+    font-size: 1em;
+    line-height: 1.2em;
+    font-weight: 400;
+    text-transform: none;
+}
+.product-card {
+    border: none;
+}
+.products h2 {
+    margin: 0;
+    font-size: 1em;
+}
+.products:hover h2 {
+    color: var(--contrast);
+}
+.product-card .product-img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1; /* Make images square */
+    object-fit: contain; /* Ensure image fits without stretching */
+    transition: opacity 0.4s ease;
+    background: var(--base);
+    border-bottom: 5px solid var(--contrast-3);
+    border-radius: 25px;
+}
+
+.product-card .img-hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+}
+
+.product-card:hover .img-hover {
+    opacity: 1;
+}
+
+.product-card:hover .img-main {
+    opacity: 0;
+}
+
+.products .price {
+    color: #222222;
+    font-size: .857em;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+.products .btn-add-to-cart {
+    background-color: var(--lapis-lazuli);
+    color: #ffffff;
+    padding: 10px 20px;
+    margin-top: 1em;
+    margin-left: auto;
+    margin-right: auto;
+    border: none;
+}
+
+/* =================================== */
+/* =========== BANNER STYLES ========= */
+/* =================================== */
+.banner-section {
+    padding-top: 50px;
+    padding-bottom: 50px;
+    background-color: #2da836;
+    background-image: url(https://makekit.co.il/wp-content/uploads/2023/08/title.png);
+    background-repeat: repeat-x;
+    background-position: center center;
+    background-size: auto;
+}
+.banner-section h1 {
+    font-size: 56px;
+    text-align: center;
+    margin-bottom: 0px;
+    color: var(--base-3);
+}
+
+/* =================================== */
+/* ==== CLASS LIST STYLES ==== */
+/* =================================== */
+.class-list {
+    background-color: var(--base-1);
+}
+.class-list .text-col p {
+    line-height: 1.8;
+    margin-bottom: 1.5em;
+}
+.class-list .btn-middle {
+    background-color: var(--lapis-lazuli);
+    color: white;
+    padding: 0.6rem 2rem;
+}
+.class-list .btn-middle:hover {
+    background-color: rgba(41, 96, 148, 0.85);
+    color: var(--base-3);
+}
+.class-list .right-image-col, .class-list .left-image-col {
+    position: relative;
+    min-height: 300px; /* Give height for the background to show */
+}
+.class-list .right-image-col::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 100%;
+    height: 100%;
+    background-image: url(https://makekit.co.il/wp-content/uploads/2023/09/dots_blue.svg);
+    background-repeat: no-repeat;
+    background-position: top right;
+    background-size: 50%;
+    z-index: 1;
+}
+.class-list .left-image-col::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 100%;
+    height: 100%;
+    background-image: url(https://makekit.co.il/wp-content/uploads/2023/09/dots_blue.svg);
+    background-repeat: no-repeat;
+    background-position: top left;
+    background-size: 50%;
+    z-index: 1;
+}
+.class-list .right-image-col .main-image {
+    position: relative;
+    z-index: 2;
+    border-radius: 80px 200px 100px 30px;
+    vertical-align: middle;
+    height: auto;
+    width: 590px;
+}
+
+.class-list .left-image-col .main-image {
+    position: relative;
+    z-index: 2;
+    border-radius: 200px 80px 30px 100px;
+    vertical-align: middle;
+}
+
+/* =================================== */
+/* ====== WHOLESALE ITEMS STYLES ===== */
+/* =================================== */
+.wholesale-item-card {
+    border-radius: 25px;
+    overflow: hidden;
+    border: none;
+    transition: transform 0.5s ease;
+}
+
+.wholesale-item-card:hover {
+    transform: translateY(-7px); /* ADDED */
+}
+
+.wholesale-card-footer {
+    background-color: var(--light-sea-green);
+}
+
+/* =================================== */
+/* ====== DRAWINGS ITEMS STYLES ===== */
+/* =================================== */
+.drawings-item-card {
+    overflow: hidden;
+    border: none;
+    transition: transform 0.5s ease;
+}
+.drawings-item-card:hover {
+    transform: translateY(-7px); /* ADDED */
+}
+
+
+/* =================================== */
+/* =========== LOGO FOOTER STYLES ==== */
+/* =================================== */
+.logo-footer {
+    background-color: var(--crayolas-maize);
+    padding: 100px 40px;
+
+}
+.logo-footer .social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 40px;
+    color: white;
+    font-size: 2rem;
+    margin-right: 5px;
+    margin-left: 5px;
+    border: 5px solid #ffffff;
+    transition: transform 0.3s ease;
+    padding: 20px;
+}
+.logo-footer .social-icon:hover {
+    transform: rotate(10deg);
+    transition: all 0.5s ease;
+}
+.logo-footer .youtube {
+    background-color: var(--american-purple);
+}
+.logo-footer .facebook {
+    background-color: var(--dingy-dungeon);
+}
+
+
+/* =================================== */
+/* =========== FOOTER STYLES ========= */
+/* =================================== */
+.site-footer {
+    padding: 0; /* Remove padding from main footer */
+}
+.footer-bottom-bar {
+    background-color: var(--base-2);
+    padding: 1.5rem 0;
+    font-size: 0.9rem;
+    color: var(--contrast-2);
+}
+.payment-icons img {
+    height: auto;
+    margin-left: 0.5rem;
+    opacity: 0.7;
+}
+.footer-center-link a {
+    font-size: 20px;
+}
+.copyright-text {
+    margin: 0;
+    font-size: 20px;
+    margin-bottom: 1.5em;
+}

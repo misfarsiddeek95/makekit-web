@@ -6,45 +6,14 @@ class FrontController extends Base_Controller {
     parent::__construct();
     $this->load->model('Front_model');
 
-    $commonData['newsLetter'] = $this->Front_model->fetchPage(55);
-    $commonData['socialMediaLinks'] = $this->Front_model->fetchPage(56);
-    $commonData['footerServices'] = $this->serviceList(7,'RANDOM');
+    $commonData['newsLetter'] = [];
     $this->load->vars($commonData);
   }
 	
   # home page
   public function index() {
     $data['activePage'] = 'HOME';
-    $data['pageMain'] = $this->Front_model->fetchPage(1);
-    $data['pageBanner'] = $this->Front_model->fetchPage(2);
-    $data['pageServices'] = $this->Front_model->fetchPage(3);
-    $data['pageAbout'] = $this->Front_model->fetchPage(4);
-    
-    $data['pageWCUTitle'] = $this->Front_model->fetchPage(5); # why choose us title section.
-    $data['pageWCUBoxOne'] = $this->Front_model->fetchPage(6); # why choose us box 1.
-    $data['pageWCUBoxTwo'] = $this->Front_model->fetchPage(7); # why choose us box 2.
-    $data['pageWCUBoxThree'] = $this->Front_model->fetchPage(8); # why choose us box 3.
-    $data['pageWCUBoxFour'] = $this->Front_model->fetchPage(9); # why choose us box 4.
-
-    $data['pageBusinessExcellence'] = $this->Front_model->fetchPage(10); # Business Excellence Main.
-    $data['pageBEAccOne'] = $this->Front_model->fetchPage(11); # Business Accordion 1.
-    $data['pageBEAccTwo'] = $this->Front_model->fetchPage(12); # Business Accordion 2.
-    $data['pageBEAccThree'] = $this->Front_model->fetchPage(13); # Business Accordion 3.
-
-    $data['pageTestimonial'] = $this->Front_model->fetchPage(14);
-    $data['testimonialList'] = $this->loadTestimonials();
-
-
-    $data['pageHowItWorks'] = $this->Front_model->fetchPage(15); # How it works
-    $data['pageHowItWorksStepOne'] = $this->Front_model->fetchPage(16); # How it works Step 1
-    $data['pageHowItWorksStepTwo'] = $this->Front_model->fetchPage(17); # How it works Step 2
-    $data['pageHowItWorksStepThree'] = $this->Front_model->fetchPage(18); # How it works Step 3
-
-    $data['pageOurWorks'] = $this->Front_model->fetchPage(19);
-
-    $data['services'] = $this->serviceList(3,'RANDOM');
-    
-    $this->load->view('index', $data);
+    $this->load->view('home', $data);
   }
 
   private function loadTestimonials() {
