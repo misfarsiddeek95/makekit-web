@@ -14,7 +14,7 @@
                 <div class="container">
                     <div class="row align-items-center">
                         <div class="col-lg-12">
-                            <h1>ציורים להדפסה</h1>
+                            <h1><?=$pageMain->headline?></h1>
                         </div>
                     </div>
                 </div>
@@ -22,28 +22,15 @@
 
             <!-- Wholesale item section -->
             <section class="drawings-list my-5 p-5">
-                <p>הציורים צוירו ע"י צייר הבית, לביא כהן. ניתן להזמין ציורים מותאמים אישית.</p>
+                <p><?=strip_tags($pageMain->page_text)?></p>
                 <div class="row flex-row-reverse">
+                    <?php foreach ($drawinList as $row) {  ?>
                     <div class="col-md-3 col-sm-12 my-4">
                         <div class="card text-center drawings-item-card shadow">
-                            <img src="https://makesmart.co.il/wp-content/uploads/2023/11/drawing-shield-600x849.jpg" class="card-img-top" alt="wholesale-item">
+                            <img src="<?=PHOTO_DOMAIN.'pages/'.$row->photo_path.'-org.'.$row->extension?>" class="card-img-top" alt="<?=$row->photo_header?>">
                         </div>
                     </div>
-                    <div class="col-md-3 col-sm-12 my-4">
-                        <div class="card text-center drawings-item-card shadow">
-                            <img src="https://makesmart.co.il/wp-content/uploads/2023/11/drawing-spinner.jpg" class="card-img-top" alt="wholesale-item">
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-12 my-4">
-                        <div class="card text-center drawings-item-card shadow">
-                            <img src="https://makesmart.co.il/wp-content/uploads/2023/11/drawing-unicorn.jpg" class="card-img-top" alt="wholesale-item">
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-12 my-4">
-                        <div class="card text-center drawings-item-card shadow">
-                            <img src="https://makesmart.co.il/wp-content/uploads/2023/11/drawing-lion.jpg" class="card-img-top" alt="wholesale-item">
-                        </div>
-                    </div>
+                    <?php } ?>
                 </div>
             </section>
         </main>

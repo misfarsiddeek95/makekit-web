@@ -20,6 +20,7 @@ class Front_model extends CI_Model {
         $this->db->where('p.field_id', $id);
         $this->db->where('pg.status', 0);
         $this->db->join('pages pg', 'pg.page_id=p.field_id');
+        $this->db->order_by('p.photo_order', 'ASC');
         if ($limits != 0) {
             $this->db->limit($limits);
         }

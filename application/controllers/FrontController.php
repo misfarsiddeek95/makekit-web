@@ -45,6 +45,8 @@ class FrontController extends Base_Controller {
   public function makeitDrawings() {
     $data['activePage'] = 'DRAWINGS';
 
+    $data['pageMain'] = $this->Front_model->fetchPage(9);
+    $data['drawinList'] = $this->Front_model->fetchPageManyPics(10);
     $this->load->view('drawings', $data);
   }
 
