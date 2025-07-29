@@ -13,6 +13,20 @@ class Front_model extends CI_Model {
         return $query->row();
     }
 
+    public function fetchPageManyPics($id,$limits=0) {
+        $this->db->select('p.*');
+        $this->db->from('photo p');
+        $this->db->where('p.table', 'pages');
+        $this->db->where('p.field_id', $id);
+        $this->db->where('pg.status', 0);
+        $this->db->join('pages pg', 'pg.page_id=p.field_id');
+        if ($limits != 0) {
+            $this->db->limit($limits);
+        }
+        $q = $this->db->get();
+        return $q->result();
+    }
+
     public function insert_me($table,$data){
 		$this->db->insert($table, $data); 
 		return  $this->db->insert_id();

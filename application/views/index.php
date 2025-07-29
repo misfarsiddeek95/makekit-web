@@ -16,22 +16,18 @@
                     <div class="col-lg-7 hero-carousel-col">
                         <div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-touch="true">
                             <div class="carousel-inner">
-                                <div class="carousel-item active" data-bs-interval="4000">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2023/08/home-1.png" class="d-block w-100" alt="Carousel Image 1">
+                                <?php foreach ($pageSliderImages as $key => $row) { ?>
+                                <div class="carousel-item <?=$key == 0 ? 'active' : ''?>" data-bs-interval="4000">
+                                    <img src="<?=PHOTO_DOMAIN.'pages/'.$row->photo_path.'-org.'.$row->extension?>" class="d-block w-100" alt="<?=$row->photo_header?>">
                                 </div>
-                                <div class="carousel-item" data-bs-interval="4000">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2023/08/home-2.png" class="d-block w-100" alt="Carousel Image 1">
-                                </div>
-                                <div class="carousel-item" data-bs-interval="4000">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2023/08/home-3.png" class="d-block w-100" alt="Carousel Image 2">
-                                </div>
+                                <?php } ?>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-5 hero-text-col">
-                        <h2>הקיטים הכי ייחודיים, איכותיים ולימודיים בארץ.</h2>
-                        <h2>הקיטים מתאימים לחוגים, ימי הולדת, סדנאות ובניה עצמית.</h2>
-                        <a href="#" class="btn btn-hero curved-button">לתכנית חוגים</a>
+                        <h2><?=$pageSlider->headline?></h2>
+                        <h2><?=$pageSlider->second_title?></h2>
+                        <a href="<?=base_url()?>classes/" class="btn btn-hero curved-button">לתכנית חוגים</a>
                     </div>
                 </div>
             </div>
@@ -70,7 +66,6 @@
             </div>
         </section>
 
-
         <!-- Middle section -->
         <section class="middle-banner-section py-5 px-5">
             <div class="container">
@@ -79,18 +74,16 @@
                         <img 
                             decoding="async" 
                             class="img-fluid main-image" 
-                            src="https://makesmart.co.il/wp-content/uploads/2023/08/instructor.jpg" 
+                            src="<?=PHOTO_DOMAIN.'pages/'.$pageWantToGuide->photo_path.'-org.'.$pageWantToGuide->extension?>" 
                             alt="Instructor" 
-                            srcset="https://makesmart.co.il/wp-content/uploads/2023/08/instructor.jpg 630w, https://makesmart.co.il/wp-content/uploads/2023/08/instructor-284x300.jpg 284w, https://makesmart.co.il/wp-content/uploads/2023/08/instructor-600x633.jpg 600w" 
+                            srcset="<?=PHOTO_DOMAIN.'pages/'.$pageWantToGuide->photo_path.'-org.'.$pageWantToGuide->extension?> 630w, <?=PHOTO_DOMAIN.'pages/'.$pageWantToGuide->photo_path.'-sma.'.$pageWantToGuide->extension?> 284w, <?=PHOTO_DOMAIN.'pages/'.$pageWantToGuide->photo_path.'-std.'.$pageWantToGuide->extension?> 600w" 
                             sizes="(max-width: 630px) 100vw, 630px"
                         >
                     </div>
                     <div class="col-lg-6 text-col">
-                        <h1 class="underline-heading-1">רוצים להדריך איתנו?</h1>
+                        <h1 class="underline-heading-1"><?=$pageWantToGuide->headline?></h1>
                         <div class="container-underline"></div>
-                        <p>אוהבים ילדים? אוהבים להדריך? הגעתם למקום הנכון.</p>
-                        <p>תחומים מסויימים דורשים ידע מוקדם: אנגלית, ערבית, כלכלה ותכנות. <br> במידה ואין לכם את הידע הנדרש בתחומים אלה אך יש בכם רצון ללמוד, אנו נעזור לכם ונפנה אתכם להכשרה כך שתוכלו להדריך אצלנו.</p>
-                        <p>בנוסף לשכר בסיסי שעתי גבוה מהשכר השעתי הממוצע בשוק אנו מציעים בונוסים על רצינות, מקצועיות והתמדה.</p>
+                        <?=$pageWantToGuide->page_text?>
                         <a href="#" class="btn btn-middle curved-button">למידע נוסף</a>
                     </div>
                 </div>
@@ -102,10 +95,10 @@
             <di v class="container">
                 <div class="text-end mb-4">
                     <div class="section-title-container">
-                        <h1 class="underline-heading-1">חדש באתר</h1>
+                        <h1 class="underline-heading-1"><?=$pageNewOnTheSite->headline?></h1>
                         <div class="container-underline"></div>
                     </div>
-                    <p class="section-subtitle mb-1">מוצרים אחרונים</p>
+                    <p class="section-subtitle mb-1"><?=$pageNewOnTheSite->second_title?></p>
                 </div>
                 <div class="row">
                     <!-- Product 1 -->

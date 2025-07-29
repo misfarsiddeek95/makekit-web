@@ -13,6 +13,13 @@ class FrontController extends Base_Controller {
   # home page
   public function index() {
     $data['activePage'] = 'HOME';
+
+    $data['pageMain'] = $this->Front_model->fetchPage(1);
+    $data['pageSlider'] = $this->Front_model->fetchPage(2);
+    $data['pageSliderImages'] = $this->Front_model->fetchPageManyPics(2);
+    $data['pageWantToGuide'] = $this->Front_model->fetchPage(3);
+    $data['pageNewOnTheSite'] = $this->Front_model->fetchPage(4);
+
     $this->load->view('index', $data);
   }
 
