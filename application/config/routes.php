@@ -58,15 +58,4 @@ $route['wholesale'] = 'FrontController/makeitWholesale';
 $route['drawings'] = 'FrontController/makeitDrawings';
 $route['contact-us'] = 'FrontController/makeitContactUs';
 
-$route['services/(:any)'] = 'FrontController/serviceDetail';
-$route['load-products'] = 'FrontController/loadProducts';
-$route['products/(:any)'] = 'FrontController/productDetail';
-$route['request-product-demo'] = 'FrontController/requestDemo';
-$route['works'] = 'FrontController/ourWorks';
-$route['load-works'] = 'FrontController/loadWorks';
-$route['send-email'] = 'FrontController/sendEmail';
-$route['subscribe-email'] = 'FrontController/subscribeEmail';
-$route['get-a-quote'] = 'FrontController/getAQuote';
-$route['submit-quote'] = 'FrontController/submitQuote';
-
-$route['remove-unused-files'] = 'FrontController/removeUnwantedDocuments';
+$route['product-category/(:any)'] = 'FrontController/makekitProducsts/$1';

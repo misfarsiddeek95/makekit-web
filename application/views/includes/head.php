@@ -24,9 +24,9 @@
     }
 ?>
 
-<title><?=($pageMain->seo_title) ? $pageMain->seo_title : $title?></title>
-<meta name="description" content="<?=$pageMain->seo_description ? $pageMain->seo_description : '' ?>">
-<meta name="keywords" content="<?=$pageMain->seo_keywords ? $pageMain->seo_keywords : '' ?>">
+<title><?=($pageMain && $pageMain->seo_title) ? $pageMain->seo_title : $title?></title>
+<meta name="description" content="<?=($pageMain && $pageMain->seo_description) ? $pageMain->seo_description : '' ?>">
+<meta name="keywords" content="<?=($pageMain && $pageMain->seo_keywords) ? $pageMain->seo_keywords : '' ?>">
 
 <!-- Bootstrap 5.3 CSS for layout and toggler functionality -->
 <link href="<?=base_url()?>assets/css/bootstrap.min.css" rel="stylesheet">

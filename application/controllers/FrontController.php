@@ -51,8 +51,16 @@ class FrontController extends Base_Controller {
   }
 
   # products page
-  public function ourProducsts() {
+  public function makekitProducsts($seoUrl) {
     $data['activePage'] = 'PRODUCT';
+
+    $data['pageMain'] = [];
+
+    $conditions = [
+      ['field' => 'seo_url', 'value' => $seoUrl]
+    ];
+  
+    $data['selectedCate'] = $this->Front_model->get_data_with_conditions_and_joins('categories',['category_second_title'],[],$conditions,1);
 
     $this->load->view('products', $data);
   }

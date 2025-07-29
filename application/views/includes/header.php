@@ -35,9 +35,9 @@
         <!-- Bottom Red Nav -->
         <div class="desktop-bottom-nav">
             <div class="container-fluid">
-                <ul class="desktop-bottom-menu flex-row-reverse">
+                <ul class="desktop-bottom-menu flex-row-reverse bottom-nav">
                     <?php foreach ($categoryList as $navCate) { ?>
-                        <li><a class="nav-link" href="<?=base_url()?>product-category/<?=$navCate->seo_url?>/"><?=$navCate->category?></a></li>
+                        <li><a class="nav-link <?=$navCate->seo_url == $this->uri->segment(2) ? 'active' : '' ?>" href="<?=base_url()?>product-category/<?=$navCate->seo_url?>/"><?=$navCate->category?></a></li>
                     <?php } ?>
                 </ul>
             </div>
@@ -88,7 +88,7 @@
             </a>
         </div>
             <!-- MENU 2: Dropdown -->
-        <div class="collapse store-menu-collapse" id="storeMenuMobile">
+        <div class="collapse store-menu-collapse bottom-nav" id="storeMenuMobile">
             <ul>
                 <?php foreach (array_reverse($categoryList) as $navCate) { ?>
                 <li><a class="nav-link" href="<?=base_url()?>product-category/<?=$navCate->seo_url?>/"><?=$navCate->category?></a></li>
