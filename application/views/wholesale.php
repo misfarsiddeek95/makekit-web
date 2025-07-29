@@ -14,7 +14,7 @@
                 <div class="container">
                     <div class="row align-items-center">
                         <div class="col-lg-12">
-                            <h1>מוצרים בסיטונאות</h1>
+                            <h1><?=$pageMain->headline?></h1>
                         </div>
                     </div>
                 </div>
@@ -23,51 +23,17 @@
             <!-- Wholesale item section -->
             <section class="wholesale-list my-5 p-5">
                 <div class="row flex-row-reverse">
+                    <?php foreach ($wholesaleContentList as $row) { ?>
                     <div class="col-md-3 col-sm-12 my-4">
                         <div class="card text-center wholesale-item-card shadow">
-                            <img src="https://makesmart.co.il/wp-content/uploads/2023/10/wholesale-lego-s.png" class="card-img-top" alt="wholesale-item">
+                            <img src="<?=PHOTO_DOMAIN.'pages/'.$row->photo_path.'-org.'.$row->extension?>" class="card-img-top" alt="<?=$row->photo_header?>">
 
                             <div class="card-footer wholesale-card-footer">
-                                <h3>פטריות</h3>
+                                <h3><?=$row->photo_header?></h3>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3 col-sm-12 my-4">
-                        <div class="card text-center wholesale-item-card shadow">
-                            <img src="https://makesmart.co.il/wp-content/uploads/2023/10/wholesale-lego-m.png" class="card-img-top" alt="wholesale-item">
-
-                            <div class="card-footer wholesale-card-footer">
-                                <h3>לגו בינוני</h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-12 my-4">
-                        <div class="card text-center wholesale-item-card shadow">
-                            <img src="https://makesmart.co.il/wp-content/uploads/2023/10/wholesale-lego-l.png" class="card-img-top" alt="wholesale-item">
-
-                            <div class="card-footer wholesale-card-footer">
-                                <h3>לגו גדול</h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-12 my-4">
-                        <div class="card text-center wholesale-item-card shadow">
-                            <img src="https://makesmart.co.il/wp-content/uploads/2023/10/wholesale-mushroom.png" class="card-img-top" alt="wholesale-item">
-
-                            <div class="card-footer wholesale-card-footer">
-                                <h3>פטריות</h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-12 my-4">
-                        <div class="card text-center wholesale-item-card shadow">
-                            <img src="https://makesmart.co.il/wp-content/uploads/2023/10/wholesale-yopi.png" class="card-img-top" alt="wholesale-item">
-
-                            <div class="card-footer wholesale-card-footer">
-                                <h3>יופי</h3>
-                            </div>
-                        </div>
-                    </div>
+                    <?php } ?>
                 </div>
             </section>
         </main>

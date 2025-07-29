@@ -37,6 +37,8 @@ class FrontController extends Base_Controller {
   public function makeitWholesale() {
     $data['activePage'] = 'WHOLESALE';
 
+    $data['pageMain'] = $this->Front_model->fetchPage(7);
+    $data['wholesaleContentList'] = $this->Front_model->fetchPageManyPics(8);
     $this->load->view('wholesale', $data);
   }
 
