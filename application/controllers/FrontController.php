@@ -20,6 +20,8 @@ class FrontController extends Base_Controller {
     $data['pageWantToGuide'] = $this->Front_model->fetchPage(3);
     $data['pageNewOnTheSite'] = $this->Front_model->fetchPage(4);
 
+    $data['categoryList'] = $this->Front_model->getAll('categories');
+
     $this->load->view('index', $data);
   }
 
