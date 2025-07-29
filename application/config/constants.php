@@ -84,6 +84,6 @@ defined('EXIT_DATABASE')       OR define('EXIT_DATABASE', 8); // database error
 defined('EXIT__AUTO_MIN')      OR define('EXIT__AUTO_MIN', 9); // lowest automatically-assigned error code
 defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
 
-define('PHOTO_DOMAIN', 'http://localhost/arbolsoft-back/photos/');
-define('COMPANY_NAME', 'Arbol Soft');
+define('PHOTO_DOMAIN', 'http://localhost/make-kit/photos/');
+define('COMPANY_NAME', 'Make Kit');
 define('COMPANY_COMMON_EMAIL_ID', 'info@arbolsoft.com');

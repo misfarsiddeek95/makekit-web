@@ -8,6 +8,6 @@ class Base_Controller extends MY_Controller {
             'cur' => '$',
         );
         $this->load->vars($availabeAllViews);
-        $this->folder = $_SERVER['DOCUMENT_ROOT'] . "/arbolsoft-web";
+        $this->folder = $_SERVER['DOCUMENT_ROOT'] . "/makekit-web";
     }
 }
