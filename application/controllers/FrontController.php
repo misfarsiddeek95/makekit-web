@@ -66,6 +66,13 @@ class FrontController extends Base_Controller {
   # contact us page
   public function makeitContactUs() {
     $data['activePage'] = 'CONTACT';
+
+    $data['pageMain'] = $this->Front_model->fetchPage(11);
+    $data['pageEmail'] = $this->Front_model->fetchPage(12);
+    $data['pageWhatsApp'] = $this->Front_model->fetchPage(13);
+    $data['pagePhone'] = $this->Front_model->fetchPage(14);
+    $data['pageAddress'] = $this->Front_model->fetchPage(15);
+
     $this->load->view('contact', $data);
   }
 }
