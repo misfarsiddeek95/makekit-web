@@ -573,7 +573,8 @@ h2 {
     border-radius: 80px 200px 100px 30px;
     vertical-align: middle;
     height: auto;
-    width: 590px;
+    max-width: 100%;
+    width: 100%;
 }
 
 .class-list .left-image-col .main-image {
@@ -581,6 +582,95 @@ h2 {
     z-index: 2;
     border-radius: 200px 80px 30px 100px;
     vertical-align: middle;
+    max-width: 100%;
+    width: 100%;
+}
+
+/* =================================== */
+/* ====== RESPONSIVE MEDIA QUERIES === */
+/* =================================== */
+
+/* Tablet and smaller screens */
+@media (max-width: 991.98px) {
+    .class-list {
+        padding: 2rem 1rem !important;
+    }
+    
+    .class-list .right-image-col, .class-list .left-image-col {
+        margin: 0 !important;
+        margin-bottom: 2rem !important;
+    }
+    
+    .class-list .right-image-col::before,
+    .class-list .left-image-col::before {
+        display: none; /* Hide decorative elements on smaller screens */
+    }
+    
+    .class-list .right-image-col .main-image,
+    .class-list .left-image-col .main-image {
+        border-radius: 20px;
+    }
+    
+    /* Ensure proper container behavior */
+    .class-list .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
+
+/* Mobile screens */
+@media (max-width: 767.98px) {
+    .class-list {
+        padding: 1rem 0.5rem !important;
+    }
+    
+    .class-list .text-col {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .class-list .text-col h1 {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+    }
+    
+    .class-list .text-col p {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    
+    /* Remove horizontal margins on mobile */
+    .class-list .right-image-col,
+    .class-list .left-image-col {
+        margin: 0 !important;
+        padding: 0 10px;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 575.98px) {
+    .class-list {
+        padding: 1rem 0.25rem !important;
+    }
+    
+    .class-list .text-col h1 {
+        font-size: 1.5rem;
+    }
+    
+    .class-list .text-col p {
+        font-size: 0.9rem;
+    }
+    
+    /* Ensure no horizontal overflow */
+    .class-list .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    .class-list .right-image-col,
+    .class-list .left-image-col {
+        padding: 0 5px;
+    }
 }
 
 /* =================================== */

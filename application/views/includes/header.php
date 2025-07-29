@@ -14,15 +14,14 @@
                         </a>
                     </div>
                     
-                    
                     <!-- Right Side: Icons and Menu -->
                     <div class="d-flex align-items-center">
                         <ul class="desktop-main-menu flex-row-reverse">
-                            <li><a class="nav-link" href="contact-us.html">צור קשר</a></li>
-                            <li><a class="nav-link" href="drawings.html">ציודים להדפסה</a></li>
-                            <li><a class="nav-link" href="wholesale.html">מוצרים בסיטונאות</a></li>
-                            <li><a class="nav-link" href="classes.html">תכניות חוגים</a></li>
-                            <li><a class="nav-link active" href="index.html">ראשי</a></li>
+                            <li><a class="nav-link <?= $activePage == 'CONTACT' ? 'active' : '' ?>" href="<?=base_url()?>contact-us/">צור קשר</a></li>
+                            <li><a class="nav-link <?= $activePage == 'DRAWINGS' ? 'active' : '' ?>" href="<?=base_url()?>drawings/">ציודים להדפסה</a></li>
+                            <li><a class="nav-link <?= $activePage == 'WHOLESALE' ? 'active' : '' ?>" href="<?=base_url()?>wholesale/">מוצרים בסיטונאות</a></li>
+                            <li><a class="nav-link <?= $activePage == 'CLASS' ? 'active' : '' ?>" href="<?=base_url()?>classes/">תכניות חוגים</a></li>
+                            <li><a class="nav-link <?= $activePage == 'HOME' ? 'active' : '' ?>" href="<?=base_url()?>">ראשי</a></li>
                         </ul>
 
                         <div class="desktop-header-icons">
@@ -70,11 +69,11 @@
                 <i class="fa-solid fa-times"></i>
                 </button>
                 <ul class="main-menu-mobile-content">
-                <li><a class="nav-link active" href="index.html">ראשי</a></li>
-                <li><a class="nav-link" href="classes.html">תכניות חוגים</a></li>
-                <li><a class="nav-link" href="wholesale.html">מוצרים בסיטונאות</a></li>
-                <li><a class="nav-link" href="#">ציודים להדפסה</a></li>
-                <li><a class="nav-link" href="#">צור קשר</a></li>
+                <li><a class="nav-link <?= $activePage == 'HOME' ? 'active' : '' ?>" href="<?=base_url()?>">ראשי</a></li>
+                <li><a class="nav-link <?= $activePage == 'CLASS' ? 'active' : '' ?>" href="<?=base_url()?>classes/">תכניות חוגים</a></li>
+                <li><a class="nav-link <?= $activePage == 'WHOLESALE' ? 'active' : '' ?>" href="<?=base_url()?>wholesale/">מוצרים בסיטונאות</a></li>
+                <li><a class="nav-link <?= $activePage == 'DRAWINGS' ? 'active' : '' ?>" href="<?=base_url()?>drawings/">ציודים להדפסה</a></li>
+                <li><a class="nav-link <?= $activePage == 'CONTACT' ? 'active' : '' ?>" href="<?=base_url()?>contact-us/">צור קשר</a></li>
                 </ul>
         </div>
 

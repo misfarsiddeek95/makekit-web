@@ -53,16 +53,17 @@ $route['default_controller'] = 'FrontController';
 $route['404_override'] = 'FrontController';
 $route['translate_uri_dashes'] = FALSE;
 
-$route['about-us'] = 'FrontController/aboutUs';
-$route['services'] = 'FrontController/ourServices';
+$route['classes'] = 'FrontController/makeitClasses';
+$route['wholesale'] = 'FrontController/makeitWholesale';
+$route['drawings'] = 'FrontController/makeitDrawings';
+$route['contact-us'] = 'FrontController/makeitContactUs';
+
 $route['services/(:any)'] = 'FrontController/serviceDetail';
-$route['products'] = 'FrontController/ourProducsts';
 $route['load-products'] = 'FrontController/loadProducts';
 $route['products/(:any)'] = 'FrontController/productDetail';
 $route['request-product-demo'] = 'FrontController/requestDemo';
 $route['works'] = 'FrontController/ourWorks';
 $route['load-works'] = 'FrontController/loadWorks';
-$route['contact-us'] = 'FrontController/contactUs';
 $route['send-email'] = 'FrontController/sendEmail';
 $route['subscribe-email'] = 'FrontController/subscribeEmail';
 $route['get-a-quote'] = 'FrontController/getAQuote';
