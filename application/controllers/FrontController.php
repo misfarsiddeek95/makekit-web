@@ -6,7 +6,7 @@ class FrontController extends Base_Controller {
     parent::__construct();
     $this->load->model('Front_model');
 
-    $commonData['newsLetter'] = [];
+    $commonData['categoryList'] = $this->Front_model->getAll('categories');
     $this->load->vars($commonData);
   }
 	
@@ -19,8 +19,6 @@ class FrontController extends Base_Controller {
     $data['pageSliderImages'] = $this->Front_model->fetchPageManyPics(2);
     $data['pageWantToGuide'] = $this->Front_model->fetchPage(3);
     $data['pageNewOnTheSite'] = $this->Front_model->fetchPage(4);
-
-    $data['categoryList'] = $this->Front_model->getAll('categories');
 
     $this->load->view('index', $data);
   }

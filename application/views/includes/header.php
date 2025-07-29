@@ -9,7 +9,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <!-- Left Side: Logo -->
                     <div>
-                        <a class="navbar-brand" href="#">
+                        <a class="navbar-brand" href="<?=base_url()?>">
                             <img src="https://makesmart.co.il/wp-content/uploads/2023/08/logo.png" alt="MakeKit Logo" class="desktop-logo">
                         </a>
                     </div>
@@ -35,11 +35,10 @@
         <!-- Bottom Red Nav -->
         <div class="desktop-bottom-nav">
             <div class="container-fluid">
-                <ul class="desktop-bottom-menu">
-                    <li><a class="nav-link" href="#">מדעים</a></li>
-                    <li><a class="nav-link" href="#">מייקסמארט – משחקי כישורי חיים</a></li>
-                    <li><a class="nav-link" href="#">מייק קיט – קיטים להלחמה</a></li>
-                    <li><a class="nav-link" href="#">הרכבה – קיטים ללא הלחמה</a></li>
+                <ul class="desktop-bottom-menu flex-row-reverse">
+                    <?php foreach ($categoryList as $navCate) { ?>
+                        <li><a class="nav-link" href="<?=base_url()?>product-category/<?=$navCate->seo_url?>/"><?=$navCate->category?></a></li>
+                    <?php } ?>
                 </ul>
             </div>
         </div>
@@ -51,7 +50,7 @@
     <div class="d-lg-none">
         <!-- Mobile Main Header (Logo and top icons) -->
         <div class="mobile-header-top">
-            <a class="navbar-brand mobile-logo-link" href="#">
+            <a class="navbar-brand mobile-logo-link" href="<?=base_url()?>">
                     <img src="https://makesmart.co.il/wp-content/uploads/2023/08/logo.png" alt="MakeKit Logo" class="mobile-logo">
             </a>
             <div class="mobile-icons-top">
@@ -89,12 +88,11 @@
             </a>
         </div>
             <!-- MENU 2: Dropdown -->
-            <div class="collapse store-menu-collapse" id="storeMenuMobile">
+        <div class="collapse store-menu-collapse" id="storeMenuMobile">
             <ul>
-                <li><a class="nav-link" href="#">הרכבה – קיטים ללא הלחמה</a></li>
-                <li><a class="nav-link" href="#">מייק קיט – קיטים להלחמה</a></li>
-                <li><a class="nav-link" href="#">מייקסמארט – משחקי כישורי חיים</a></li>
-                <li><a class="nav-link" href="#">מדעים</a></li>
+                <?php foreach (array_reverse($categoryList) as $navCate) { ?>
+                <li><a class="nav-link" href="<?=base_url()?>product-category/<?=$navCate->seo_url?>/"><?=$navCate->category?></a></li>
+                <?php } ?>
             </ul>
         </div>
     </div>
