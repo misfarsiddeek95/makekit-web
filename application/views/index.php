@@ -1,660 +1,170 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title><?=$pageMain->seo_title?></title>
-    <meta name="description" content="<?=$pageMain->seo_description?>">
-    <meta name="keywords" content="<?=$pageMain->seo_keywords?>">
-    <!-- Stylesheets -->
-    <?php $this->load->view('includes/head'); ?>
-  </head>
+<!-- Specifying Hebrew language and Right-to-Left direction for proper layout -->
+<html lang="he" dir="rtl">
+<head>
+   <?php $this->load->view('includes/head'); ?>
+</head>
+<body>
 
-  <body>
-    <div class="page-wrapper">
-      <!-- Preloader -->
-      <?php $this->load->view('includes/cursor_preloader'); ?>
-      <!-- Preloader End -->
+    <?php $this->load->view('includes/header'); ?>
 
-      <!-- Main Header -->
-      <?php $this->load->view('includes/header'); ?>
-      <!-- End Main Header -->
-
-      <!-- Banner One -->
-      <section class="banner-one">
-        <div
-          class="banner-one_shadow"
-          style="background-image: url(<?=base_url()?>assets/images/main-slider/banner-bg.png)"
-        ></div>
-        <div class="auto-container">
-          <!-- Content Column -->
-          <div class="banner-one_content">
-            <div class="banner-one_content-inner">
-              <div class="banner-one_title">
-                <i><img src="<?=base_url()?>assets/images/main-slider/hand.png" alt="" /></i>
-                Effortless communication
-              </div>
-              <h1 class="banner-one_heading">
-                <?=$pageBanner->seo_description?> <span><?=$pageBanner->headline?></span> <?=$pageBanner->second_title?>
-              </h1>
-              <div class="banner-one_text"><?=strip_tags($pageBanner->page_text)?></div>
-              <div class="banner-one_newsletter">
-                <div class="newsletter-box">
-                  <form method="post" id="banner_news_letter">
-                    <div class="form-group">
-                      <span class="icon fa-regular fa-envelope fa-fw"></span>
-                      <input
-                        type="email"
-                        name="email"
-                        value=""
-                        placeholder="Enter business email"
-                        required
-                        autocomplete="off"
-                      />
-                      <input type="hidden" name="g_recaptcha_response" id="banner_news_letter-g-recaptcha-response">
-                      <button type="submit" class="template-btn btn-style-one">
-                        <span class="btn-wrap">
-                          <span class="text-one">Subscribe</span>
-                          <span class="text-two">Subscribe</span>
-                        </span>
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="banner-one_icon"
-            style="background-image: url(<?=base_url()?>assets/images/main-slider/banner-icon.png);"
-          ></div>
-          <div class="banner-one_image">
-            <?php $bannerImage = $pageBanner->photo_path ? PHOTO_DOMAIN.'pages/'.$pageBanner->photo_path.'-org.'.$pageBanner->extension : base_url().'assets/images/main-slider/banner.png'; ?>
-            <img src="<?=$bannerImage?>" alt="" />
-          </div>
-        </div>
-      </section>
-      <!-- End Main Banner One -->
-
-      <!-- Services -->
-      <section class="assistance-one">
-        <div class="auto-container">
-          <!-- Sec Title -->
-          <div class="sec-title style-two centered">
-            <div class="sec-title_title"><?=$pageServices->seo_title?></div>
-            <h2 class="sec-title_heading">
-            <?=$pageServices->headline?> <br />
-              <span><?=$pageServices->second_title?></span>
-            </h2>
-          </div>
-          <div class="three-item_carousel swiper-container">
-            <div class="swiper-wrapper">
-              <!-- Slide -->
-              <?php 
-                foreach ($services as $key => $row) { 
-                  $text = strip_tags($row->service_text);
-              ?>
-              <div class="swiper-slide">
-                <!-- Service Block Three -->
-                <div class="service-block_three">
-                  <div
-                    class="service-block_three-inner wow fadeInLeft"
-                    data-wow-delay="0ms"
-                    data-wow-duration="1500ms"
-                  >
-                    <div
-                      class="service-block_three-dots"
-                      style="background-image: url(<?=base_url()?>assets/images/icons/icon-2.png);"
-                    ></div>
-                    <div
-                      class="service-block_three-circles"
-                      style="background-image: url(<?=base_url()?>assets/images/icons/service-three_circle.png);"
-                    ></div>
-                    <div class="color-layer"></div>
-                    <div class="service-block_three-icon">
-                      <i class="<?=$row->class_name?>"></i>
-                    </div>
-                    <h5 class="service-block_three-heading">
-                      <a href="<?=base_url()?>services/<?=$row->slug?>?select=<?=$row->service_uuid?>"><?=$row->title?></a>
-                    </h5>
-                    <div class="service-block_three-text"><?=(strlen($text) > 97) ? substr($text, 0, 97) . '...' : $text?></div>
-                    <a
-                      class="service-block_three-more"
-                      href="<?=base_url()?>services/<?=$row->slug?>?select=<?=$row->service_uuid?>"
-                      >View more <i class="fa-solid fa-arrow-right fa-fw"></i
-                    ></a>
-                  </div>
-                </div>
-              </div>
-              <?php } ?>
-            </div>
-            <!-- If we need pagination -->
-            <div class="three-item_carousel-pagination"></div>
-          </div>
-        </div>
-      </section>
-      <!-- End Services -->
-
-      <!-- About -->
-      <section class="livechat">
-        <div class="auto-container">
-          <div class="row clearfix">
-            <!-- Image Column -->
-            <div class="livechat_image-column col-lg-6 col-md-12 col-sm-12">
-              <div class="livechat_image-outer">
-                <div class="livechat-agent">
-                  <i
-                    ><img src="<?=base_url()?>assets/images/icons/livechat-stars.png" alt=""
-                  /></i>
-                </div>
-                <div
-                  class="livechat-layer"
-                  style="background-image: url(<?=base_url()?>assets/images/background/service-three_bg.png);"
-                ></div>
-                <div
-                  class="livechat-icon"
-                  style="background-image: url(<?=base_url()?>assets/images/icons/livechat-icon.png);"
-                ></div>
-                <div class="color-layer"></div>
-                <?php $aboutImage = $pageAbout->photo_path ? PHOTO_DOMAIN.'pages/'.$pageAbout->photo_path.'-org.'.$pageAbout->extension : base_url().'assets/images/resource/livechat.png'; ?>
-                <img src="<?=$aboutImage?>" alt="" />
-              </div>
-            </div>
-
-            <!-- Content Column -->
-            <div class="livechat_content-column col-lg-6 col-md-12 col-sm-12">
-              <div class="livechat_content-outer">
-                <!-- Sec Title -->
-                <div class="sec-title style-two title-anim">
-                  <div class="sec-title_title"><?=$pageAbout->seo_title?></div>
-                  <h2 class="sec-title_heading">
-                    <?=$pageAbout->seo_description?> <span><?=$pageAbout->headline?></span> <?=$pageAbout->second_title?>.
-                  </h2>
-                  <div class="sec-title_text"><?=strip_tags($pageAbout->page_text)?></div>
-                </div>
-                <div
-                  class="livechat-options d-flex align-items-center flex-wrap"
-                >
-                  <div class="livechat_button">
-                    <a href="<?=base_url('about-us')?>" class="template-btn btn-style-one">
-                      <span class="btn-wrap">
-                        <span class="text-one">Learn more</span>
-                        <span class="text-two">Learn more</span>
-                      </span>
-                    </a>
-                  </div>
-                  <a class="livechat-now" href="<?=base_url('contact-us')?>"
-                    ><i><img src="<?=base_url()?>assets/images/icons/chat.png" alt="" /></i>
-                    Contact us</a
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <!-- End LiveChat -->
-
-      <!-- Why Choose Us -->
-      <section class="counter-one">
-        <div class="auto-container">
-          <div class="inner-container">
-            <!-- Sec Title -->
-            <div class="sec-title style-two centered">
-              <div class="sec-title_title"><?=$pageWCUTitle->seo_title?></div>
-              <h2 class="sec-title_heading">
-              <?=$pageWCUTitle->headline?> <br />
-                <span class="text-capitalize"><?=$pageWCUTitle->second_title?></span>
-              </h2>
-            </div>
-            <div class="row clearfix">
-              <!-- Counter Block Two -->
-              <?php if($pageWCUBoxOne) { ?>
-              <div class="counter-block_two col-lg-3 col-md-6 col-sm-6">
-                <div
-                  class="counter-block_two-inner wow fadeInLeft"
-                  data-wow-delay="0ms"
-                  data-wow-duration="1500ms"
-                >
-                  <div class="color-layer"></div>
-                  <div class="counter-block_two-count">
-                    <span class="odometer" data-count="<?=$pageWCUBoxOne->seo_keywords?>"></span><i><?=$pageWCUBoxOne->seo_description?></i>
-                  </div>
-                  <h5 class="counter-block_two-title"><?=$pageWCUBoxOne->headline?></h5>
-                  <div class="counter-block_two-text"><?=$pageWCUBoxOne->second_title?></div>
-                </div>
-              </div>
-              <?php } ?>
-
-              <!-- Counter Block Two -->
-              <?php if($pageWCUBoxTwo) { ?>
-              <div class="counter-block_two col-lg-3 col-md-6 col-sm-6">
-                <div
-                  class="counter-block_two-inner wow fadeInLeft"
-                  data-wow-delay="150ms"
-                  data-wow-duration="1500ms"
-                >
-                  <div class="color-layer"></div>
-                  <div class="counter-block_two-count">
-                    <span class="odometer" data-count="<?=$pageWCUBoxTwo->seo_keywords?>"></span><i><?=$pageWCUBoxTwo->seo_description?></i>
-                  </div>
-                  <h5 class="counter-block_two-title"><?=$pageWCUBoxTwo->headline?></h5>
-                  <div class="counter-block_two-text"><?=$pageWCUBoxTwo->second_title?></div>
-                </div>
-              </div>
-              <?php } ?>
-
-              <!-- Counter Block Two -->
-              <?php if($pageWCUBoxThree) { ?>
-              <div class="counter-block_two col-lg-3 col-md-6 col-sm-6">
-                <div
-                  class="counter-block_two-inner wow fadeInLeft"
-                  data-wow-delay="300ms"
-                  data-wow-duration="1500ms"
-                >
-                  <div class="color-layer"></div>
-                  <div class="counter-block_two-count">
-                    <span class="odometer" data-count="<?=$pageWCUBoxThree->seo_keywords?>"></span><i><?=$pageWCUBoxThree->seo_description?></i>
-                  </div>
-                  <h5 class="counter-block_two-title"><?=$pageWCUBoxThree->headline?></h5>
-                  <div class="counter-block_two-text"><?=$pageWCUBoxThree->second_title?></div>
-                </div>
-              </div>
-              <?php } ?>
-
-              <!-- Counter Block Two -->
-              <?php if($pageWCUBoxFour) { ?>
-              <div class="counter-block_two col-lg-3 col-md-6 col-sm-6">
-                <div
-                  class="counter-block_two-inner wow fadeInLeft"
-                  data-wow-delay="450ms"
-                  data-wow-duration="1500ms"
-                >
-                  <div class="color-layer"></div>
-                  <div class="counter-block_two-count">
-                    <span class="odometer" data-count="<?=$pageWCUBoxFour->seo_keywords?>"></span><i><?=$pageWCUBoxFour->seo_title?></i>
-                  </div>
-                  <h5 class="counter-block_two-title"><?=$pageWCUBoxFour->headline?></h5>
-                  <div class="counter-block_two-text"><?=$pageWCUBoxFour->second_title?></div>
-                </div>
-              </div>
-              <?php } ?>
-            </div>
-          </div>
-        </div>
-      </section>
-      <!-- End Why Choose Us -->
-
-      <!-- Business Excellence -->
-      <section class="order-one">
-        <div class="auto-container">
-          <div class="row clearfix">
-            <!-- Column -->
-            <div class="order-one_skill-column col-lg-6 col-md-12 col-sm-12">
-              <div class="order-one_skill-outer">
-                <div class="image">
-                  <?php $beImage = $pageBusinessExcellence->photo_path ? PHOTO_DOMAIN.'pages/'.$pageBusinessExcellence->photo_path.'-org.'.$pageBusinessExcellence->extension : base_url().'assets/images/resource/skill.png'; ?>
-                  <img src="<?=$beImage?>" alt="<?=$pageBusinessExcellence->seo_title?>" />
-                </div>
-              </div>
-            </div>
-            <!-- Column -->
-            <div class="order-one_content-column col-lg-6 col-md-12 col-sm-12">
-              <div class="order-one_content-outer">
-                <!-- Sec Title -->
-                <div class="sec-title style-two title-anim">
-                  <div class="sec-title_title"><?=$pageBusinessExcellence->seo_title?></div>
-                  <h2 class="sec-title_heading">
-                  <?=$pageBusinessExcellence->headline?> <span class="text-capitalize"><?=$pageBusinessExcellence->second_title?></span>
-                  </h2>
-                </div>
-
-                <!-- Accordion Box Three -->
-                <ul class="accordion-box_three">
-                  <!-- Block -->
-                  <?php if($pageBEAccOne) { ?>
-                  <li class="accordion block active-block">
-                    <div class="acc-btn active">
-                      <div class="icon-outer">
-                        <span class="icon fa-solid fa-user fa-fw"></span>
-                      </div>
-                      <?=$pageBEAccOne->headline?>
-                    </div>
-                    <div class="acc-content current">
-                      <div class="content">
-                        <div class="text">
-                          <?=strip_tags($pageBEAccOne->page_text)?>
+    <main>
+        <!-- Slider section -->
+        <section class="hero-section">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-7 hero-carousel-col">
+                        <div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-touch="true">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active" data-bs-interval="4000">
+                                    <img src="https://makesmart.co.il/wp-content/uploads/2023/08/home-1.png" class="d-block w-100" alt="Carousel Image 1">
+                                </div>
+                                <div class="carousel-item" data-bs-interval="4000">
+                                    <img src="https://makesmart.co.il/wp-content/uploads/2023/08/home-2.png" class="d-block w-100" alt="Carousel Image 1">
+                                </div>
+                                <div class="carousel-item" data-bs-interval="4000">
+                                    <img src="https://makesmart.co.il/wp-content/uploads/2023/08/home-3.png" class="d-block w-100" alt="Carousel Image 2">
+                                </div>
+                            </div>
                         </div>
-                        <a class="learn-more" href="<?=base_url('contact-us')?>">Learn More <i class="fa-solid fa-plus fa-fw"></i
-                        ></a>
-                      </div>
                     </div>
-                  </li>
-                  <?php } ?>
+                    <div class="col-lg-5 hero-text-col">
+                        <h2>הקיטים הכי ייחודיים, איכותיים ולימודיים בארץ.</h2>
+                        <h2>הקיטים מתאימים לחוגים, ימי הולדת, סדנאות ובניה עצמית.</h2>
+                        <a href="#" class="btn btn-hero curved-button">לתכנית חוגים</a>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-                  <!-- Block -->
-                  <?php if($pageBEAccTwo) { ?>
-                  <li class="accordion block">
-                    <div class="acc-btn">
-                      <div class="icon-outer">
-                        <span class="icon fa-solid fa-flag fa-fw"></span>
-                      </div>
-                      <?=$pageBEAccTwo->headline?>
-                    </div>
-                    <div class="acc-content">
-                      <div class="content">
-                        <div class="text">
-                          <?=strip_tags($pageBEAccTwo->page_text)?>
+        <section class="icon-section py-5">
+            <div class="container">
+                <!-- flex-column for mobile (default), flex-md-row for medium screens and up -->
+                <div class="d-flex flex-column flex-md-row justify-content-evenly text-center">
+                    <!-- CHANGED: HTML order is reversed to achieve correct visual order in RTL -->
+                    <div class="feature-icon mb-4 mb-md-0">
+                        <div class="icon-circle" style="--icon-bg-color: var(--dingy-dungeon);">
+                            <svg viewBox="0 0 16 16" class="bi bi-screwdriver" fill="currentColor" height="50" width="50" xmlns="http://www.w3.org/2000/svg">   <path d="M0 .995.995 0l3.064 2.19a.995.995 0 0 1 .417.809v.07c0 .264.105.517.291.704l5.677 5.676.909-.303a.995.995 0 0 1 1.018.24l3.338 3.339a.995.995 0 0 1 0 1.406L14.13 15.71a.995.995 0 0 1-1.406 0l-3.337-3.34a.995.995 0 0 1-.24-1.018l.302-.909-5.676-5.677a.995.995 0 0 0-.704-.291H3a.995.995 0 0 1-.81-.417L0 .995Zm11.293 9.595a.497.497 0 1 0-.703.703l2.984 2.984a.497.497 0 0 0 .703-.703l-2.984-2.984Z"></path> </svg>
                         </div>
-                        <a class="learn-more" href="<?=base_url('contact-us')?>">Learn More <i class="fa-solid fa-plus fa-fw"></i
-                        ></a>
-                      </div>
+                        <h4 style="--icon-text-color: var(--dingy-dungeon);">הרכבה</h4>
                     </div>
-                  </li>
-                  <?php } ?>
-
-                  <!-- Block -->
-                  <?php if($pageBEAccThree) { ?>
-                  <li class="accordion block">
-                    <div class="acc-btn">
-                      <div class="icon-outer">
-                        <span class="icon fa-solid fa-thumbs-up fa-fw"></span>
-                      </div>
-                      <?=$pageBEAccThree->headline?>
-                    </div>
-                    <div class="acc-content">
-                      <div class="content">
-                        <div class="text">
-                          <?=strip_tags($pageBEAccThree->page_text)?>
+                    <div class="feature-icon mb-4 mb-md-0">
+                        <div class="icon-circle" style="--icon-bg-color: var(--royal-orange);">
+                            <svg viewBox="0 0 16 16" class="bi bi-cpu" fill="currentColor" height="50" width="50" xmlns="http://www.w3.org/2000/svg">   <path d="M5 0a.5.5 0 0 1 .5.5V2h1V.5a.5.5 0 0 1 1 0V2h1V.5a.5.5 0 0 1 1 0V2h1V.5a.5.5 0 0 1 1 0V2A2.5 2.5 0 0 1 14 4.5h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14a2.5 2.5 0 0 1-2.5 2.5v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14A2.5 2.5 0 0 1 2 11.5H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2A2.5 2.5 0 0 1 4.5 2V.5A.5.5 0 0 1 5 0zm-.5 3A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13h7a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 11.5 3h-7zM5 6.5A1.5 1.5 0 0 1 6.5 5h3A1.5 1.5 0 0 1 11 6.5v3A1.5 1.5 0 0 1 9.5 11h-3A1.5 1.5 0 0 1 5 9.5v-3zM6.5 6a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z"></path> </svg>
                         </div>
-                        <a class="learn-more" href="<?=base_url('contact-us')?>">Learn More <i class="fa-solid fa-plus fa-fw"></i
-                        ></a>
-                      </div>
+                        <h4 style="--icon-text-color: var(--royal-orange);">רובוטרוניק</h4>
                     </div>
-                  </li>
-                  <?php } ?>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <!-- End Business Excellence -->
-
-      <!-- Testimonial Two -->
-      <?php if($pageTestimonial && $testimonialList) { ?>
-      <section class="testimonial-one">
-        <div class="auto-container">
-          <!-- Sec Title -->
-          <div class="sec-title style-two centered">
-            <div class="sec-title_title"><?=$pageTestimonial->seo_title?></div>
-            <h2 class="sec-title_heading">
-              <?=$pageTestimonial->headline?> <br />
-              <span><?=$pageTestimonial->second_title?></span>
-            </h2>
-          </div>
-          <div class="inner-container">
-            <div class="three-item_carousel swiper-container">
-              <div class="swiper-wrapper">
-                <!-- Slide -->
-                <?php 
-                  foreach ($testimonialList as $testimonial) { 
-                    $img = $testimonial->image != '' && $testimonial->image != null ? PHOTO_DOMAIN.'testimonials/'.$testimonial->image : base_url().'assets/images/testimonial_default.jpg';
-                ?>
-                <div class="swiper-slide">
-                  <!-- Testimonial Block One -->
-                  <div class="testimonial-block_one">
-                    <div class="testimonial-block_one-inner">
-                      <div class="testimonial-block_one-rating">
-                        <?=str_repeat('<span class="fa fa-star"></span>', $testimonial->stars)?>
-                      </div>
-                      <div class="testimonial-block_one-text">
-                        <?=strip_tags($testimonial->content)?>
-                      </div>
-                      <div class="testimonial-block_one-author_box">
-                        <div class="testimonial-block_one-author-image">
-                          <img
-                            src="<?=$img?>"
-                            alt="<?=$testimonial->name?>"
-                          />
+                    <div class="feature-icon mb-4 mb-md-0">
+                        <div class="icon-circle" style="--icon-bg-color: var(--crayolas-maize);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-emoji-wink" viewBox="0 0 16 16">   <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"></path>   <path d="M4.285 9.567a.5.5 0 0 1 .683.183A3.498 3.498 0 0 0 8 11.5a3.498 3.498 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.498 4.498 0 0 1 8 12.5a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683zM7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm1.757-.437a.5.5 0 0 1 .68.194.934.934 0 0 0 .813.493c.339 0 .645-.19.813-.493a.5.5 0 1 1 .874.486A1.934 1.934 0 0 1 10.25 7.75c-.73 0-1.356-.412-1.687-1.007a.5.5 0 0 1 .194-.68z"></path> </svg>
                         </div>
-                          <?=$testimonial->name?> <span><?=$testimonial->designation?></span>
-                      </div>
+                        <h4 style="--icon-text-color: var(--crayolas-maize);">משחקים</h4>
                     </div>
-                  </div>
+                    <div class="feature-icon mb-4 mb-md-0">
+                        <div class="icon-circle" style="--icon-bg-color: var(--light-sea-green);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">   <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path> </svg>
+                        </div>
+                        <h4 style="--icon-text-color: var(--light-sea-green);">מדעים</h4>
+                    </div>
                 </div>
-                <?php } ?>
-              </div>
-              <!-- If we need pagination -->
-              <div class="three-item_carousel-pagination"></div>
             </div>
-          </div>
-        </div>
-      </section>
-      <?php } ?>
-      <!-- End Testimonial Two -->
+        </section>
 
-      <!-- Steps One -->
-      <section class="steps-one">
-        <div
-          class="steps-one_bg"
-          style="background-image: url(<?=base_url()?>assets/images/background/step-1_bg.png)"
-        ></div>
-        <div
-          class="steps-one_icon"
-          style="background-image: url(<?=base_url()?>assets/images/icons/step.png)"
-        ></div>
-        <div class="auto-container">
-          <div class="inner-container">
-            <div class="circle-layer"></div>
-            <div class="dots-layer">
-              <span class="dot-one"></span>
-              <span class="dot-two"></span>
-            </div>
 
-            <!-- Sec Title -->
-            <div class="sec-title style-two">
-              <div class="sec-title_title"><?=$pageHowItWorks->seo_title?></div>
-              <h2 class="sec-title_heading">
-                <?=$pageHowItWorks->seo_keywords?> <span><?=$pageHowItWorks->headline?></span> <br /> <?=$pageHowItWorks->second_title?>
-              </h2>
-            </div>
-            <div class="steps-one_button">
-              <a href="<?=base_url('contact-us')?>" class="template-btn btn-style-two">
-                <span class="btn-wrap">
-                  <span class="text-one">Know more</span>
-                  <span class="text-two">Know more</span>
-                </span>
-              </a>
-            </div>
-            <div class="row clearfix">
-              <!-- Column -->
-              <?php if($pageHowItWorksStepOne) { ?>
-              <div class="column col-lg-6 col-md-12 col-sm-12">
-                <!-- Step Block One -->
-                <div class="step-block_one">
-                  <div class="step-block_one-inner">
-                    <div class="step-block_one-steps"><?=$pageHowItWorksStepOne->seo_title?></div>
-                    <h5 class="step-block_one-title"><?=$pageHowItWorksStepOne->headline?></h5>
-                    <div class="step-block_one-text text-white"><?=strip_tags($pageHowItWorksStepOne->page_text)?></div>
-                    <div class="step-block_one-content">
-                      <div class="image">
-                        <?php $stepOneImage = $pageHowItWorksStepOne->photo_path ? PHOTO_DOMAIN.'pages/'.$pageHowItWorksStepOne->photo_path.'-org.'.$pageHowItWorksStepOne->extension : base_url().'assets/images/resource/step-1.png'; ?>
-                        <img src="<?=$stepOneImage?>" alt="<?=$pageHowItWorksStepOne->headline?>" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <?php } ?>
-              <!-- Column -->
-              <?php if($pageHowItWorksStepTwo) { ?>
-              <div class="column col-lg-6 col-md-12 col-sm-12">
-                <!-- Step Block One -->
-                <div class="step-block_one">
-                  <div class="step-block_one-inner">
-                    <div class="step-block_one-steps"><?=$pageHowItWorksStepTwo->seo_title?></div>
-                    <h5 class="step-block_one-title"><?=$pageHowItWorksStepTwo->headline?></h5>
-                    <div class="step-block_one-text text-white"><?=strip_tags($pageHowItWorksStepTwo->page_text)?></div>
-                    <div class="step-block_one-content">
-                      <div class="image">
-                        <?php $stepTwoImage = $pageHowItWorksStepTwo->photo_path ? PHOTO_DOMAIN.'pages/'.$pageHowItWorksStepTwo->photo_path.'-org.'.$pageHowItWorksStepTwo->extension : base_url().'assets/images/resource/step-2.png'; ?>
-                        <img src="<?=$stepTwoImage?>" alt="<?=$pageHowItWorksStepTwo->headline?>" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <?php } ?>
-
-                <!-- Step Block One -->
-                <?php if($pageHowItWorksStepThree) { ?>
-                <div class="step-block_one">
-                  <div class="step-block_one-inner">
-                    <div class="step-block_one-steps"><?=$pageHowItWorksStepThree->seo_title?></div>
-                    <h5 class="step-block_one-title"><?=$pageHowItWorksStepThree->headline?></h5>
-                    <div class="step-block_one-text text-white"><?=strip_tags($pageHowItWorksStepThree->page_text)?></div>
-                    <div class="step-block_one-content">
-                      <div class="image">
-                        <?php $stepThreeImage = $pageHowItWorksStepThree->photo_path ? PHOTO_DOMAIN.'pages/'.$pageHowItWorksStepThree->photo_path.'-org.'.$pageHowItWorksStepThree->extension : base_url().'assets/images/resource/step-3.png'; ?>
-                        <img src="<?=$stepThreeImage?>" alt="<?=$pageHowItWorksStepThree->headline?>" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <?php } ?>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <!-- End Steps One -->
-
-      <!-- News One -->
-      <section class="news-one style-two">
-        <div
-          class="news-one_shadow-two"
-          style="background-image: url(<?=base_url()?>assets/images/background/news-shadow-2.png);"
-        ></div>
-        <div class="auto-container">
-          <!-- Sec Title -->
-          <div class="sec-title style-two">
-            <div
-              class="d-flex justify-content-between align-items-end flex-wrap"
-            >
-              <div class="left-box">
-                <div class="sec-title_title"><?=$pageOurWorks->seo_title?></div>
-                <h2 class="sec-title_heading">
-                  <?=$pageOurWorks->headline?> <span><?=$pageOurWorks->second_title?></span>
-                </h2>
-              </div>
-              <div class="news-two_button">
-                <div class="livechat_button">
-                  <a href="<?=base_url('works')?>" class="template-btn btn-style-one">
-                    <span class="btn-wrap">
-                      <span class="text-one">Learn more</span>
-                      <span class="text-two">Learn more</span>
-                    </span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="three-item_carousel swiper-container">
-            <div class="swiper-wrapper">
-              <!-- Slide -->
-              <div class="swiper-slide">
-                <!-- News Block One -->
-                <div class="news-block_one">
-                  <div class="news-block_one-inner">
-                    <div class="news-block_one-image">
-                      <a href="news-detail.html"
-                        ><img src="<?=base_url()?>assets/images/resource/news-1.jpg" alt=""
-                      /></a>
-                    </div>
-                    <div class="news-block_one-content">
-                      <div class="news-block_one-time">
-                        By Admin <span>6 min read</span>
-                      </div>
-                      <h5 class="news-block_one-title">
-                        <a href="news-detail.html"
-                          >Transforming industries and shaping the future</a
+        <!-- Middle section -->
+        <section class="middle-banner-section py-5 px-5">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 right-image-col mt-4 mt-lg-0">
+                        <img 
+                            decoding="async" 
+                            class="img-fluid main-image" 
+                            src="https://makesmart.co.il/wp-content/uploads/2023/08/instructor.jpg" 
+                            alt="Instructor" 
+                            srcset="https://makesmart.co.il/wp-content/uploads/2023/08/instructor.jpg 630w, https://makesmart.co.il/wp-content/uploads/2023/08/instructor-284x300.jpg 284w, https://makesmart.co.il/wp-content/uploads/2023/08/instructor-600x633.jpg 600w" 
+                            sizes="(max-width: 630px) 100vw, 630px"
                         >
-                      </h5>
-                      <a class="news-block_one-more" href="service-detail.html"
-                        >Read more <i class="fa-solid fa-plus fa-fw"></i
-                      ></a>
                     </div>
-                  </div>
+                    <div class="col-lg-6 text-col">
+                        <h1 class="underline-heading-1">רוצים להדריך איתנו?</h1>
+                        <div class="container-underline"></div>
+                        <p>אוהבים ילדים? אוהבים להדריך? הגעתם למקום הנכון.</p>
+                        <p>תחומים מסויימים דורשים ידע מוקדם: אנגלית, ערבית, כלכלה ותכנות. <br> במידה ואין לכם את הידע הנדרש בתחומים אלה אך יש בכם רצון ללמוד, אנו נעזור לכם ונפנה אתכם להכשרה כך שתוכלו להדריך אצלנו.</p>
+                        <p>בנוסף לשכר בסיסי שעתי גבוה מהשכר השעתי הממוצע בשוק אנו מציעים בונוסים על רצינות, מקצועיות והתמדה.</p>
+                        <a href="#" class="btn btn-middle curved-button">למידע נוסף</a>
+                    </div>
                 </div>
-              </div>
-
-              <!-- Slide -->
-              <div class="swiper-slide">
-                <!-- News Block One -->
-                <div class="news-block_one">
-                  <div class="news-block_one-inner">
-                    <div class="news-block_one-image">
-                      <a href="news-detail.html"
-                        ><img src="<?=base_url()?>assets/images/resource/news-2.jpg" alt=""
-                      /></a>
-                    </div>
-                    <div class="news-block_one-content">
-                      <div class="news-block_one-time">
-                        By Admin <span>6 min read</span>
-                      </div>
-                      <h5 class="news-block_one-title">
-                        <a href="news-detail.html"
-                          >Exploring the cutting-edge of artificial
-                          intelligence</a
-                        >
-                      </h5>
-                      <a class="news-block_one-more" href="service-detail.html"
-                        >Read more <i class="fa-solid fa-plus fa-fw"></i
-                      ></a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Slide -->
-              <div class="swiper-slide">
-                <!-- News Block One -->
-                <div class="news-block_one">
-                  <div class="news-block_one-inner">
-                    <div class="news-block_one-image">
-                      <a href="news-detail.html"
-                        ><img src="<?=base_url()?>assets/images/resource/news-3.jpg" alt=""
-                      /></a>
-                    </div>
-                    <div class="news-block_one-content">
-                      <div class="news-block_one-time">
-                        By Admin <span>6 min read</span>
-                      </div>
-                      <h5 class="news-block_one-title">
-                        <a href="news-detail.html"
-                          >Understanding the basics of artificial
-                          intelligence</a
-                        >
-                      </h5>
-                      <a class="news-block_one-more" href="service-detail.html"
-                        >Read more <i class="fa-solid fa-plus fa-fw"></i
-                      ></a>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
-            <!-- If we need pagination -->
-            <div class="three-item_carousel-pagination"></div>
-          </div>
-        </div>
-      </section>
-      <!-- End News One -->
+        </section>
 
-      <!-- Main Footer -->
-      <?php $this->load->view('includes/footer_home'); ?>
-    </div>
-    <!-- End PageWrapper -->
-    <?php $this->load->view('includes/js'); ?>
-  </body>
+        <!-- Product section -->
+        <section class="product-section py-5 px-5">
+            <di v class="container">
+                <div class="text-end mb-4">
+                    <div class="section-title-container">
+                        <h1 class="underline-heading-1">חדש באתר</h1>
+                        <div class="container-underline"></div>
+                    </div>
+                    <p class="section-subtitle mb-1">מוצרים אחרונים</p>
+                </div>
+                <div class="row">
+                    <!-- Product 1 -->
+                    <div class="col-6 col-lg-3 mb-4 text-center products">
+                        <a href="#">
+                            <div class="card product-card">
+                                <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28.png" alt="Product Image 1" class="product-img img-main">
+                                <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" alt="Product Image 1 Hover" class="product-img img-hover">
+                            </div>
+                            <h2>מורס נסיון</h2>
+                            <span class="price">החל מ: ₪0.00</span>
+                        </a>
+                        <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
+                    </div>
+
+                    <div class="col-6 col-lg-3 mb-4 text-center products">
+                        <a href="#">
+                            <div class="card product-card">
+                                <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28.png" alt="Product Image 1" class="product-img img-main">
+                                <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" alt="Product Image 1 Hover" class="product-img img-hover">
+                            </div>
+                            <h2>מורס נסיון</h2>
+                            <span class="price">החל מ: ₪0.00</span>
+                        </a>
+                        <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
+                    </div>
+
+                    <div class="col-6 col-lg-3 mb-4 text-center products">
+                        <a href="#">
+                            <div class="card product-card">
+                                <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28.png" alt="Product Image 1" class="product-img img-main">
+                                <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" alt="Product Image 1 Hover" class="product-img img-hover">
+                            </div>
+                            <h2>מורס נסיון</h2>
+                            <span class="price">החל מ: ₪0.00</span>
+                        </a>
+                        <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
+                    </div>
+
+                    <div class="col-6 col-lg-3 mb-4 text-center products">
+                        <a href="#">
+                            <div class="card product-card">
+                                <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28.png" alt="Product Image 1" class="product-img img-main">
+                                <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" alt="Product Image 1 Hover" class="product-img img-hover">
+                            </div>
+                            <h2>מורס נסיון</h2>
+                            <span class="price">החל מ: ₪0.00</span>
+                        </a>
+                        <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <?php $this->load->view('includes/footer') ?>
+
+    <?php $this->load->view('includes/js') ?>
+    
+</body>
 </html>

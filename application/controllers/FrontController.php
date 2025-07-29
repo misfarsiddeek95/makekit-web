@@ -13,7 +13,7 @@ class FrontController extends Base_Controller {
   # home page
   public function index() {
     $data['activePage'] = 'HOME';
-    $this->load->view('home', $data);
+    $this->load->view('index', $data);
   }
 
   private function loadTestimonials() {
