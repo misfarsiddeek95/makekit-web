@@ -109,7 +109,7 @@
 
         <!-- Product section -->
         <section class="product-section py-5 px-5">
-            <di v class="container">
+            <div class="container">
                 <div class="text-end mb-4">
                     <div class="section-title-container">
                         <h1 class="underline-heading-1"><?=$pageNewOnTheSite->headline?></h1>

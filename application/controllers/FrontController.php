@@ -88,6 +88,7 @@ class FrontController extends Base_Controller {
     $this->load->view('products', $data);
   } */
 
+  # Products
   public function makekitProducts($slug, $page = 1) {
 
     $orderby = $this->input->get('orderby'); // LOW_TO_EXP, EXP_TO_LOW, etc.
@@ -159,13 +160,6 @@ class FrontController extends Base_Controller {
     $this->load->view('products', $data);
   }
   
-  public function filterProducts() {
-    $seoUrl = $this->input->get('seoUrl');
-    $sortType = $this->input->get('sortType');
-
-    $result = $this->Front_model->filter_products($seoUrl,$sortType);
-  }
-
   # product detail
   public function makekitProductDetail() {
     $data['activePage'] = 'PRODUCT';

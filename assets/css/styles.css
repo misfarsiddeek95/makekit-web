@@ -648,6 +648,64 @@ h2 {
 }
 
 /* =================================== */
+/* ====== PRODUCTS DETAIL STYLES ===== */
+/* =================================== */
+.product-detail,
+.related-product-section {
+  background-color: var(--base-3);
+}
+.product-detail p.price {
+  color: #222222;
+  font-weight: 700;
+  font-size: 1.25em;
+}
+
+.product-detail div.short-description {
+  color: var(--american-purple);
+}
+.product-detail .table > :not(caption) > * > * {
+  background-color: var(--base-3);
+}
+
+.product-detail .table th {
+  font-weight: 600 !important;
+}
+
+.product-detail .table tr.active td {
+  background-color: #110b40 !important;
+  color: #ffffff !important;
+}
+
+.product-detail .position-relative:hover {
+  background-color: #fff;
+}
+
+.product-detail .position-relative {
+  overflow: hidden; /* hide overflow when zooming */
+}
+
+.product-detail .position-relative img {
+  transition: transform 0.3s ease;
+  transform-origin: center center;
+  cursor: zoom-in;
+}
+
+.product-detail .category-preview p {
+  font-size: 16px;
+}
+
+.product-detail .btn-add-to-cart {
+  background-color: var(--lapis-lazuli);
+  color: #ffffff;
+  padding: 10px 20px;
+  border: none;
+}
+
+.related-product-section .product-card {
+  border-radius: 25px;
+}
+
+/* =================================== */
 /* =========== LOGO FOOTER STYLES ==== */
 /* =================================== */
 .logo-footer {
