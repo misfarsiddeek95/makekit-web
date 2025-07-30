@@ -38,16 +38,16 @@
                     <div class="row flex-column justify-content-between flex-md-row-reverse my-5">
                         <div class="col-sm-12 col-md-6 text-md-start">
                             <div class="dropdown w-100 w-md-auto">
-                                <button class="btn d-flex justify-content-between align-items-center border rounded px-3 py-2 w-100" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                <button class="btn d-flex justify-content-between align-items-center border rounded px-3 py-2 w-100" type="button" id="dropdownMenuButton" d-val="DEFAULT" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fa fa-ellipsis-h ms-2"></i>
                                     <span class="text-muted">Default arrangement</span>
                                 </button>
                                 <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
-                                    <li><a class="dropdown-item" href="#">Default arrangement</a></li>
-                                    <li><a class="dropdown-item" href="#">Sort by popularity</a></li>
-                                    <li><a class="dropdown-item" href="#">Sort by most recent</a></li>
-                                    <li><a class="dropdown-item" href="#">Sort from cheap to expensive</a></li>
-                                    <li><a class="dropdown-item" href="#">Sort from expensive to cheap</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="DEFAULT">Default arrangement</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="POPULAR">Sort by popularity</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="RECENT">Sort by most recent</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="LOW_TO_EXP">Sort from cheap to expensive</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="EXP_TO_LOW">Sort from expensive to cheap</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -116,5 +116,34 @@
 
         <?php $this->load->view('includes/js') ?>
         
+        <script>
+            $(document).ready(function(){
+                filterProducts();
+            });
+
+            $('.dropdown-item').on('click', function (e) {
+                e.preventDefault();
+                const selectedText = $(this).text();
+                const selectedValue = $(this).data('value');
+
+                // Update button label
+                $('#dropdownMenuButton').html(`<i class="fa fa-ellipsis-h ms-2"></i> ${selectedText}`);
+
+                // Set value in hidden input
+                $('#dropdownMenuButton').attr('d-val',selectedValue);
+
+                // call the filter function
+                filterProducts();
+            });
+
+            const filterProducts = () => {
+                const selectedFilterOpt = $('#dropdownMenuButton').attr('d-val');
+                const seoUrl = '<?=$selectedCate->seo_url?>';
+
+                
+            }
+
+        </script>
+
     </body>
 </html>

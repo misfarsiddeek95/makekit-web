@@ -60,7 +60,7 @@ class FrontController extends Base_Controller {
       ['field' => 'seo_url', 'value' => $seoUrl]
     ];
   
-    $data['selectedCate'] = $this->Front_model->get_data_with_conditions_and_joins('categories',['category_second_title'],[],$conditions,1);
+    $data['selectedCate'] = $this->Front_model->get_data_with_conditions_and_joins('categories',['category_second_title','seo_url'],[],$conditions,1);
 
     $this->load->view('products', $data);
   }
