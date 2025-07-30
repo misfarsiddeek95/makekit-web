@@ -101,7 +101,7 @@ class FrontController extends Base_Controller {
     }
 
     // Pagination setup
-    $limit = 4; // products per page
+    $limit = 12; // products per page
     $offset = ($page - 1) * $limit;
 
     // Get products
@@ -117,20 +117,35 @@ class FrontController extends Base_Controller {
     $config['use_page_numbers'] = TRUE;
     $config['reuse_query_string'] = TRUE;
 
-    // Add Bootstrap styling (optional)
-    $config['full_tag_open'] = '<ul class="pagination justify-content-center">';
-    $config['full_tag_close'] = '</ul>';
-    $config['num_tag_open'] = '<li class="page-item">';
-    $config['num_tag_close'] = '</li>';
-    $config['cur_tag_open'] = '<li class="page-item active"><span class="page-link">';
-    $config['cur_tag_close'] = '</span></li>';
-    $config['prev_tag_open'] = '<li class="page-item">';
-    $config['prev_tag_close'] = '</li>';
+    // --- Bootstrap Pagination Styling ---
+    $config['full_tag_open'] = '<nav aria-label="Page navigation"><ul class="pagination justify-content-center">';
+    $config['full_tag_close'] = '</ul></nav>';
+
+    $config['first_link'] = false; // hide "First"
+    $config['last_link'] = false;  // hide "Last"
+
+    $config['next_link'] = '←'; // right arrow ››
     $config['next_tag_open'] = '<li class="page-item">';
     $config['next_tag_close'] = '</li>';
+
+    $config['prev_link'] = '→'; // left arrow ‹‹
+    $config['prev_tag_open'] = '<li class="page-item">';
+    $config['prev_tag_close'] = '</li>';
+
+    $config['cur_tag_open'] = '<li class="page-item active" aria-current="page"><a class="page-link" href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+
+    $config['num_tag_open'] = '<li class="page-item">';
+    $config['num_tag_close'] = '</li>';
+
     $config['attributes'] = ['class' => 'page-link'];
 
     $this->pagination->initialize($config);
+
+    $start_result = ($total_products > 0) ? ($offset + 1) : 0;
+    $end_result = min($offset + $limit, $total_products);
+    // $result_text = "Showing {$start_result}–{$end_result} of {$total_products} results";
+    $result_text = "מציג {$start_result}–{$end_result} מתוך {$total_products} תוצאות";
 
     $data = [
         'activePage'    => 'PRODUCT',
@@ -138,6 +153,7 @@ class FrontController extends Base_Controller {
         'selectedCate'  => $selectedCate,
         'products'      => $products,
         'pagination'    => $this->pagination->create_links(),
+        'result_text'   => $result_text,
     ];
 
     $this->load->view('products', $data);

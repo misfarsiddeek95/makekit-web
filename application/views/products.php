@@ -39,19 +39,19 @@
                         <div class="col-sm-12 col-md-6 text-md-start">
                             <?php
                                 $orderby = isset($_GET['orderby']) ? $_GET['orderby'] : '';
-                                $selectedLabel = 'Default arrangement';
+                                $selectedLabel = 'סידור ברירת מחדל';
                                 switch ($orderby) {
                                     case 'popularity':
-                                        $selectedLabel = 'Sort by popularity';
+                                        $selectedLabel = 'למיין לפי פופולריות';
                                         break;
                                     case 'date':
-                                        $selectedLabel = 'Sort by most recent';
+                                        $selectedLabel = 'למיין לפי המעודכן ביותר';
                                         break;
                                     case 'price':
-                                        $selectedLabel = 'Sort from cheap to expensive';
+                                        $selectedLabel = 'למיין מהזול ליקר';
                                         break;
                                     case 'price-desc':
-                                        $selectedLabel = 'Sort from expensive to cheap';
+                                        $selectedLabel = 'למיין מהיקר לזול';
                                         break;
                                 }
                             ?>
@@ -61,18 +61,16 @@
                                     <span class="text-muted"><?= $selectedLabel ?></span>
                                 </button>
                                 <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
-                                    <li><a class="dropdown-item" href="#" data-value="menu_order">Default arrangement</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="popularity">Sort by popularity</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="date">Sort by most recent</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="price">Sort from cheap to expensive</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="price-desc">Sort from expensive to cheap</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="menu_order">סידור ברירת מחדל</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="popularity">למיין לפי פופולריות</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="date">למיין לפי המעודכן ביותר</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="price">למיין מהזול ליקר</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="price-desc">למיין מהיקר לזול</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-12 col-md-6 "> 
-                            <font style="font-size:14px;">
-                                מציגים את כל ⁦7⁩ התוצאות
-                            </font> 
+                            <font style="font-size:14px;"><?=$result_text?></font> 
                         </div>
                     </div>
                     
