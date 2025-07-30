@@ -80,7 +80,7 @@ class Front_model extends CI_Model {
     }
     
     public function get_filtered_products($cate_id, $sortType = null, $limit = null, $offset = null, $currentId = null) {
-        $this->db->select('p.pro_id AS id, p.name, p.price, p.slug_url as product_url');
+        $this->db->select('p.pro_id AS id, p.name, p.price, p.slug_url as product_url,p.quantity as qty');
         $this->db->from('products p');
         $this->db->where('p.cate_id', $cate_id);
         $this->db->where('p.status', 0);
@@ -131,7 +131,7 @@ class Front_model extends CI_Model {
     }
 
     public function product_detail($slug) {
-        $this->db->select('p.pro_id AS id, p.name, p.price, p.slug_url as product_url,p.description,p.short_description,p.ingredients,p.how_to_use,p.how_to_use,p.cate_id,c.category_second_title as cate_short_name,c.seo_url as cate_url');
+        $this->db->select('p.pro_id AS id, p.name, p.price, p.slug_url as product_url,p.quantity as qty,p.description,p.short_description,p.ingredients,p.how_to_use,p.how_to_use,p.cate_id,c.category_second_title as cate_short_name,c.seo_url as cate_url');
         $this->db->from('products p');
         $this->db->where('p.slug_url', trim($slug));
         $this->db->join('categories c', 'c.cate_id=p.cate_id', 'left');

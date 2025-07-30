@@ -171,7 +171,7 @@
                                 <!-- Quantity Input with +/- -->
                                 <div class="input-group" style="width: 130px;">
                                     <button class="btn btn-outline-secondary btn-no-hover qty-btn" type="button" onclick="decreaseQty()">−</button>
-                                    <input type="number" id="qtyInput" class="form-control text-center" value="1" min="1" max="99">
+                                    <input type="number" id="qtyInput" class="form-control text-center" value="<?=$productDetail->qty > 5 ? 5 : $productDetail->qty ?>" min="1" max="99">
                                     <button class="btn btn-outline-secondary btn-no-hover qty-btn" type="button" onclick="increaseQty()">+</button>
                                 </div>
 
@@ -253,7 +253,7 @@
                     <div class="row">
                         <!-- Product 1 -->
                         <?php foreach ($relatedProducts as $p) { ?>
-                            <div class="col-6 col-lg-3 mb-4 text-center products">
+                            <div class="col-6 col-lg-3 mb-4 text-center products <?= $p->qty < 1 ? 'disabled' : '' ?>">
                                 <a href="<?=base_url()?>product/<?=$p->product_url?>/">
                                     <div class="card product-card">
                                         <?php 
