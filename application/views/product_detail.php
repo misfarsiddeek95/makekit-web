@@ -55,7 +55,7 @@
                 <div class="container">
                     <div class="row align-items-center">
                         <div class="col-lg-12">
-                            <h1>Azaqod</h1>
+                            <h1><?=$productDetail->name?></h1>
                         </div>
                     </div>
                 </div>
@@ -72,13 +72,13 @@
                                     <font style="vertical-align: inherit;">עמוד הבית</font>
                                 </font>
                             </a>
-                            <a href="<?=base_url()?>">
+                            <a href="<?=base_url()?>product-category/<?=$productDetail->cate_url?>/">
                                 <font style="vertical-align: inherit;">
-                                    <font style="vertical-align: inherit;">&nbsp;/ עמוד הבית</font>
+                                    <font style="vertical-align: inherit;">&nbsp;/ <?=$productDetail->cate_short_name?></font>
                                 </font>
                             </a>
                             <font style="vertical-align: inherit;">
-                                <font style="vertical-align: inherit;"> &nbsp;/ Azakod</font>
+                                <font style="vertical-align: inherit;"> &nbsp;/ <?=$productDetail->name?></font>
                             </font>
                         </nav>
                     </div>
@@ -88,20 +88,45 @@
                         <div class="col-12 col-md-6">
                             <p class="price">
                                 <span class="amount">
-                                    <bdi><span class="currency-symbol">₪</span>24.00</bdi>
+                                    <bdi><span class="currency-symbol"><?=$cur?></span><?=number_format($productDetail->price,2)?></bdi>
                                 </span>
                             </p>
 
+                            <?php if ($productDetail->short_description != '') { ?>
                             <div class="short-description">
-                                <p>
-                                    אזעקה קטנה, רב שימושית ופשוטה לתפעול.<br>
-                                    האזעקה מתחברת לכל דלת\חלון.<br>
-                                    האזעקה מתריעה בעוצמה במקרים בהם הדלת\חלון נפתח\ת ללא אישור.<br>
-                                    לתפעול האזעקה יש ללחוץ על הלחצן בצד ולהניח את האזעקה על דלת\חלון, באופן כזה שהלחצן ישאר באותו מצב.
-                                </p>
+                                <p><?=$productDetail->short_description?></p>
                             </div>
+                            <?php } ?>
 
-                            <table class="table table-responsive table-bordered my-4">
+                            <?php if ($productDetail->description != '') { ?>
+                            <div class="short-description">
+                                <?=$productDetail->description?>
+                            </div>
+                            <?php } ?>
+
+                            <?php if ($productDetail->ingredients != '') { ?>
+                            <div class="short-description">
+                                <?=$productDetail->ingredients?>
+                            </div>
+                            <?php } ?>
+
+                            <?php if ($productDetail->how_to_use != '') { ?>
+                            <div class="short-description">
+                                <?=$productDetail->how_to_use?>
+                            </div>
+                            <?php } ?>
+
+                            <?php
+                                if($productDetail->discountList) {
+                                    $basePrice = (float) $productDetail->price;
+                                    $discounts = $productDetail->discountList;
+
+                                    // Sort discountList by min_item_count ascending
+                                    usort($discounts, function($a, $b) {
+                                        return $a->min_item_count - $b->min_item_count;
+                                    });
+                            ?>
+                            <table class="table table-responsive table-bordered my-4" dir="rtl">
                                 <thead>
                                     <tr>
                                         <th>כמות</th>
@@ -110,13 +135,37 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>10-24</td>
-                                        <td>4%</td>
-                                        <td>₪23.04</td>
-                                    </tr>
+                                    <?php foreach ($discounts as $index => $row) {
+                                        $isLast = $index === count($discounts) - 1;
+                                        $nextMin = $discounts[$index + 1]->min_item_count ?? null;
+
+                                        // Quantity range display
+                                        if ($isLast) {
+                                            $qtyRange = '+' . $row->min_item_count;
+                                        } else {
+                                            $qtyRange = $row->min_item_count . '-' . ($nextMin - 1);
+                                        }
+
+                                        // Discount calculation
+                                        if ($row->discount_type == 1) {
+                                            // percentage
+                                            $discountLabel = rtrim(rtrim($row->discount_value, '0'), '.') . '%';
+                                            $unitPrice = $basePrice - ($basePrice * ($row->discount_value / 100));
+                                        } else {
+                                            // flat amount
+                                            $discountLabel = $cur . number_format($row->discount_value, 2);
+                                            $unitPrice = $basePrice - $row->discount_value;
+                                        }
+                                    ?>
+                                        <tr class="discount-tr" min-count="<?=$row->min_item_count?>" next-min="<?=$nextMin?>">
+                                            <td><?= $qtyRange ?></td>
+                                            <td><?= $discountLabel ?></td>
+                                            <td><?=$cur?><?= number_format($unitPrice, 2) ?></td>
+                                        </tr>
+                                    <?php } ?>
                                 </tbody>
                             </table>
+                            <?php } ?>
 
                             <div class="d-flex align-items-center gap-2 flex-wrap">
                                 <!-- Quantity Input with +/- -->
@@ -133,15 +182,16 @@
                             <hr/>
                             
                             <div class="my-3 category-preview">
-                                <p>קטגוריה: <a href="">Robotronic</a></p>
+                                <p>קטגוריה: <a href="<?=base_url()?>product-category/<?=$productDetail->cate_url?>/"><?=$productDetail->cate_short_name?></a></p>
                             </div>
                         </div>
+                        <?php if($productDetail->images) { ?>
                         <div class="col-12 col-md-6 d-flex justify-content-md-start">
                             <div class="product-image-wrapper text-center">
 
                                 <!-- Main Image with Zoom Icon -->
                                 <div class="position-relative d-inline-block">
-                                    <img id="mainImage" src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" class="img-fluid border rounded" alt="Product" />
+                                    <img id="mainImage" src="<?=PHOTO_DOMAIN.'products/'.$productDetail->images[0]->photo_path.'-org.'.$productDetail->images[0]->extension ?>" class="img-fluid border rounded" alt="Product" />
                                 
                                     <button class="btn btn-light rounded-pill position-absolute top-0 start-0 m-2 bg-white" style="transform: scaleX(-1);" data-bs-toggle="modal" data-bs-target="#zoomModal" title="Zoom">
                                     🔍
@@ -150,9 +200,9 @@
 
                                 <!-- Thumbnails -->
                                 <div class="mt-3 d-flex flex-wrap justify-content-start gap-2">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" class="thumb-img img-thumbnail" style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;" onclick="setMainImage(this, 0)">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28.png" class="thumb-img img-thumbnail" style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;" onclick="setMainImage(this, 1)">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-8.png" class="thumb-img img-thumbnail" style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;" onclick="setMainImage(this, 2)">
+                                    <?php foreach ($productDetail->images as $key => $img) { ?>
+                                    <img src="<?=PHOTO_DOMAIN.'products/'.$img->photo_path.'-org.'.$img->extension ?>" class="thumb-img img-thumbnail" style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;" onclick="setMainImage(this, <?=$key?>)">
+                                    <?php } ?>
                                 </div>
                             </div>
 
@@ -165,17 +215,15 @@
                                         <div class="modal-body p-0">
                                             <div id="carouselZoom" class="carousel slide" data-bs-ride="carousel">
                                                 <div class="carousel-inner">
-                                                    <div class="carousel-item active">
-                                                        <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" class="d-block w-100 img-fluid" style="max-height: 90vh; object-fit: contain;" alt="Zoom Image 1">
+                                                    <?php 
+                                                        foreach ($productDetail->images as $key => $img) {
+                                                            $act = $key == 0 ? 'active' : '';
+                                                    ?>
+                                                    <div class="carousel-item <?=$act?>">
+                                                        <img src="<?=PHOTO_DOMAIN.'products/'.$img->photo_path.'-org.'.$img->extension ?>" class="d-block w-100 img-fluid" style="max-height: 90vh; object-fit: contain;" alt="Zoom Image <?=$key + 1?>">
                                                     </div>
-                                                    <div class="carousel-item">
-                                                        <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28.png" class="d-block w-100 img-fluid" style="max-height: 90vh; object-fit: contain;" alt="Zoom Image 2">
-                                                    </div>
-                                                    <div class="carousel-item">
-                                                        <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-8.png" class="d-block w-100 img-fluid" style="max-height: 90vh; object-fit: contain;" alt="Zoom Image 3">
-                                                    </div>
+                                                    <?php } ?>
                                                 </div>
-
                                                 <button class="carousel-control-prev" type="button" data-bs-target="#carouselZoom" data-bs-slide="prev">
                                                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                                     <span class="visually-hidden">Previous</span>
@@ -190,9 +238,11 @@
                                 </div>
                             </div>
                         </div>
+                        <?php } ?>
                     </div>
                 </div>
             </section>
+            <?php if ($relatedProducts) { ?>
             <section class="related-product-section py-5 px-5">
                 <div class="container px-0">
                     <div class="text-end mb-4">
@@ -202,57 +252,39 @@
                     </div>
                     <div class="row">
                         <!-- Product 1 -->
-                        <div class="col-6 col-lg-3 mb-4 text-center products">
-                            <a href="#">
-                                <div class="card product-card">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28.png" alt="Product Image 1" class="product-img img-main">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" alt="Product Image 1 Hover" class="product-img img-hover">
-                                </div>
-                                <h2>מורס נסיון</h2>
-                                <span class="price">החל מ: ₪0.00</span>
-                            </a>
-                            <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
-                        </div>
-
-                        <div class="col-6 col-lg-3 mb-4 text-center products">
-                            <a href="#">
-                                <div class="card product-card">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28.png" alt="Product Image 1" class="product-img img-main">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" alt="Product Image 1 Hover" class="product-img img-hover">
-                                </div>
-                                <h2>מורס נסיון</h2>
-                                <span class="price">החל מ: ₪0.00</span>
-                            </a>
-                            <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
-                        </div>
-
-                        <div class="col-6 col-lg-3 mb-4 text-center products">
-                            <a href="#">
-                                <div class="card product-card">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28.png" alt="Product Image 1" class="product-img img-main">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" alt="Product Image 1 Hover" class="product-img img-hover">
-                                </div>
-                                <h2>מורס נסיון</h2>
-                                <span class="price">החל מ: ₪0.00</span>
-                            </a>
-                            <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
-                        </div>
-
-                        <div class="col-6 col-lg-3 mb-4 text-center products">
-                            <a href="#">
-                                <div class="card product-card">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28.png" alt="Product Image 1" class="product-img img-main">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" alt="Product Image 1 Hover" class="product-img img-hover">
-                                </div>
-                                <h2>מורס נסיון</h2>
-                                <span class="price">החל מ: ₪0.00</span>
-                            </a>
-                            <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
-                        </div>
-
+                        <?php foreach ($relatedProducts as $p) { ?>
+                            <div class="col-6 col-lg-3 mb-4 text-center products">
+                                <a href="<?=base_url()?>product/<?=$p->product_url?>/">
+                                    <div class="card product-card">
+                                        <?php 
+                                            if (count($p->images) == 1) {
+                                                $img = $p->images[0];
+                                                $imgSrc = PHOTO_DOMAIN.'products/'.$img->photo_path.'-std.'.$img->extension;
+                                        ?>
+                                            <img src="<?= $imgSrc ?>" alt="<?= $p->name ?>" class="product-img img-main">
+                                            <img src="<?= $imgSrc ?>" alt="<?= $p->name ?>" class="product-img img-hover">
+                                        <?php 
+                                            } else {
+                                                foreach ($p->images as $key => $img) {
+                                                    $hovCls = ($key % 2 == 0) ? 'img-main' : 'img-hover';
+                                                    $imgSrc = PHOTO_DOMAIN.'products/'.$img->photo_path.'-std.'.$img->extension;
+                                        ?>
+                                            <img src="<?= $imgSrc ?>" alt="<?= $p->name ?>" class="product-img <?= $hovCls ?>">
+                                        <?php 
+                                                } 
+                                            }
+                                        ?>
+                                    </div>
+                                    <h2><?= $p->name ?></h2>
+                                    <span class="price">החל מ: ₪<?= number_format($p->price, 2) ?></span>
+                                </a>
+                                <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
             </section>
+            <?php } ?>
         </main>
 
         <?php $this->load->view('includes/footer') ?>
@@ -296,19 +328,51 @@
                 let value = parseInt(input.value);
                 if (value > 1) {
                     input.value = value - 1;
+                    
+                    // Manually trigger change
+                    $(input).trigger('change');
                 }
+
             }
 
             function increaseQty() {
                 const input = document.getElementById('qtyInput');
                 let value = parseInt(input.value);
                 input.value = value + 1;
+
+                // Manually trigger change
+                $(input).trigger('change');
             }
 
             function addToCart() {
                 const quantity = document.getElementById('qtyInput').value;
                 // You can perform your AJAX or form submission here
                 alert('Added ' + quantity + ' item(s) to the cart!');
+            }
+
+            $(document).on('change input', '#qtyInput', function() {
+                const qtyVal = this.value;
+                tableActivate(qtyVal);
+            });
+
+            const tableActivate = (qtyVal) => {
+                $('.discount-tr').each(function() {
+                    const min = parseInt($(this).attr('min-count'));
+                    const nextMin = $(this).attr('next-min');
+                    const next = nextMin !== '' ? parseInt(nextMin) : null;
+
+                    // Remove previously active class
+                    $(this).removeClass('active');
+
+                    // Check if qtyVal is in this range
+                    if (next === null) {
+                        if (qtyVal >= min) {
+                            $(this).addClass('active');
+                        }
+                    } else if (qtyVal >= min && qtyVal < next) {
+                        $(this).addClass('active');
+                    }
+                });
             }
 
         </script>

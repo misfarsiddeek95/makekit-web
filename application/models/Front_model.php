@@ -79,11 +79,15 @@ class Front_model extends CI_Model {
         return $this->db->count_all_results();
     }
     
-    public function get_filtered_products($cate_id, $sortType = null, $limit = null, $offset = null) {
+    public function get_filtered_products($cate_id, $sortType = null, $limit = null, $offset = null, $currentId = null) {
         $this->db->select('p.pro_id AS id, p.name, p.price, p.slug_url as product_url');
         $this->db->from('products p');
         $this->db->where('p.cate_id', $cate_id);
         $this->db->where('p.status', 0);
+
+        if ($currentId != null ) {
+            $this->db->where('p.pro_id !=', $currentId);
+        }
     
         // Handle popularity filter
         if ($sortType === 'popularity') {
@@ -100,6 +104,9 @@ class Front_model extends CI_Model {
                 break;
             case 'date':
                 $this->db->order_by('p.added_date', 'desc');
+                break;
+            case 'related_products':
+                $this->db->order_by('p.pro_id', 'RANDOM');
                 break;
             default:
                 $this->db->order_by('p.pro_id', 'desc');
@@ -120,6 +127,38 @@ class Front_model extends CI_Model {
             $row->images = $this->get_data_with_conditions_and_joins('photo', ['photo_path', 'extension'], [], $product_condition, 2);
         }
     
+        return $main;
+    }
+
+    public function product_detail($slug) {
+        $this->db->select('p.pro_id AS id, p.name, p.price, p.slug_url as product_url,p.description,p.short_description,p.ingredients,p.how_to_use,p.how_to_use,p.cate_id,c.category_second_title as cate_short_name,c.seo_url as cate_url');
+        $this->db->from('products p');
+        $this->db->where('p.slug_url', trim($slug));
+        $this->db->join('categories c', 'c.cate_id=p.cate_id', 'left');
+        $this->db->limit(1);
+        $q = $this->db->get();
+        $main = false;
+        if ($q->num_rows() == 1) {
+            $main = $q->row();
+
+            // product images
+            $product_condition = [
+                ['field' => 'table', 'value' => 'products'],
+                ['field' => 'field_id', 'value' => $main->id],
+            ];
+            $main->images =  $this->get_data_with_conditions_and_joins('photo', ['photo_path', 'extension'], [], $product_condition);
+
+            // discount list
+            $discount_fields = array('pd.min_item_count','dl.discount_value','dl.discount_type');
+            $discount_joins = array(
+              array('table' => 'discount_list dl', 'on' => 'dl.id=pd.discount_id', 'type' => 'left'),
+            );
+            $discount_conditions = array(
+              array('field' => 'pd.product_id', 'value' => $main->id),
+            );
+           
+            $main->discountList = $this->get_data_with_conditions_and_joins('product_discount pd',$discount_fields,$discount_joins,$discount_conditions);
+        }
         return $main;
     }
 

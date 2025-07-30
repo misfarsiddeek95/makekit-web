@@ -161,9 +161,23 @@ class FrontController extends Base_Controller {
   }
   
   # product detail
-  public function makekitProductDetail() {
+  public function makekitProductDetail($slugUrl) {
     $data['activePage'] = 'PRODUCT';
     $data['pageMain'] = [];
+
+
+    $productDetail = $this->Front_model->product_detail($slugUrl);
+
+    if (!$productDetail) {
+      redirect(base_url());
+    }
+
+    /* print '<pre>';
+    print_r($productDetail);
+    exit; */
+    $data['productDetail'] = $productDetail;
+    $data['relatedProducts'] = $this->Front_model->get_filtered_products($productDetail->cate_id, 'related_products', 4, 0, $productDetail->id);
+    
     $this->load->view('product_detail', $data);
   }
 
