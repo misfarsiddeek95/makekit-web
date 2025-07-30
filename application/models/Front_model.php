@@ -80,7 +80,7 @@ class Front_model extends CI_Model {
     }
     
     public function get_filtered_products($cate_id, $sortType = null, $limit = null, $offset = null) {
-        $this->db->select('p.pro_id AS id, p.name, p.price');
+        $this->db->select('p.pro_id AS id, p.name, p.price, p.slug_url as product_url');
         $this->db->from('products p');
         $this->db->where('p.cate_id', $cate_id);
         $this->db->where('p.status', 0);

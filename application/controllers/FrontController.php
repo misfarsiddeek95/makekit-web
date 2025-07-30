@@ -167,8 +167,9 @@ class FrontController extends Base_Controller {
   }
 
   # product detail
-  public function productDetail() {
+  public function makekitProductDetail() {
     $data['activePage'] = 'PRODUCT';
+    $data['pageMain'] = [];
     $this->load->view('product_detail', $data);
   }
 

@@ -77,7 +77,7 @@
                     <div class="row">
                         <?php foreach ($products as $p) { ?>
                             <div class="col-6 col-lg-3 mb-4 text-center products">
-                                <a href="#">
+                                <a href="<?=base_url()?>product/<?=$p->product_url?>/">
                                     <div class="card product-card">
                                         <?php 
                                             if (count($p->images) == 1) {
