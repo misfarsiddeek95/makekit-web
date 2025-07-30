@@ -91,7 +91,7 @@
         <div class="collapse store-menu-collapse bottom-nav" id="storeMenuMobile">
             <ul>
                 <?php foreach (array_reverse($categoryList) as $navCate) { ?>
-                <li><a class="nav-link" href="<?=base_url()?>product-category/<?=$navCate->seo_url?>/"><?=$navCate->category?></a></li>
+                <li><a class="nav-link <?=$navCate->seo_url == $this->uri->segment(2) ? 'active' : '' ?>" href="<?=base_url()?>product-category/<?=$navCate->seo_url?>/"><?=$navCate->category?></a></li>
                 <?php } ?>
             </ul>
         </div>
