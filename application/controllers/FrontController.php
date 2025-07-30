@@ -50,19 +50,104 @@ class FrontController extends Base_Controller {
     $this->load->view('drawings', $data);
   }
 
-  # products page
-  public function makekitProducsts($seoUrl) {
-    $data['activePage'] = 'PRODUCT';
+  /* public function makekitProducts($slug, $page = 0) {
+    $orderby = $this->input->get('orderby'); // From URL like ?orderby=POPULAR
 
-    $data['pageMain'] = [];
+    $selectedCate = $this->Front_model->get_category_by_slug($slug);
+    if (!$selectedCate) show_404();
 
-    $conditions = [
-      ['field' => 'seo_url', 'value' => $seoUrl]
+    $limit = 4;
+    $offset = ($page > 0) ? ($page - 1) * $limit : 0;
+
+    $products = $this->Front_model->get_filtered_products($selectedCate->cate_id, $orderby, $limit, $offset);
+    $total_products = $this->Front_model->count_products_by_category($selectedCate->cate_id, $orderby);
+
+    // Pagination Config
+    $this->load->library('pagination');
+    $config['base_url'] = base_url("product-category/{$slug}/page");
+    $config['total_rows'] = $total_products;
+    $config['per_page'] = $limit;
+    $config['uri_segment'] = 4; // "page" segment (i.e., product-category/slug/page/X)
+    $config['use_page_numbers'] = TRUE;
+
+    // Ensure ?orderby=xyz is preserved
+    $config['reuse_query_string'] = TRUE;
+    $config['suffix'] = ($orderby) ? '?orderby=' . $orderby : '';
+    $config['first_url'] = base_url("product-category/{$slug}") . $config['suffix'];
+
+    $this->pagination->initialize($config);
+
+    $data = [
+        'activePage' => 'PRODUCT',
+        'pageMain' => [],
+        'selectedCate' => $selectedCate,
+        'products'     => $products,
+        'pagination'   => $this->pagination->create_links(),
     ];
-  
-    $data['selectedCate'] = $this->Front_model->get_data_with_conditions_and_joins('categories',['category_second_title','seo_url'],[],$conditions,1);
 
     $this->load->view('products', $data);
+  } */
+
+  public function makekitProducts($slug, $page = 1) {
+
+    $orderby = $this->input->get('orderby'); // LOW_TO_EXP, EXP_TO_LOW, etc.
+
+    // Load category
+    $selectedCate = $this->Front_model->get_category_by_slug($slug);
+    if (!$selectedCate) show_404();
+
+    if ($page === null || !is_numeric($page) || $page < 1) {
+      $page = 1;
+    }
+
+    // Pagination setup
+    $limit = 4; // products per page
+    $offset = ($page - 1) * $limit;
+
+    // Get products
+    $products = $this->Front_model->get_filtered_products($selectedCate->cate_id, $orderby, $limit, $offset);
+    $total_products = $this->Front_model->count_products_by_category($selectedCate->cate_id, $orderby);
+
+    // Prepare pagination
+    $this->load->library('pagination');
+    $config['base_url'] = base_url("product-category/{$slug}/page"); // NOTE: No query string here
+    $config['total_rows'] = $total_products;
+    $config['per_page'] = $limit;
+    $config['uri_segment'] = 4;
+    $config['use_page_numbers'] = TRUE;
+    $config['reuse_query_string'] = TRUE;
+
+    // Add Bootstrap styling (optional)
+    $config['full_tag_open'] = '<ul class="pagination justify-content-center">';
+    $config['full_tag_close'] = '</ul>';
+    $config['num_tag_open'] = '<li class="page-item">';
+    $config['num_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="page-item active"><span class="page-link">';
+    $config['cur_tag_close'] = '</span></li>';
+    $config['prev_tag_open'] = '<li class="page-item">';
+    $config['prev_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li class="page-item">';
+    $config['next_tag_close'] = '</li>';
+    $config['attributes'] = ['class' => 'page-link'];
+
+    $this->pagination->initialize($config);
+
+    $data = [
+        'activePage'    => 'PRODUCT',
+        'pageMain'      => [],
+        'selectedCate'  => $selectedCate,
+        'products'      => $products,
+        'pagination'    => $this->pagination->create_links(),
+    ];
+
+    $this->load->view('products', $data);
+  }
+  
+  public function filterProducts() {
+    $seoUrl = $this->input->get('seoUrl');
+    $sortType = $this->input->get('sortType');
+
+    $result = $this->Front_model->filter_products($seoUrl,$sortType);
   }
 
   # product detail

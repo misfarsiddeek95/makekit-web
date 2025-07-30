@@ -37,17 +37,35 @@
                     <hr/>
                     <div class="row flex-column justify-content-between flex-md-row-reverse my-5">
                         <div class="col-sm-12 col-md-6 text-md-start">
+                            <?php
+                                $orderby = isset($_GET['orderby']) ? $_GET['orderby'] : '';
+                                $selectedLabel = 'Default arrangement';
+                                switch ($orderby) {
+                                    case 'popularity':
+                                        $selectedLabel = 'Sort by popularity';
+                                        break;
+                                    case 'date':
+                                        $selectedLabel = 'Sort by most recent';
+                                        break;
+                                    case 'price':
+                                        $selectedLabel = 'Sort from cheap to expensive';
+                                        break;
+                                    case 'price-desc':
+                                        $selectedLabel = 'Sort from expensive to cheap';
+                                        break;
+                                }
+                            ?>
                             <div class="dropdown w-100 w-md-auto">
-                                <button class="btn d-flex justify-content-between align-items-center border rounded px-3 py-2 w-100" type="button" id="dropdownMenuButton" d-val="DEFAULT" data-bs-toggle="dropdown" aria-expanded="false">
+                                <button class="btn d-flex justify-content-between align-items-center border rounded px-3 py-2 w-100" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fa fa-ellipsis-h ms-2"></i>
-                                    <span class="text-muted">Default arrangement</span>
+                                    <span class="text-muted"><?= $selectedLabel ?></span>
                                 </button>
                                 <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
-                                    <li><a class="dropdown-item" href="#" data-value="DEFAULT">Default arrangement</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="POPULAR">Sort by popularity</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="RECENT">Sort by most recent</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="LOW_TO_EXP">Sort from cheap to expensive</a></li>
-                                    <li><a class="dropdown-item" href="#" data-value="EXP_TO_LOW">Sort from expensive to cheap</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="menu_order">Default arrangement</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="popularity">Sort by popularity</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="date">Sort by most recent</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="price">Sort from cheap to expensive</a></li>
+                                    <li><a class="dropdown-item" href="#" data-value="price-desc">Sort from expensive to cheap</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -57,57 +75,42 @@
                             </font> 
                         </div>
                     </div>
+                    
                     <div class="row">
-                        <!-- Product 1 -->
-                        <div class="col-6 col-lg-3 mb-4 text-center products">
-                            <a href="#">
-                                <div class="card product-card">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28.png" alt="Product Image 1" class="product-img img-main">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" alt="Product Image 1 Hover" class="product-img img-hover">
-                                </div>
-                                <h2>מורס נסיון</h2>
-                                <span class="price">החל מ: ₪0.00</span>
-                            </a>
-                            <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
-                        </div>
-
-                        <div class="col-6 col-lg-3 mb-4 text-center products">
-                            <a href="#">
-                                <div class="card product-card">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28.png" alt="Product Image 1" class="product-img img-main">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" alt="Product Image 1 Hover" class="product-img img-hover">
-                                </div>
-                                <h2>מורס נסיון</h2>
-                                <span class="price">החל מ: ₪0.00</span>
-                            </a>
-                            <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
-                        </div>
-
-                        <div class="col-6 col-lg-3 mb-4 text-center products">
-                            <a href="#">
-                                <div class="card product-card">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28.png" alt="Product Image 1" class="product-img img-main">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" alt="Product Image 1 Hover" class="product-img img-hover">
-                                </div>
-                                <h2>מורס נסיון</h2>
-                                <span class="price">החל מ: ₪0.00</span>
-                            </a>
-                            <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
-                        </div>
-
-                        <div class="col-6 col-lg-3 mb-4 text-center products">
-                            <a href="#">
-                                <div class="card product-card">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28.png" alt="Product Image 1" class="product-img img-main">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" alt="Product Image 1 Hover" class="product-img img-hover">
-                                </div>
-                                <h2>מורס נסיון</h2>
-                                <span class="price">החל מ: ₪0.00</span>
-                            </a>
-                            <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
-                        </div>
-
+                        <?php foreach ($products as $p) { ?>
+                            <div class="col-6 col-lg-3 mb-4 text-center products">
+                                <a href="#">
+                                    <div class="card product-card">
+                                        <?php 
+                                            if (count($p->images) == 1) {
+                                                $img = $p->images[0];
+                                                $imgSrc = PHOTO_DOMAIN.'products/'.$img->photo_path.'-std.'.$img->extension;
+                                        ?>
+                                            <img src="<?= $imgSrc ?>" alt="<?= $p->name ?>" class="product-img img-main">
+                                            <img src="<?= $imgSrc ?>" alt="<?= $p->name ?>" class="product-img img-hover">
+                                        <?php 
+                                            } else {
+                                                foreach ($p->images as $key => $img) {
+                                                    $hovCls = ($key % 2 == 0) ? 'img-main' : 'img-hover';
+                                                    $imgSrc = PHOTO_DOMAIN.'products/'.$img->photo_path.'-std.'.$img->extension;
+                                        ?>
+                                            <img src="<?= $imgSrc ?>" alt="<?= $p->name ?>" class="product-img <?= $hovCls ?>">
+                                        <?php 
+                                                } 
+                                            }
+                                        ?>
+                                    </div>
+                                    <h2><?= $p->name ?></h2>
+                                    <span class="price">החל מ: ₪<?= number_format($p->price, 2) ?></span>
+                                </a>
+                                <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
+                            </div>
+                        <?php } ?>
                     </div>
+                    <div class="mt-4">
+                        <?= $pagination ?>
+                    </div>
+
                 </div>
             </section>
         </main>
@@ -117,31 +120,28 @@
         <?php $this->load->view('includes/js') ?>
         
         <script>
-            $(document).ready(function(){
-                filterProducts();
-            });
-
             $('.dropdown-item').on('click', function (e) {
                 e.preventDefault();
-                const selectedText = $(this).text();
-                const selectedValue = $(this).data('value');
+                const selected = $(this).data('value');
 
-                // Update button label
-                $('#dropdownMenuButton').html(`<i class="fa fa-ellipsis-h ms-2"></i> ${selectedText}`);
+                // Clean current URL
+                const url = new URL(window.location.href);
 
-                // Set value in hidden input
-                $('#dropdownMenuButton').attr('d-val',selectedValue);
+                // Remove all existing orderby (even if duplicated)
+                url.search = url.search.replace(/([&?])orderby=[^&]+/g, '');
 
-                // call the filter function
-                filterProducts();
+                // Remove pagination from path like /page/2
+                const pathname = url.pathname.replace(/\/page\/\d+/, '');
+                url.pathname = pathname;
+
+                if (selected) {
+                    url.searchParams.set('orderby', selected);
+                }
+
+                // Redirect to clean URL
+                window.location.href = url.toString();
             });
 
-            const filterProducts = () => {
-                const selectedFilterOpt = $('#dropdownMenuButton').attr('d-val');
-                const seoUrl = '<?=$selectedCate->seo_url?>';
-
-                
-            }
 
         </script>
 

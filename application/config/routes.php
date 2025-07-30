@@ -58,4 +58,6 @@ $route['wholesale'] = 'FrontController/makeitWholesale';
 $route['drawings'] = 'FrontController/makeitDrawings';
 $route['contact-us'] = 'FrontController/makeitContactUs';
 
-$route['product-category/(:any)'] = 'FrontController/makekitProducsts/$1';
+$route['product-category/(:any)'] = 'FrontController/makekitProducts/$1';
+$route['product-category/(:any)/page'] = 'FrontController/makekitProducts/$1/1';
+$route['product-category/(:any)/page/(:num)'] = 'FrontController/makekitProducts/$1/$2';

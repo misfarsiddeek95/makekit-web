@@ -62,36 +62,65 @@ class Front_model extends CI_Model {
         }
     }
 
-    public function load_products($limit=null,$offset=null) {
-        $this->db->select('wp.id as productId,wp.title,wp.product_uuid as uuid,wp.slug_url,wp.product_desc,CONCAT_WS("-std.", wp.thum_image, wp.extension) as image');
-        $this->db->from('web_products wp');
-        $this->db->where('wp.status', 1);
-        if($limit != null) {
-            $this->db->limit($limit,$offset);
-        }
-        $q = $this->db->get();
-        $main = $q->result();
-        foreach ($main as $row) {
-            $_fields = array('wpp.*');
-            $_condition = array(
-                array('field' => 'wpp.web_product_id', 'value' => $row->productId),
-            );
-            $row->features = $this->get_data_with_conditions_and_joins('web_products_point wpp',$_fields,[],$_condition,3);
-        }
-        return $main;
+    public function get_category_by_slug($slug) {
+        return $this->db->get_where('categories', ['seo_url' => $slug])->row(); // assuming `seo_url` is slug
     }
-
-    public function load_works($limit=null,$offset=null) {
-        $this->db->select('ww.id as workId,ww.title,ww.link,pt.pt_name,CONCAT_WS("-std.", ww.image, ww.extension) as image');
-        $this->db->from('web_works ww');
-        $this->db->where('ww.status', 1);
-        $this->db->join('product_type pt', 'pt.pt_id=ww.work_type', 'left outer');
-        if($limit != null) {
-            $this->db->limit($limit,$offset);
+    
+    public function count_products_by_category($cate_id, $sortType = null) {
+        $this->db->from('products p');
+        $this->db->where('p.cate_id', $cate_id);
+        $this->db->where('p.status', 0);
+    
+        if ($sortType == 'popularity') {
+            $this->db->join('product_attr_val pav', 'pav.pro_id = p.pro_id', 'left');
+            $this->db->where('pav.av_id', 1);
         }
-        $this->db->order_by('ww.id', 'RANDOM');
-        $q = $this->db->get();
-        return $q->result();
+    
+        return $this->db->count_all_results();
+    }
+    
+    public function get_filtered_products($cate_id, $sortType = null, $limit = null, $offset = null) {
+        $this->db->select('p.pro_id AS id, p.name, p.price');
+        $this->db->from('products p');
+        $this->db->where('p.cate_id', $cate_id);
+        $this->db->where('p.status', 0);
+    
+        // Handle popularity filter
+        if ($sortType === 'popularity') {
+            $this->db->join('product_attr_val pav', 'pav.pro_id = p.pro_id AND pav.av_id = 1');
+        }
+    
+        // Handle sorting
+        switch ($sortType) {
+            case 'price':
+                $this->db->order_by('p.price', 'asc');
+                break;
+            case 'price-desc':
+                $this->db->order_by('p.price', 'desc');
+                break;
+            case 'date':
+                $this->db->order_by('p.added_date', 'desc');
+                break;
+            default:
+                $this->db->order_by('p.pro_id', 'desc');
+                break;
+        }
+    
+        if ($limit !== null) {
+            $this->db->limit($limit, $offset);
+        }
+    
+        $main = $this->db->get()->result();
+    
+        foreach ($main as $row) {
+            $product_condition = [
+                ['field' => 'table', 'value' => 'products'],
+                ['field' => 'field_id', 'value' => $row->id],
+            ];
+            $row->images = $this->get_data_with_conditions_and_joins('photo', ['photo_path', 'extension'], [], $product_condition, 2);
+        }
+    
+        return $main;
     }
 
     public function getAll($table) {
