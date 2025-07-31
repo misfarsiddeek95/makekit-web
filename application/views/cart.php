@@ -31,7 +31,7 @@
             </section>
 
             <!-- Cart item section -->
-            <section class="my-5 p-5 cart">
+            <section class="my-5 p-5 cart has-cart-button">
                 <div class="table-responsive">
                     <table class="table cart-table text-center align-middle" dir="rtl">
                         <thead class="table-light">
@@ -40,7 +40,7 @@
                                 <th></th> <!-- For image -->
                                 <th>מוצר</th>
                                 <th>מחיר</th>
-                                <th>כמות</th>
+                                <th style="text-align: right;">כמות</th>
                                 <th>סכום ביניים</th>
                             </tr>
                         </thead>
@@ -57,13 +57,13 @@
                                     <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" alt="Product" width="40">
                                 </td>
                                 <!-- Product Name -->
-                                <td data-label="מוצר" class="d-block d-md-table-cell text-md-start">
+                                <td data-label="מוצר" class="d-block d-md-table-cell text-md-center">
                                     <a href="#" class="text-decoration-none">!Scottie Go</a>
                                 </td>
                                 <!-- Price -->
                                 <td data-label="מחיר" class="d-block d-md-table-cell text-md-center">₪54.40</td>
                                 <!-- Quantity -->
-                                <td data-label="כמות" align="center" class="d-block d-md-table-cell text-md-center">
+                                <td data-label="כמות" class="d-block d-md-table-cell text-md-center">
                                     <div class="input-group justify-content-center" style="width: 110px;">
                                         <button class="btn btn-outline-secondary px-2 qty-btn" type="button" onclick="decreaseQty()">-</button>
                                         <input type="text" id="qtyInput" class="form-control text-center border-start-0 border-end-0" value="5" readonly>
@@ -75,6 +75,73 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <!-- action buttons d-flex flex-column flex-md-row justify-content-between -->
+                <div class="row flex-column flex-column-reverse gap-2 gap-md-0 flex-md-row-reverse justify-content-between align-items-center mt-4 py-4 py-md-0 mobile-bg">
+                    <!-- Left: Update Cart Button -->
+                    <div class="col-12 col-md-6 text-md-start text-center mb-3 mb-md-0">
+                        <button class="btn curved-button btn-add-to-cart" disabled>לעדכן סל קניות</button>
+                    </div>
+
+                    <!-- Right: Coupon Input + Button (Right-Aligned) -->
+                    <div class="col-12 col-md-6 d-flex justify-content-start">
+                        <div class="d-flex flex-row gap-2">
+                            <input type="text" class="form-control" style="width: 150px;" placeholder="הזן קופון">
+                            <button class="btn curved-button btn-add-to-cart">החלת קופון</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- summary -->
+                <div class="row flex-column flex-column-reverse gap-2 gap-md-0 flex-md-row-reverse justify-content-between mt-4 py-4 py-md-0">
+                    <div class="col-12 col-md-6 text-md-end text-center">
+                        <div class="section-title-container">
+                            <h1 class="underline-heading-1 fw-semibold">סה"כ בסל הקניות</h1>
+                        </div>
+
+                        <!-- Summary -->
+                        <div class="container my-4">
+                            <div class="table-responsive summary-table">
+                                <table class="table text-end align-middle bg-light">
+                                    <tbody>
+                                        <!-- Subtotal -->
+                                        <tr>
+                                            <th class="fw-semibold w-30">סכום ביניים</th>
+                                            <td>₪272.00</td>
+                                        </tr>
+
+                                        <!-- Shipping Methods -->
+                                        <tr>
+                                            <th class="fw-semibold d-none border-0 d-md-block">משלוח</th>
+                                            <td colspan="2" class="border-0 pt-4">
+                                                <span class="d-block d-md-none fw-semibold mb-2">משלוח</span>
+                                                <div class="bg-white p-3 small">
+                                                    <div class="form-check form-check-reverse">
+                                                        <input class="form-check-input ms-2" type="radio" name="shipping" id="ship1" checked>
+                                                        <label class="form-check-label w-100" for="ship1">משלוח מהיר: ₪50.00</label>
+                                                    </div>
+                                                    <div class="form-check form-check-reverse">
+                                                        <input class="form-check-input ms-2" type="radio" name="shipping" id="ship2">
+                                                        <label class="form-check-label w-100" for="ship2">איסוף מקומי</label>
+                                                    </div>
+                                                    <div class="form-check form-check-reverse">
+                                                        <input class="form-check-input ms-2" type="radio" name="shipping" id="ship3">
+                                                        <label class="form-check-label w-100" for="ship3">אספקה דרך איש קשר (פרסים בלבד)</label>
+                                                    </div>
+                                                    <div class="text-muted mt-2">אפשרויות המשלוח יעודכנו במהלך התשלום בקופה.</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <!-- Total -->
+                                        <tr class="fw-bold fs-5">
+                                            <th class="fw-semibold">סה"כ</th>
+                                            <td>₪322.00</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                 </div>
             </section>
         </main>

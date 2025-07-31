@@ -62,7 +62,7 @@
             </section>
 
             <!-- Product section -->
-            <section class="product-detail py-5 px-5">
+            <section class="product-detail has-cart-button py-5 px-5">
                 <div class="container">
                     <hr/>
                     <div class="text-end mb-4">
