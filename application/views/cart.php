@@ -101,7 +101,7 @@
                         </div>
 
                         <!-- Summary -->
-                        <div class="container my-4">
+                        <div class="container mt-4">
                             <div class="table-responsive summary-table">
                                 <table class="table text-end align-middle bg-light">
                                     <tbody>
@@ -114,7 +114,7 @@
                                         <!-- Shipping Methods -->
                                         <tr>
                                             <th class="fw-semibold d-none border-0 d-md-block">משלוח</th>
-                                            <td colspan="2" class="border-0 pt-4">
+                                            <td colspan="2" class="border-md-0 pt-4">
                                                 <span class="d-block d-md-none fw-semibold mb-2">משלוח</span>
                                                 <div class="bg-white p-3 small">
                                                     <div class="form-check form-check-reverse">
@@ -140,6 +140,11 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                            </div>
+                            <div class="d-grid mt-3">
+                                <button class="btn curved-button btn-add-to-cart py-4">
+                                מעבר לתשלום
+                                </button>
                             </div>
                         </div>
                 </div>
