@@ -75,19 +75,21 @@ h2 {
   background-color: var(--crayolas-maize);
   color: var(--base-3);
 }
-.desktop-main-menu .nav-link:hover {
+.desktop-main-menu .nav-link:hover,
+.desktop-header-icons .icon:hover {
   background-color: var(--crayolas-maize);
   color: var(--base-3);
 }
 .desktop-header-icons {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  /* gap: 1.5rem; */
   margin-right: 2rem; /* Added margin to separate from menu */
 }
 .desktop-header-icons .icon {
   color: var(--dingy-dungeon);
   font-size: 1.5rem;
+  padding: 0.5rem 1rem;
 }
 .desktop-bottom-nav {
   background-color: var(--dingy-dungeon);
@@ -723,6 +725,62 @@ h2 {
 
 .related-product-section .product-card {
   border-radius: 25px;
+}
+
+/* =================================== */
+/* =========== CART STYLES =========== */
+/* =================================== */
+
+.cart .table th {
+  font-weight: 500;
+  color: var(--american-purple);
+}
+
+.cart .table tbody td {
+  font-weight: 400;
+  color: var(--american-purple);
+}
+
+.cart .table tr.active td {
+  background-color: #110b40 !important;
+  color: #ffffff !important;
+}
+
+.cart .table a {
+  color: var(--lapis-lazuli);
+}
+
+.cart .table a:hover {
+  color: var(--contrast);
+}
+
+@media (max-width: 767.98px) {
+  .cart-table tbody td {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border: none;
+    border-bottom: 1px solid #eee;
+  }
+
+  .cart-table tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--american-purple);
+  }
+
+  .cart-table thead {
+    display: none;
+  }
+
+  .cart-table tbody tr {
+    display: block;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background: #fff;
+  }
 }
 
 /* =================================== */

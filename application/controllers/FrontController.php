@@ -176,6 +176,7 @@ class FrontController extends Base_Controller {
     print_r($productDetail);
     exit; */
     $data['productDetail'] = $productDetail;
+    $data['selectedCate'] = $productDetail->cate_url;
     $data['relatedProducts'] = $this->Front_model->get_filtered_products($productDetail->cate_id, 'related_products', 4, 0, $productDetail->id);
     
     $this->load->view('product_detail', $data);
@@ -193,4 +194,13 @@ class FrontController extends Base_Controller {
 
     $this->load->view('contact', $data);
   }
+
+  # Cart
+  public function makekitCart() {
+    $data['activePage'] = 'CART';
+    $data['pageMain'] = $this->Front_model->fetchPage(16);
+
+    $this->load->view('cart', $data);
+  }
+
 }
