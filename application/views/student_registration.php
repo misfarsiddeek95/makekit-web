@@ -101,7 +101,7 @@
                         </div>
 
                         <div class="mt-2">
-                            <button type="submit" class="btn curved-button btn-add-to-cart">התחברות</button>
+                            <button type="submit" id="submitButton" class="btn curved-button btn-add-to-cart">התחברות</button>
                         </div>
                     </form>
                 </div>
@@ -193,6 +193,7 @@
 
                         // Submit with AJAX if valid
                         if (form.checkValidity()) {
+                            $('#submitButton').html('הַגָשָׁה...').attr('disabled','disabled')
                             const formData = new FormData(form);
                             $.ajax({
                                 url: '<?=base_url()?>register-student',
@@ -203,6 +204,9 @@
                                 success: function(result) {
                                     const resp = $.parseJSON(result);
                                     console.log(resp);
+                                    setTimeout(() => {
+                                        location.reload();
+                                    }, 1000);
                                 },
                                 error: function(xhr, status, error) {
                                     console.error("AJAX Error:", error);
