@@ -203,4 +203,20 @@ class FrontController extends Base_Controller {
     $this->load->view('cart', $data);
   }
 
+  # My account
+  public function makekitMyAccount() {
+    $data['activePage'] = 'MY-ACCOUNT';
+    $data['pageMain'] = $this->Front_model->fetchPage(17);
+
+    $this->load->view('login', $data);
+  }
+
+  # Student registration
+  public function makekitStudentRegistraion() {
+    $data['activePage'] = 'STUDENT-REGISTRATION';
+    $data['pageMain'] = $this->Front_model->fetchPage(18);
+
+    $this->load->view('student_registration', $data);
+  }
+
 }

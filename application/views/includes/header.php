@@ -33,7 +33,7 @@
                         </ul>
 
                         <div class="desktop-header-icons">
-                            <a href="#" class="icon"><i class="fa-regular fa-user"></i></a>
+                            <a href="<?=base_url('my-account/');?>" class="icon"><i class="fa-regular fa-user"></i></a>
                             <a href="<?=base_url('cart/');?>" class="icon"><i class="fa-solid fa-shopping-basket"></i></a>
                         </div>
                     </div>
@@ -66,7 +66,7 @@
                 <button class="navbar-toggler mobile-main-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenuMobile" aria-controls="mainMenuMobile" aria-expanded="false" aria-label="Toggle main navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <a href="#" class="mobile-icon icon-user"><i class="fa-regular fa-user"></i></a>
+                <a href="<?=base_url('my-account/');?>" class="mobile-icon icon-user"><i class="fa-regular fa-user"></i></a>
                 <a href="<?=base_url('cart/');?>" class="mobile-icon icon-basket"><i class="fa-solid fa-shopping-basket"></i></a>
             </div>
         </div>

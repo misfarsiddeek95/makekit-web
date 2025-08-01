@@ -64,3 +64,5 @@ $route['product-category/(:any)/page/(:num)'] = 'FrontController/makekitProducts
 
 $route['product/(:any)'] = 'FrontController/makekitProductDetail/$1';
 $route['cart'] = 'FrontController/makekitCart';
+$route['my-account'] = 'FrontController/makekitMyAccount';
+$route['student-registration'] = 'FrontController/makekitStudentRegistraion';

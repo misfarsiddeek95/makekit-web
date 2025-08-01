@@ -54,7 +54,7 @@
                                 </td>
                                 <!-- Product Image -->
                                 <td class="d-block d-md-table-cell text-end text-md-center">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" alt="Product" width="40">
+                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" alt="Product" width="100">
                                 </td>
                                 <!-- Product Name -->
                                 <td data-label="מוצר" class="d-block d-md-table-cell text-md-center">
@@ -96,14 +96,14 @@
                 <!-- summary -->
                 <div class="row flex-column flex-column-reverse gap-2 gap-md-0 flex-md-row-reverse justify-content-between mt-4 py-4 py-md-0">
                     <div class="col-12 col-md-6 text-md-end text-center">
-                        <div class="section-title-container">
+                        <div class="section-title-container px-2">
                             <h1 class="underline-heading-1 fw-semibold">סה"כ בסל הקניות</h1>
                         </div>
 
                         <!-- Summary -->
                         <div class="container mt-4">
                             <div class="table-responsive summary-table">
-                                <table class="table text-end align-middle bg-light">
+                                <table class="table text-end align-middle">
                                     <tbody>
                                         <!-- Subtotal -->
                                         <tr>
@@ -113,12 +113,12 @@
 
                                         <!-- Shipping Methods -->
                                         <tr>
-                                            <th class="fw-semibold d-none border-0 d-md-block">משלוח</th>
+                                            <th class="fw-semibold d-none d-md-table-cell align-top border-0">משלוח</th>
                                             <td colspan="2" class="border-md-0 pt-4">
                                                 <span class="d-block d-md-none fw-semibold mb-2">משלוח</span>
-                                                <div class="bg-white p-3 small">
+                                                <div class="bg-white small lh-lg">
                                                     <div class="form-check form-check-reverse">
-                                                        <input class="form-check-input ms-2" type="radio" name="shipping" id="ship1" checked>
+                                                        <input class="form-check-input ms-2" type="radio" name="shipping" id="ship1">
                                                         <label class="form-check-label w-100" for="ship1">משלוח מהיר: ₪50.00</label>
                                                     </div>
                                                     <div class="form-check form-check-reverse">

@@ -793,6 +793,22 @@ h2 {
 }
 
 /* =================================== */
+/* ======= MY ACCOUNT STYLES ========= */
+/* =================================== */
+.my-account input {
+  background: #fff;
+  line-height: 2;
+  padding: 0.5em;
+  border: 1px solid rgba(32, 7, 7, 0.8);
+  border-radius: 4px;
+}
+
+.my-account input[type="checkbox"] {
+  appearance: auto !important;
+  -webkit-appearance: auto !important;
+  -moz-appearance: auto !important;
+}
+/* =================================== */
 /* =========== LOGO FOOTER STYLES ==== */
 /* =================================== */
 .logo-footer {
