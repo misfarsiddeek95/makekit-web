@@ -216,7 +216,139 @@ class FrontController extends Base_Controller {
     $data['activePage'] = 'STUDENT-REGISTRATION';
     $data['pageMain'] = $this->Front_model->fetchPage(18);
 
+    $data['loadInstitutes'] = $this->Front_model->getAll('class');
+    $data['loadCities'] = $this->Front_model->getAll('cities');
     $this->load->view('student_registration', $data);
+  }
+
+  public function loadInstituteCircles() {
+    try {
+      $instituteId = $this->input->get('institute_id');
+      
+      if(!$instituteId) throw new Exception("משהו לא השתבש בהעברת תעודת הזהות של המוסד");
+
+      $_fields = array('s.sub_id','s.subject_name');
+      $_joins = array(
+        array('table' => 'subjects s', 'on' => 's.sub_id=cs.subject_id', 'type' => 'left'),
+      );
+      $_conditions = array(
+        array('field' => 'cs.class_id', 'value' => $instituteId),
+      );
+      
+      $result = $this->Front_model->get_data_with_conditions_and_joins('class_subjects cs',$_fields,$_joins,$_conditions);
+      
+      $message = array("status" => "success","data" => $result);
+
+    } catch (Exception $ex) {
+      $message = array("status" => "error","message" => $ex->getMessage());
+    }
+    echo json_encode($message);
+  }
+
+  public function loadSubjectInstructor() {
+    try {
+      $instituteId = $this->input->get('institute_id');
+      $subjectId = $this->input->get('subject_id');
+      
+      if(!$instituteId || !$subjectId) throw new Exception("משהו לא השתבש בהעברת מזהה המכון / מעגל.");
+
+      $_fields = array('su.user_id as teacher_id', 'CONCAT_WS(" ", su.fname, su.lname) AS teacher_name');
+      $_joins = array(
+        array('table' => 'staff_users su', 'on' => 'su.user_id=sa.teacher_id', 'type' => 'left'),
+      );
+      $_conditions = array(
+        array('field' => 'sa.class_id', 'value' => $instituteId),
+        array('field' => 'sa.subject_id', 'value' => $subjectId),
+      );
+      
+      $result = $this->Front_model->get_data_with_conditions_and_joins('subject_assign sa',$_fields,$_joins,$_conditions);
+      
+      $message = array("status" => "success","data" => $result);
+
+    } catch (Exception $ex) {
+      $message = array("status" => "error","message" => $ex->getMessage());
+    }
+    echo json_encode($message);
+  }
+
+  public function registerStudent() {
+    try {
+      $user_id = $this->input->post('user_id');
+      $add_id = $this->input->post('add_id');
+      $name = $this->input->post('name');
+      $institute_id = $this->input->post('institute_id');
+      $subject_id = $this->input->post('subject_id');
+      $instructor_id = $this->input->post('instructor_id');
+
+      $parent_name = $this->input->post('parent_name');
+      $parent_phone = $this->input->post('parent_phone');
+
+      $address = '';
+      $city = $this->input->post('city');
+
+      $parent_email = $this->input->post('parent_email'); // username
+      $password= trim($this->input->post('password'));
+
+      $date = date("Y-m-d H:i:s");
+
+      $user_array = array(
+        'name' => $name,
+        'user_type' => 3,
+        'role_number' => NULL,
+        'city_id' => $city,
+        'class_id' => $institute_id,
+        'subject_id' => $subject_id,
+        'instructor_id' => $instructor_id,
+        'gender' => NULL,
+        'parent_name' => $parent_name,
+        'parent_phone' => $parent_phone,
+        'status' => 1
+      );
+
+      $addr_array = array(
+        'fname' => $name,
+        'lname' => null,
+        'address' => $address,
+        'city_id' => $city,
+        'phone' => $parent_phone,
+        'add_type' => 0,
+        'user_type' => 2, // student / external users
+        'status' => 1,
+      );
+
+      if ($password!='') {
+        $user_array['password'] = $this->get_encrypted_password($password);
+      }
+
+      if (isset($_POST['parent_email'])) {
+        $parent_email = $this->input->post('parent_email');
+        $checkuser = $this->Front_model->checkField('external_users','parent_email',$parent_email);
+        if ($checkuser) {
+          throw new Exception("שם משתמש כבר קיים. אנא נסה אחר.");
+        }else{
+          $user_array['parent_email'] = $parent_email;
+        }
+      }
+
+      if ($user_id == 0 && $add_id==0) {
+        $user_array['created_at'] = $date;
+        $type = 'save';
+        $msg = 'רישום הסטודנטים הסתיים בהצלחה.';
+      }else if ($user_id != 0 && $add_id!=0) {
+        $type = 'update';
+        $msg = 'תלמיד עודכן בהצלחה.';
+      }else{
+        throw new Exception("משהו השתבש. אנא נסה שוב.");
+      }
+
+      $returnedUserId = $this->Front_model->register_external_user($user_id,$add_id,$user_array,$addr_array);
+
+      $message = array("status" => "success","message" => $msg);
+        
+    } catch (Exception $ex) {
+      $message = array("status" => "error","message" => $ex->getMessage());
+    }
+    echo json_encode($message);
   }
 
 }

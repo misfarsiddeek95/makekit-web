@@ -795,7 +795,8 @@ h2 {
 /* =================================== */
 /* ======= MY ACCOUNT STYLES ========= */
 /* =================================== */
-.my-account input {
+.my-account input,
+.my-account select {
   background: #fff;
   line-height: 2;
   padding: 0.5em;

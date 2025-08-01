@@ -66,3 +66,6 @@ $route['product/(:any)'] = 'FrontController/makekitProductDetail/$1';
 $route['cart'] = 'FrontController/makekitCart';
 $route['my-account'] = 'FrontController/makekitMyAccount';
 $route['student-registration'] = 'FrontController/makekitStudentRegistraion';
+$route['load-intitute-circles'] = 'FrontController/loadInstituteCircles';
+$route['load-subject-instructor'] = 'FrontController/loadSubjectInstructor';
+$route['register-student'] = 'FrontController/registerStudent';

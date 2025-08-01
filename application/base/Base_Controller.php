@@ -10,4 +10,11 @@ class Base_Controller extends MY_Controller {
         $this->load->vars($availabeAllViews);
         $this->folder = $_SERVER['DOCUMENT_ROOT'] . "/makekit-web";
     }
+
+    function get_encrypted_password($password) {
+        $options = [
+            'cost' => 10
+        ];
+        return password_hash($password, PASSWORD_BCRYPT, $options);
+    }
 }

@@ -169,6 +169,38 @@ class Front_model extends CI_Model {
         return $q->result();
     }
 
+    function checkField($table,$id,$value){
+		$this->db->select($id);
+		$this->db->from($table);
+	   	$this->db->where($id, $value);
+	   	$this->db->limit(1);
+		$query = $this->db->get();
+		if($query->num_rows() == 1){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+    function register_external_user($user_id,$add_id,$user_array,$addr_array) {
+        $this->db->trans_start();
+        if ($user_id==0) {
+            $this->db->insert('external_users',$user_array);
+            $user_id =  $this->db->insert_id();
+
+            $addr_array['user_id'] = $user_id;
+            $this->db->insert('addresses',$addr_array);
+        }else{
+            $this->db->where('id', $user_id);
+            $this->db->update('external_users', $user_array);
+
+            $this->db->where('add_id', $add_id);
+            $this->db->update('addresses', $addr_array);
+        }
+        $this->db->trans_complete();
+        return $user_id; 
+    }
+
 
     // =========================================================================
 }
