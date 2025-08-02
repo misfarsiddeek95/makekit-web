@@ -75,7 +75,10 @@
                     </div>
                     
                     <div class="row">
-                        <?php foreach ($products as $p) { ?>
+                        <?php 
+                            foreach ($products as $p) {
+                                $cartQty = $p->qty > 5 ? 5 : $p->qty;
+                        ?>
                             <div class="col-6 col-lg-3 mb-4 text-center products <?= $p->qty < 1 ? 'disabled' : '' ?>">
                                 <a href="<?=base_url()?>product/<?=$p->product_url?>/">
                                     <div class="card product-card">
@@ -101,7 +104,7 @@
                                     <h2><?= $p->name ?></h2>
                                     <span class="price">החל מ: <?=$cur?><?= number_format($p->price, 2) ?></span>
                                 </a>
-                                <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
+                                <button class="btn d-block curved-button btn-add-to-cart" onclick="addToCart(this,<?=$p->id?>,<?=$cartQty?>);">הוספה לסל</button>
                             </div>
                         <?php } ?>
                     </div>
@@ -140,7 +143,22 @@
                 window.location.href = url.toString();
             });
 
+            const addToCart = (elem, proId, qty) => {
+                $(elem).html('טְעִינָה...').prop('disabled', true);
+                $.ajax({
+                    url: '<?=base_url()?>add-to-cart',
+                    type: 'POST',
+                    data: {product_id: proId, qty},
+                    success: function(result) {
+                        const resp = $.parseJSON(result);
 
+                        $(elem).html('הוספה לסל').prop('disabled', false);
+                    },
+                    error: function(result) {
+                        console.log('Error', result);
+                    }
+                })
+            }
         </script>
 
     </body>

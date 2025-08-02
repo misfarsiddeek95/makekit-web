@@ -6,7 +6,7 @@
         <style>
             /* Optional: ensure uniform button height and no rounding */
             .qty-btn,
-            #qtyInput {
+            .qtyInput {
                 border-radius: 0 !important;
                 height: 42px;
                 border: 1px solid rgba(0,0,0,.1)
@@ -30,6 +30,9 @@
                 </div>
             </section>
 
+        <pre>
+            <?php print_r($this->cart->contents()); ?>
+        </pre>
             <!-- Cart item section -->
             <section class="my-5 p-5 cart has-cart-button">
                 <div class="table-responsive">
@@ -45,6 +48,10 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <?php 
+                                foreach ($this->cart->contents() as $item){
+                                    $img = $item['options']['photo'] != null ? $item['options']['photo'] : base_url('assets/images/product_default.png');
+                            ?>
                             <tr class="d-table-row d-md-table-row d-block d-md-table-row">
                                 <!-- Remove -->
                                 <td class="d-block d-md-table-cell text-end text-md-center">
@@ -54,25 +61,31 @@
                                 </td>
                                 <!-- Product Image -->
                                 <td class="d-block d-md-table-cell text-end text-md-center">
-                                    <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" alt="Product" width="100">
+                                    <img src="<?=$img?>" alt="<?= $item['name'] ?>" width="100">
                                 </td>
                                 <!-- Product Name -->
                                 <td data-label="מוצר" class="d-block d-md-table-cell text-md-center">
-                                    <a href="#" class="text-decoration-none">!Scottie Go</a>
+                                    <a href="#" class="text-decoration-none"><?= $item['name'] ?></a>
                                 </td>
                                 <!-- Price -->
-                                <td data-label="מחיר" class="d-block d-md-table-cell text-md-center">₪54.40</td>
+                                <td data-label="מחיר" class="d-block d-md-table-cell text-md-center">
+                                    <?php if ($item['options']['has_discount']) { ?>
+                                        <del><?= $cur.number_format($item['options']['original_price'], 2) ?></del>
+                                    <?php } ?>
+                                    <?=$cur.number_format($item['price'], 2);?>
+                                </td>
                                 <!-- Quantity -->
                                 <td data-label="כמות" class="d-block d-md-table-cell text-md-center">
                                     <div class="input-group justify-content-center" style="width: 110px;">
-                                        <button class="btn btn-outline-secondary px-2 qty-btn" type="button" onclick="decreaseQty()">-</button>
-                                        <input type="text" id="qtyInput" class="form-control text-center border-start-0 border-end-0" value="5" readonly>
-                                        <button class="btn btn-outline-secondary px-2 qty-btn" type="button" onclick="increaseQty()">+</button>
+                                        <button class="btn btn-outline-secondary px-2 qty-btn" type="button" onclick="decreaseQty('<?=$item['rowid']?>')">-</button>
+                                        <input type="text" id="qtyInput<?=$item['rowid']?>" class="form-control text-center border-start-0 border-end-0 qtyInput" value="<?= $item['qty'] ?>" readonly>
+                                        <button class="btn btn-outline-secondary px-2 qty-btn" type="button" onclick="increaseQty('<?=$item['rowid']?>')">+</button>
                                     </div>
                                 </td>
                                 <!-- Subtotal -->
-                                <td data-label="סכום ביניים" class="d-block d-md-table-cell text-md-center">₪272.00</td>
+                                <td data-label="סכום ביניים" class="d-block d-md-table-cell text-md-center"><?=$cur.number_format($item['subtotal'], 2);?></td>
                             </tr>
+                            <?php } ?>
                         </tbody>
                     </table>
                 </div>
@@ -107,7 +120,7 @@
                                     <tbody>
                                         <!-- Subtotal -->
                                         <tr>
-                                            <th class="fw-semibold w-30">סכום ביניים</th>
+                                            <th class="fw-semibold w-30 border-0">סכום ביניים</th>
                                             <td>₪272.00</td>
                                         </tr>
 
@@ -155,14 +168,14 @@
 
         <?php $this->load->view('includes/js') ?>
         <script>
-            function decreaseQty() {
-                const input = document.getElementById('qtyInput');
+            function decreaseQty(rowId) {
+                const input = document.getElementById('qtyInput' + rowId);
                 let val = parseInt(input.value);
                 if (val > 1) input.value = val - 1;
             }
 
-            function increaseQty() {
-                const input = document.getElementById('qtyInput');
+            function increaseQty(rowId) {
+                const input = document.getElementById('qtyInput' + rowId);
                 let val = parseInt(input.value);
                 input.value = val + 1;
             }

@@ -6,6 +6,8 @@ class FrontController extends Base_Controller {
     parent::__construct();
     $this->load->model('Front_model');
 
+    $this->load->library('cart'); // load cart
+
     $commonData['categoryList'] = $this->Front_model->getAll('categories');
     $this->load->vars($commonData);
   }
@@ -174,13 +176,14 @@ class FrontController extends Base_Controller {
       redirect(base_url());
     }
 
-    /* print '<pre>';
-    print_r($productDetail);
-    exit; */
     $data['productDetail'] = $productDetail;
     $data['selectedCate'] = $productDetail->cate_url;
     $data['relatedProducts'] = $this->Front_model->get_filtered_products($productDetail->cate_id, 'related_products', 4, 0, $productDetail->id);
-    
+
+    /* print '<pre>';
+    print_r($productDetail);
+    exit; */
+
     $this->load->view('product_detail', $data);
   }
 
@@ -201,6 +204,10 @@ class FrontController extends Base_Controller {
   public function makekitCart() {
     $data['activePage'] = 'CART';
     $data['pageMain'] = $this->Front_model->fetchPage(16);
+
+    /* foreach ($this->cart->contents() as $rowId => $item) {
+      $this->cart->remove($rowId);
+    } */
 
     $this->load->view('cart', $data);
   }
@@ -349,6 +356,197 @@ class FrontController extends Base_Controller {
         
     } catch (Exception $ex) {
       $message = array("status" => "error","message" => $ex->getMessage());
+    }
+    echo json_encode($message);
+  }
+
+  /* public function addToCart() {
+    try {
+      $addFrom = $this->input->post('added_from');
+      $productId = $this->input->post('product_id');
+      $qty = $this->input->post('qty');
+
+      $productDetail = $this->Front_model->get_product_for_cart($productId, $qty);
+
+      if (!$productDetail) {
+        throw new Exception("Product is not available.");
+      }
+
+      if ($qty > $productDetail->qty) {
+        throw new Exception("Requested quantity is not available.");
+      }
+
+      $productPrice = $productDetail->price;
+
+      // calculate discount price.
+      if (isset($productDetail->discount_value) && in_array($productDetail->discount_type, [0, 1])) {
+        switch ($productDetail->discount_type) {
+          case 0: // flat rate
+            $productPrice -= $productDetail->discount_value;
+            break;
+
+          case 1: // percentage
+            $productPrice -= $productPrice * ($productDetail->discount_value / 100);
+            break;
+        }
+      }
+
+      // Round and sanitize final price
+      $productPrice = max(0, round($productPrice, 2));
+      
+      $item = array(
+        'id' => $productDetail->id,
+        'qty' => $qty,
+        'price' => $productPrice,
+        'name' => $productDetail->name
+      );
+
+      if ($this->cart->insert($data)) {
+        $message = array('status' => 'success', 'message' => 'Item added to the cart successfully.');
+      }
+
+    } catch (Exception $ex) {
+      $message = array('status' => 'error', 'message' => $ex->getMessage());
+    }
+    echo json_encode($message);
+  } */
+
+  public function addToCart() {
+    try {
+      $items = $this->input->post('items'); // for bulk update
+      $productId = $this->input->post('product_id'); // for single add
+      $qty = (int)$this->input->post('qty');
+
+      // CASE 1: Bulk update (from cart page)
+      if (!empty($items) && is_array($items)) {
+        foreach ($items as $prodId => $newQty) {
+          $newQty = (int)$newQty;
+
+          if ($newQty <= 0) {
+            // remove item from cart if qty is 0
+            foreach ($this->cart->contents() as $rowId => $item) {
+              if ($item['id'] == $prodId) {
+                $this->cart->remove($rowId);
+                break;
+              }
+            }
+            continue;
+          }
+
+          $productDetail = $this->Front_model->get_product_for_cart($prodId, $newQty);
+          if (!$productDetail) continue;
+
+          if ($newQty > $productDetail->qty) {
+            continue; // Skip if qty exceeds stock
+          }
+
+          // apply discount
+          $productPrice = $productDetail->price;
+          $originalPrice = $productPrice;
+
+          $hasDiscount = isset($productDetail->discount_value) && in_array($productDetail->discount_type, [0, 1]);
+
+          if ($hasDiscount) {
+            switch ($productDetail->discount_type) {
+              case 0: $productPrice -= $productDetail->discount_value; break;
+              case 1: $productPrice -= $productPrice * ($productDetail->discount_value / 100); break;
+            }
+          }
+          
+          // round and sanitize
+          $productPrice = max(0, round($productPrice, 2));
+          $originalPrice = round($originalPrice, 2);
+
+          // update cart item
+          foreach ($this->cart->contents() as $rowId => $item) {
+            if ($item['id'] == $prodId) {
+              $this->cart->update([
+                'rowid' => $rowId,
+                'qty' => $newQty,
+                'price' => $productPrice,
+                'options' => [
+                  'original_price' => $originalPrice,
+                  'has_discount' => $hasDiscount ? 1 : 0,
+                  'photo' => $productDetail->photo_path ? PHOTO_DOMAIN.'products/'.$productDetail->photo_path.'-std.'.$productDetail->extension : null,
+                ]
+              ]);
+              break;
+            }
+          }
+        }
+
+        $message = ['status' => 'success', 'message' => 'Cart updated successfully.'];
+      }
+        // CASE 2: Single item add/update (from product page)
+      elseif ($productId && $qty) {
+        if ($qty <= 0) throw new Exception("Invalid quantity.");
+
+        // check if item exists
+        $existingRowId = null;
+        $existingQty = 0;
+        foreach ($this->cart->contents() as $rowId => $item) {
+          if ($item['id'] == $productId) {
+            $existingRowId = $rowId;
+            $existingQty = (int)$item['qty'];
+            break;
+          }
+        }
+
+        $finalQty = $qty + $existingQty;
+
+        $productDetail = $this->Front_model->get_product_for_cart($productId, $finalQty);
+        if (!$productDetail) throw new Exception("Product not available.");
+
+        if ($finalQty > $productDetail->qty) {
+          throw new Exception("Only {$productDetail->qty} items available.");
+        }
+
+        $productPrice = $productDetail->price;
+        $originalPrice = $productPrice;
+
+        $hasDiscount = isset($productDetail->discount_value) && in_array($productDetail->discount_type, [0, 1]);
+
+        if ($hasDiscount) {
+          switch ($productDetail->discount_type) {
+            case 0: $productPrice -= $productDetail->discount_value; break;
+            case 1: $productPrice -= $productPrice * ($productDetail->discount_value / 100); break;
+          }
+        }
+        // round and sanitize
+        $productPrice = max(0, round($productPrice, 2));
+        $originalPrice = round($originalPrice, 2);
+
+        if ($existingRowId) {
+          $this->cart->update([
+            'rowid' => $existingRowId,
+            'qty' => $finalQty,
+            'price' => $productPrice,
+            'options' => [
+              'original_price' => $originalPrice,
+              'has_discount' => $hasDiscount ? 1 : 0,
+              'photo' => $productDetail->photo_path ? PHOTO_DOMAIN.'products/'.$productDetail->photo_path.'-std.'.$productDetail->extension : null,
+            ]
+          ]);
+        } else {
+          $this->cart->insert([
+            'id' => $productDetail->id,
+            'qty' => $qty,
+            'price' => $productPrice,
+            'name' => $productDetail->name,
+            'options' => [
+              'original_price' => $originalPrice,
+              'has_discount' => $hasDiscount ? 1 : 0,
+              'photo' => $productDetail->photo_path ? PHOTO_DOMAIN.'products/'.$productDetail->photo_path.'-std.'.$productDetail->extension : null,
+            ]
+          ]);
+        }
+
+        $message = ['status' => 'success', 'message' => 'Item added/updated in cart.'];
+      } else {
+        throw new Exception("Invalid input.");
+      }
+    } catch (Exception $ex) {
+      $message = ['status' => 'error', 'message' => $ex->getMessage()];
     }
     echo json_encode($message);
   }

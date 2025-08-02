@@ -203,6 +203,42 @@ class Front_model extends CI_Model {
         return $user_id; 
     }
 
+    public function get_product_for_cart($productId,$qty) {
+        $this->db->select('p.pro_id AS id, p.name, p.price, p.slug_url as product_url, p.quantity as qty, q.photo_path, q.extension');
+        $this->db->from('products p');
+        $this->db->where('p.pro_id', $productId);
+        $this->db->join('photo q', 'q.table="products" AND q.field_id = p.pro_id', 'left outer');
+        $this->db->limit(1);
+        $q = $this->db->get();
+
+        $main = false;
+
+        if ($q->num_rows() === 1) {
+            $main = $q->row();
+
+            // Determine applicable discount based on qty
+            $this->db->select('dl.discount_value, dl.discount_type, pd.min_item_count');
+            $this->db->from('product_discount pd');
+            $this->db->join('discount_list dl', 'dl.id = pd.discount_id', 'left');
+            $this->db->where('pd.product_id', $main->id);
+            $this->db->where('pd.min_item_count <=', $qty);
+            $this->db->order_by('pd.min_item_count', 'DESC'); // get highest eligible min_item_count
+            $this->db->limit(1); // only one matching record
+
+            $discount = $this->db->get()->row();
+
+            if ($discount) {
+                $main->discount_value = $discount->discount_value;
+                $main->discount_type = $discount->discount_type;
+                $main->min_item_count = $discount->min_item_count; // optional: for reference
+            } else {
+                $main->discount_value = null;
+                $main->discount_type = null;
+            }
+        }
+        return $main;
+    }
+
 
     // =========================================================================
 }
