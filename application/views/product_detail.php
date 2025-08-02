@@ -276,7 +276,7 @@
                                         ?>
                                     </div>
                                     <h2><?= $p->name ?></h2>
-                                    <span class="price">החל מ: ₪<?= number_format($p->price, 2) ?></span>
+                                    <span class="price">החל מ: <?=$cur?><?= number_format($p->price, 2) ?></span>
                                 </a>
                                 <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
                             </div>

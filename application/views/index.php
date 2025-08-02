@@ -119,54 +119,35 @@
                 </div>
                 <div class="row">
                     <!-- Product 1 -->
-                    <div class="col-6 col-lg-3 mb-4 text-center products">
-                        <a href="#">
-                            <div class="card product-card">
-                                <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28.png" alt="Product Image 1" class="product-img img-main">
-                                <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" alt="Product Image 1 Hover" class="product-img img-hover">
-                            </div>
-                            <h2>מורס נסיון</h2>
-                            <span class="price">החל מ: ₪0.00</span>
-                        </a>
-                        <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
-                    </div>
-
-                    <div class="col-6 col-lg-3 mb-4 text-center products">
-                        <a href="#">
-                            <div class="card product-card">
-                                <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28.png" alt="Product Image 1" class="product-img img-main">
-                                <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" alt="Product Image 1 Hover" class="product-img img-hover">
-                            </div>
-                            <h2>מורס נסיון</h2>
-                            <span class="price">החל מ: ₪0.00</span>
-                        </a>
-                        <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
-                    </div>
-
-                    <div class="col-6 col-lg-3 mb-4 text-center products">
-                        <a href="#">
-                            <div class="card product-card">
-                                <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28.png" alt="Product Image 1" class="product-img img-main">
-                                <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" alt="Product Image 1 Hover" class="product-img img-hover">
-                            </div>
-                            <h2>מורס נסיון</h2>
-                            <span class="price">החל מ: ₪0.00</span>
-                        </a>
-                        <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
-                    </div>
-
-                    <div class="col-6 col-lg-3 mb-4 text-center products">
-                        <a href="#">
-                            <div class="card product-card">
-                                <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28.png" alt="Product Image 1" class="product-img img-main">
-                                <img src="https://makesmart.co.il/wp-content/uploads/2024/05/harkava-28-main.png" alt="Product Image 1 Hover" class="product-img img-hover">
-                            </div>
-                            <h2>מורס נסיון</h2>
-                            <span class="price">החל מ: ₪0.00</span>
-                        </a>
-                        <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
-                    </div>
-
+                    <?php foreach ($latestProducts as $p) { ?>
+                        <div class="col-6 col-lg-3 mb-4 text-center products <?= $p->qty < 1 ? 'disabled' : '' ?>">
+                            <a href="<?=base_url()?>product/<?=$p->product_url?>/">
+                                <div class="card product-card">
+                                    <?php 
+                                        if (count($p->images) == 1) {
+                                            $img = $p->images[0];
+                                            $imgSrc = PHOTO_DOMAIN.'products/'.$img->photo_path.'-std.'.$img->extension;
+                                    ?>
+                                        <img src="<?= $imgSrc ?>" alt="<?= $p->name ?>" class="product-img img-main">
+                                        <img src="<?= $imgSrc ?>" alt="<?= $p->name ?>" class="product-img img-hover">
+                                    <?php 
+                                        } else {
+                                            foreach ($p->images as $key => $img) {
+                                                $hovCls = ($key % 2 == 0) ? 'img-main' : 'img-hover';
+                                                $imgSrc = PHOTO_DOMAIN.'products/'.$img->photo_path.'-std.'.$img->extension;
+                                    ?>
+                                        <img src="<?= $imgSrc ?>" alt="<?= $p->name ?>" class="product-img <?= $hovCls ?>">
+                                    <?php 
+                                            } 
+                                        }
+                                    ?>
+                                </div>
+                                <h2><?= $p->name ?></h2>
+                                <span class="price">החל מ: <?=$cur?><?= number_format($p->price, 2) ?></span>
+                            </a>
+                            <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
+                        </div>
+                    <?php } ?>
                 </div>
             </div>
         </section>

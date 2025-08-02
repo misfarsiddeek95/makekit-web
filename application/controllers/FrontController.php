@@ -20,6 +20,8 @@ class FrontController extends Base_Controller {
     $data['pageWantToGuide'] = $this->Front_model->fetchPage(3);
     $data['pageNewOnTheSite'] = $this->Front_model->fetchPage(4);
 
+    $data['latestProducts'] = $this->Front_model->get_filtered_products(null,'date',8,0);
+
     $this->load->view('index', $data);
   }
 
