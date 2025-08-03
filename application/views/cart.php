@@ -30,9 +30,6 @@
                 </div>
             </section>
 
-        <pre>
-            <?php print_r($this->cart->contents()); ?>
-        </pre>
             <!-- Cart item section -->
             <section class="my-5 p-5 cart has-cart-button">
                 <div class="table-responsive">
@@ -52,10 +49,10 @@
                                 foreach ($this->cart->contents() as $item){
                                     $img = $item['options']['photo'] != null ? $item['options']['photo'] : base_url('assets/images/product_default.png');
                             ?>
-                            <tr class="d-table-row d-md-table-row d-block d-md-table-row">
+                            <tr class="d-table-row d-md-table-row d-block d-md-table-row" id="rowId<?=$item['rowid']?>">
                                 <!-- Remove -->
                                 <td class="d-block d-md-table-cell text-end text-md-center">
-                                    <button class="btn btn-outline-dark rounded-circle p-0" style="width: 24px; height: 24px;">
+                                    <button class="btn btn-outline-dark rounded-circle p-0" style="width: 24px; height: 24px;" onclick="removeCartItem('<?=$item['rowid']?>');">
                                         ×
                                     </button>
                                 </td>
@@ -68,7 +65,7 @@
                                     <a href="#" class="text-decoration-none"><?= $item['name'] ?></a>
                                 </td>
                                 <!-- Price -->
-                                <td data-label="מחיר" class="d-block d-md-table-cell text-md-center">
+                                <td data-label="מחיר" class="d-block d-md-table-cell text-md-center" id="price-td<?=$item['rowid']?>">
                                     <?php if ($item['options']['has_discount']) { ?>
                                         <del><?= $cur.number_format($item['options']['original_price'], 2) ?></del>
                                     <?php } ?>
@@ -78,7 +75,7 @@
                                 <td data-label="כמות" class="d-block d-md-table-cell text-md-center">
                                     <div class="input-group justify-content-center" style="width: 110px;">
                                         <button class="btn btn-outline-secondary px-2 qty-btn" type="button" onclick="decreaseQty('<?=$item['rowid']?>')">-</button>
-                                        <input type="text" id="qtyInput<?=$item['rowid']?>" class="form-control text-center border-start-0 border-end-0 qtyInput" value="<?= $item['qty'] ?>" readonly>
+                                        <input type="text" id="qtyInput<?=$item['rowid']?>" product-id="<?=$item['id']?>" org-qty="<?=$item['options']['org_available_qty']?>" class="form-control text-center border-start-0 border-end-0 qtyInput" value="<?= $item['qty'] ?>" readonly>
                                         <button class="btn btn-outline-secondary px-2 qty-btn" type="button" onclick="increaseQty('<?=$item['rowid']?>')">+</button>
                                     </div>
                                 </td>
@@ -94,7 +91,7 @@
                 <div class="row flex-column flex-column-reverse gap-2 gap-md-0 flex-md-row-reverse justify-content-between align-items-center mt-4 py-4 py-md-0 mobile-bg">
                     <!-- Left: Update Cart Button -->
                     <div class="col-12 col-md-6 text-md-start text-center mb-3 mb-md-0">
-                        <button class="btn curved-button btn-add-to-cart" disabled>לעדכן סל קניות</button>
+                        <button class="btn curved-button btn-add-to-cart" id="update-btn" disabled onclick="updateCart(this)">לעדכן סל קניות</button>
                     </div>
 
                     <!-- Right: Coupon Input + Button (Right-Aligned) -->
@@ -160,6 +157,7 @@
                                 </button>
                             </div>
                         </div>
+                    </div>
                 </div>
             </section>
         </main>
@@ -169,15 +167,79 @@
         <?php $this->load->view('includes/js') ?>
         <script>
             function decreaseQty(rowId) {
+                $('#update-btn').prop('disabled', false);
                 const input = document.getElementById('qtyInput' + rowId);
+
+                const orgQty = input.getAttribute('org-qty');
+                const minQty = orgQty > 5 ? 5 : orgQty;
+
                 let val = parseInt(input.value);
-                if (val > 1) input.value = val - 1;
+                if (val > minQty) input.value = val - 1;
             }
 
             function increaseQty(rowId) {
+                $('#update-btn').prop('disabled', false);
+
                 const input = document.getElementById('qtyInput' + rowId);
                 let val = parseInt(input.value);
                 input.value = val + 1;
+            }
+
+            const updateCart = (elem) => {
+                $(elem).html('טְעִינָה...').prop('disabled', true);
+                
+                const items = {};
+                $('.qtyInput').each(function () {
+                    const qty = $(this).val();
+                    const proId = $(this).attr('product-id');
+
+                    if (proId) {
+                        items[proId] = qty;
+                    }
+                });
+
+                $.ajax({
+                    url: '<?=base_url()?>add-to-cart',
+                    type: 'POST',
+                    data: {items},
+                    success: function(result) {
+                        const resp = $.parseJSON(result);
+                        if (resp.status == 'success') {
+                            
+                            Object.entries(resp.price_html).forEach(([rowId, htmlPrice]) => {
+                                $(`#price-td${rowId}`).html(htmlPrice);
+                            });
+
+                            $(elem).html('לעדכן סל קניות').prop('disabled', true);
+                            $('.cart-count').text(resp.total_item_count).removeClass('d-none');
+                        }
+                    },
+                    error: function(result) {
+                        console.log('Error', result);
+                    }
+                })
+            }
+
+            const removeCartItem = (rowId) => {
+                $.ajax({
+                    url: '<?=base_url()?>remove-cart-item',
+                    type: 'POST',
+                    data: {rowId},
+                    success: function(result) {
+                        const resp = $.parseJSON(result);
+                        if (resp.status == 'success') {
+                            $(`#rowId${rowId}`).remove();
+                            if (resp.total_item_count == 0) {
+                                $('.cart-count').addClass('d-none')
+                            } else {
+                                $('.cart-count').text(resp.total_item_count).removeClass('d-none');
+                            }
+                        }
+                    },
+                    error: function(result) {
+                        console.log('Error', result);
+                    }
+                })
             }
         </script>
     </body>

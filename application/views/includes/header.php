@@ -34,7 +34,10 @@
 
                         <div class="desktop-header-icons">
                             <a href="<?=base_url('my-account/');?>" class="icon"><i class="fa-regular fa-user"></i></a>
-                            <a href="<?=base_url('cart/');?>" class="icon"><i class="fa-solid fa-shopping-basket"></i></a>
+                            <a href="<?=base_url('cart/');?>" class="icon">
+                                <i class="fa-solid fa-shopping-basket"></i>
+                                <span class="badge rounded-pill bg-light text-danger fs-6 fw-lighter cart-count <?= empty($this->cart->contents()) ? 'd-none' : '' ?>""><?=$this->cart->total_items();?></span>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -67,7 +70,10 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <a href="<?=base_url('my-account/');?>" class="mobile-icon icon-user"><i class="fa-regular fa-user"></i></a>
-                <a href="<?=base_url('cart/');?>" class="mobile-icon icon-basket"><i class="fa-solid fa-shopping-basket"></i></a>
+                <a href="<?=base_url('cart/');?>" class="mobile-icon icon-basket">
+                    <i class="fa-solid fa-shopping-basket"></i>
+                    <span class="badge rounded-pill bg-light text-danger fs-6 fw-lighter cart-count <?= empty($this->cart->contents()) ? 'd-none' : '' ?>""><?=$this->cart->total_items();?></span>
+                </a>
             </div>
         </div>
         <!-- MENU 1: Fullscreen Overlay -->

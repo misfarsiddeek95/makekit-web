@@ -9,6 +9,7 @@ class Base_Controller extends MY_Controller {
         );
         $this->load->vars($availabeAllViews);
         $this->folder = $_SERVER['DOCUMENT_ROOT'] . "/makekit-web";
+        $this->cur = '₪';
     }
 
     function get_encrypted_password($password) {

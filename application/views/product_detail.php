@@ -176,7 +176,7 @@
                                 </div>
 
                                 <!-- Add to Cart Button -->
-                                <button class="btn d-block curved-button btn-add-to-cart" onclick="addToCart()">הוספה לסל</button>
+                                <button class="btn d-block curved-button btn-add-to-cart" onclick="addToCart(this,'<?=$productDetail->id?>')">הוספה לסל</button>
                             </div>
 
                             <hr/>
@@ -324,9 +324,12 @@
             });
 
             function decreaseQty() {
+                const orgAvailableQty = '<?=$productDetail->qty?>';
+                const minQty = orgAvailableQty > 5 ? 5 : orgAvailableQty;
+
                 const input = document.getElementById('qtyInput');
                 let value = parseInt(input.value);
-                if (value > 1) {
+                if (value > minQty) {
                     input.value = value - 1;
                     
                     // Manually trigger change
@@ -344,10 +347,27 @@
                 $(input).trigger('change');
             }
 
-            function addToCart() {
-                const quantity = document.getElementById('qtyInput').value;
-                // You can perform your AJAX or form submission here
-                alert('Added ' + quantity + ' item(s) to the cart!');
+            const addToCart = (elem, proId) => {
+                $(elem).html('טְעִינָה...').prop('disabled', true);
+
+                const qty = document.getElementById('qtyInput').value;
+
+                $.ajax({
+                    url: '<?=base_url()?>add-to-cart',
+                    type: 'POST',
+                    data: {product_id: proId, qty},
+                    success: function(result) {
+                        const resp = $.parseJSON(result);
+
+                        if (resp.status == 'success') {
+                            $(elem).html('הוספה לסל').prop('disabled', false);
+                            $('.cart-count').text(resp.total_item_count).removeClass('d-none');
+                        }
+                    },
+                    error: function(result) {
+                        console.log('Error', result);
+                    }
+                })
             }
 
             $(document).on('change input', '#qtyInput', function() {

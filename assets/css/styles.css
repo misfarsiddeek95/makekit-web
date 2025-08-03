@@ -75,11 +75,14 @@ h2 {
   background-color: var(--crayolas-maize);
   color: var(--base-3);
 }
-.desktop-main-menu .nav-link:hover,
-.desktop-header-icons .icon:hover {
+.desktop-main-menu .nav-link:hover {
   background-color: var(--crayolas-maize);
   color: var(--base-3);
 }
+.desktop-header-icons .icon:hover {
+  background-color: var(--crayolas-maize);
+}
+
 .desktop-header-icons {
   display: flex;
   align-items: center;

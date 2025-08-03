@@ -152,7 +152,10 @@
                     success: function(result) {
                         const resp = $.parseJSON(result);
 
-                        $(elem).html('הוספה לסל').prop('disabled', false);
+                        if (resp.status == 'success') {
+                            $(elem).html('הוספה לסל').prop('disabled', false);
+                            $('.cart-count').text(resp.total_item_count).removeClass('d-none');
+                        }
                     },
                     error: function(result) {
                         console.log('Error', result);

@@ -416,9 +416,11 @@ class FrontController extends Base_Controller {
       $items = $this->input->post('items'); // for bulk update
       $productId = $this->input->post('product_id'); // for single add
       $qty = (int)$this->input->post('qty');
-
+      
       // CASE 1: Bulk update (from cart page)
       if (!empty($items) && is_array($items)) {
+        $htmlPrice = []; // initiation of the html show price list to show instantly when update.
+
         foreach ($items as $prodId => $newQty) {
           $newQty = (int)$newQty;
 
@@ -468,14 +470,24 @@ class FrontController extends Base_Controller {
                   'original_price' => $originalPrice,
                   'has_discount' => $hasDiscount ? 1 : 0,
                   'photo' => $productDetail->photo_path ? PHOTO_DOMAIN.'products/'.$productDetail->photo_path.'-std.'.$productDetail->extension : null,
+                  'org_available_qty' => $productDetail->qty,
                 ]
               ]);
               break;
             }
           }
+
+          // to show instantly when update the cart items from the cart page.
+          $updatedPriceShow = '';
+          if (!empty($hasDiscount) && $hasDiscount) {
+            $updatedPriceShow .= '<del>' . $this->cur . number_format($originalPrice, 2) . '</del> ';
+          }
+          $updatedPriceShow .= $this->cur . number_format($productPrice, 2);
+
+          $htmlPrice[$rowId] = $updatedPriceShow;
         }
 
-        $message = ['status' => 'success', 'message' => 'Cart updated successfully.'];
+        $message = ['status' => 'success', 'message' => 'Cart updated successfully.', 'total_item_count' => $this->cart->total_items(), 'price_html' => $htmlPrice];
       }
         // CASE 2: Single item add/update (from product page)
       elseif ($productId && $qty) {
@@ -525,6 +537,7 @@ class FrontController extends Base_Controller {
               'original_price' => $originalPrice,
               'has_discount' => $hasDiscount ? 1 : 0,
               'photo' => $productDetail->photo_path ? PHOTO_DOMAIN.'products/'.$productDetail->photo_path.'-std.'.$productDetail->extension : null,
+              'org_available_qty' => $productDetail->qty,
             ]
           ]);
         } else {
@@ -537,17 +550,31 @@ class FrontController extends Base_Controller {
               'original_price' => $originalPrice,
               'has_discount' => $hasDiscount ? 1 : 0,
               'photo' => $productDetail->photo_path ? PHOTO_DOMAIN.'products/'.$productDetail->photo_path.'-std.'.$productDetail->extension : null,
+              'org_available_qty' => $productDetail->qty,
             ]
           ]);
         }
 
-        $message = ['status' => 'success', 'message' => 'Item added/updated in cart.'];
+        $message = ['status' => 'success', 'message' => 'Item added/updated in cart.', 'total_item_count' => $this->cart->total_items()];
       } else {
         throw new Exception("Invalid input.");
       }
     } catch (Exception $ex) {
       $message = ['status' => 'error', 'message' => $ex->getMessage()];
     }
+    echo json_encode($message);
+  }
+
+  public function removeCartItem() {
+    $rowId = $this->input->post('rowId');
+
+    if ($rowId) {
+      $this->cart->remove($rowId);
+      $message = ['status' => 'success', 'message' => 'Item removed from cart.', 'total_item_count' => $this->cart->total_items()];
+    } else {
+      $message = ['status' => 'error', 'message' => 'Invalid request.'];
+    }
+
     echo json_encode($message);
   }
 

@@ -71,3 +71,4 @@ $route['load-subject-instructor'] = 'FrontController/loadSubjectInstructor';
 $route['register-student'] = 'FrontController/registerStudent';
 
 $route['add-to-cart'] = 'FrontController/addToCart';
+$route['remove-cart-item'] = 'FrontController/removeCartItem';
