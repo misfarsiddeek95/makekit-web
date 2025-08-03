@@ -8,7 +8,10 @@ class FrontController extends Base_Controller {
 
     $this->load->library('cart'); // load cart
 
-    $commonData['categoryList'] = $this->Front_model->getAll('categories');
+    $cate_cond = array(
+      array('field' => 'status', 'value' => 0),
+    );
+    $commonData['categoryList'] = $this->Front_model->get_data_with_conditions_and_joins('categories',['*'],[],$cate_cond);
     $this->load->vars($commonData);
   }
 	

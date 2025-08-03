@@ -104,7 +104,7 @@
                 </div>
 
                 <!-- summary -->
-                <div class="row flex-column flex-column-reverse gap-2 gap-md-0 flex-md-row-reverse justify-content-between mt-4 py-4 py-md-0">
+                <div class="row flex-column flex-column-reverse gap-2 gap-md-0 flex-md-row-reverse justify-content-between mt-4 py-4 py-md-0 cart-summary <?= empty($this->cart->contents()) ? 'd-none' : '' ?>">
                     <div class="col-12 col-md-6 text-md-end text-center">
                         <div class="section-title-container px-2">
                             <h1 class="underline-heading-1 fw-semibold">סה"כ בסל הקניות</h1>
@@ -118,7 +118,7 @@
                                         <!-- Subtotal -->
                                         <tr>
                                             <th class="fw-semibold w-30 border-0">סכום ביניים</th>
-                                            <td>₪272.00</td>
+                                            <td><?=$cur.number_format($this->cart->total(), 2)?></td>
                                         </tr>
 
                                         <!-- Shipping Methods -->
