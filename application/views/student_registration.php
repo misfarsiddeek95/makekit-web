@@ -217,7 +217,7 @@
                     }, false);
                 });
             })();
-            </script>
+        </script>
 
     </body>
 </html>

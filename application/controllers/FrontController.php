@@ -4,6 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class FrontController extends Base_Controller {
 	public function __construct() {
     parent::__construct();
+    $this->clear_cache();
     $this->load->model('Front_model');
 
     $this->load->library('cart'); // load cart
@@ -13,6 +14,11 @@ class FrontController extends Base_Controller {
     );
     $commonData['categoryList'] = $this->Front_model->get_data_with_conditions_and_joins('categories',['*'],[],$cate_cond);
     $this->load->vars($commonData);
+  }
+
+  function clear_cache(){
+    $this->output->set_header("Cache-Control: no-store, no-cache, must-revalidate, no-transform, max-age=0, post-check=0, pre-check=0");
+    $this->output->set_header("Pragma: no-cache");
   }
 	
   # home page
@@ -220,7 +226,56 @@ class FrontController extends Base_Controller {
     $data['activePage'] = 'MY-ACCOUNT';
     $data['pageMain'] = $this->Front_model->fetchPage(17);
 
-    $this->load->view('login', $data);
+    if($this->session->userdata('user_logged_in')==null){
+      $this->load->view('login', $data);
+    } else {
+      
+      $this->load->view('my_account', $data);
+    }
+  }
+
+  # sign in
+  public function signIn() {
+    try {
+      $username = ($this->input->post('username'));
+      $password = $this->input->post('password');
+
+      $_fields = array('eu.id as user_id','eu.user_type', 'eu.name as person_name', 'eu.status', 'eu.password');
+      
+      $_conditions = array(
+        array('field' => 'eu.parent_email', 'value' => $username),
+      );
+
+      $result = $this->Front_model->get_data_with_conditions_and_joins('external_users eu', $_fields, [], $_conditions, 1);
+
+      if ($result) {
+        if ($result->user_type == '' || $result->user_type == null) {
+          throw new Exception("Invalid user.");
+        }
+
+        if($result->status==1 && password_verify($password, $result->password)) {
+          $log_array = array(
+            'user_id' => $result->user_id,
+            'name' => $result->person_name,
+            'user_type' => $result->user_type
+          );
+
+          $this->session->set_userdata('user_logged_in', $log_array);
+          $message = array("status" => "success","message" => "logged in successfully", 'redirect_url' => 'my-account');
+
+        } else if(!password_verify($password, $result->password)){
+          $message = array("status" => "error","message" => "סיסמה לא חוקית. נסה שוב.");
+        }else{
+          $message = array("status" => "error","message" => "משתמש חסום. אנא צור קשר עם מנהל המערכת.");
+        }
+      } else {
+        $message = array("status"=>"error","message"=>"האימייל לא מוכר. בדוק שוב או נסה להשתמש בשם משתמש.");
+      }
+
+    } catch (Exception $ex) {
+      $message = array("status"=>"error","message"=>$ex->getMessage());
+    }
+    echo json_encode($message);
   }
 
   # Student registration
@@ -581,4 +636,18 @@ class FrontController extends Base_Controller {
     echo json_encode($message);
   }
 
+  // logout
+  public function logout() {
+    if($this->session->userdata('user_logged_in') != null){
+      $sess_array = array(
+        'user_id' => '',
+        'name' => '',
+        'user_type' => '',
+      );
+      $this->session->unset_userdata($sess_array);
+      $this->session->sess_destroy();
+      $this->clear_cache();
+      redirect(base_url());
+    }
+  }
 }

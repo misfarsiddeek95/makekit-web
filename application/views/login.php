@@ -29,38 +29,42 @@
                         </div>
                     </div>
                 </div>
-
-                <form action="" class="has-cart-button">
-                    <div class="mb-3">
-                        <label for="username" class="form-label">שם משתמש או כתובת אימייל </label>
-                        <input class="form-control form-control-lg" id="username" type="text" aria-label="username">
-                    </div>
-                    <div class="mb-3 position-relative">
-                        <label for="password" class="form-label">סיסמה</label>
-                        <input class="form-control form-control-lg" id="password" type="password" aria-label="password">
-                        
-                        <!-- Eye Icon Button -->
-                        <button
-                            type="button"
-                            id="togglePassword"
-                            class="btn border-0 bg-transparent p-0 position-absolute start-0"
-                            style="top: 70%; transform: translateY(-50%); margin-left: 0.75rem;"
-                        >
-                            <i class="fa fa-eye-slash fs-5"></i>
-                        </button>
-                    </div>
-                    <div class="mt-2 d-flex flex-row align-items-center gap-2">
-                        <button class="btn curved-button btn-add-to-cart">התחברות</button>
-                        <div class="form-check form-check-reverse">
-                            <input class="form-check-input" type="checkbox" id="flexCheckDefault">
-                            <label class="form-check-label" for="flexCheckDefault">זכור אותי</label>
+                <div class="container">
+                    <div class="alert alert-danger d-none" id="error-alert" role="alert"></div>
+                    <form class="needs-validation has-cart-button" novalidate>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">שם משתמש או כתובת אימייל </label>
+                            <input class="form-control form-control-lg" id="username" name="username" type="email" aria-label="username" required>
+                            <div class="invalid-feedback">נדרש שם משתמש או דוא"ל</div>
                         </div>
-                    </div>
-                    <div class="mt-2 d-flex flex-column gap-4">
-                        <a href="#">איפוס סיסמה</a>
-                        <a href="<?=base_url('student-registration/');?>">הרשמה</a>
-                    </div>
-                </form>
+                        <div class="mb-3 position-relative">
+                            <label for="password" class="form-label">סיסמה</label>
+                            <input class="form-control form-control-lg" id="password" name="password" type="password" aria-label="password" required>
+                            <!-- Eye Icon Button -->
+                            <button
+                                type="button"
+                                id="togglePassword"
+                                class="btn border-0 bg-transparent p-0 position-absolute start-0"
+                                style="top: 70%; transform: translateY(-50%); margin-left: 0.75rem;"
+                            >
+                                <i class="fa fa-eye-slash fs-5"></i>
+                            </button>
+
+                            <div class="invalid-feedback">נדרשת סיסמה.</div>
+                        </div>
+                        <div class="mt-2 d-flex flex-row align-items-center gap-2">
+                            <button type="submit" class="btn curved-button btn-add-to-cart" id="submitButton">התחברות</button>
+                            <div class="form-check form-check-reverse">
+                                <input class="form-check-input" type="checkbox" id="flexCheckDefault">
+                                <label class="form-check-label" for="flexCheckDefault">זכור אותי</label>
+                            </div>
+                        </div>
+                        <div class="mt-2 d-flex flex-column gap-4">
+                            <a href="#">איפוס סיסמה</a>
+                            <a href="<?=base_url('student-registration/');?>">הרשמה</a>
+                        </div>
+                    </form>
+                </div>
             </section>
         </main>
 
@@ -77,6 +81,50 @@
                 icon.classList.toggle("fa-eye");
                 icon.classList.toggle("fa-eye-slash");
             });
+
+
+            (function () {
+                'use strict';
+
+                const forms = document.querySelectorAll('.needs-validation');
+
+                Array.prototype.slice.call(forms).forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        // Add Bootstrap validation styles
+                        form.classList.add('was-validated');
+
+                        // Submit with AJAX if valid
+                        if (form.checkValidity()) {
+                            $('#submitButton').html('הַגָשָׁה...').prop('disabled', true)
+                            const formData = new FormData(form);
+                            $.ajax({
+                                url: '<?=base_url()?>signin',
+                                type: 'POST',
+                                data: formData,
+                                processData: false,
+                                contentType: false,
+                                success: function(result) {
+                                    const resp = $.parseJSON(result);
+                                    if (resp.status == 'success') {
+                                        location.href=`<?=base_url()?>${resp.redirect_url}`;
+                                    } else {
+                                        console.error(resp.message);
+                                        $('#error-alert').html(resp.message).removeClass('d-none');
+                                    }
+
+                                    $('#submitButton').html('התחברות').prop('disabled', false);
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error("AJAX Error:", error);
+                                }
+                            });
+                        }
+                    }, false);
+                });
+            })();
         </script>
 
     </body>

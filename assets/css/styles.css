@@ -812,6 +812,22 @@ h2 {
   -webkit-appearance: auto !important;
   -moz-appearance: auto !important;
 }
+
+.user-sidebar-menu li a {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 20px 0;
+  font-size: 85%;
+  color: var(--lapis-lazuli);
+}
+
+.user-sidebar-menu li a:hover {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  color: var(--contrast);
+}
+
+.user-sidebar-menu li a.active {
+  font-weight: 700;
+}
 /* =================================== */
 /* =========== LOGO FOOTER STYLES ==== */
 /* =================================== */
