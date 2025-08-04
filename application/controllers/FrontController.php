@@ -221,19 +221,6 @@ class FrontController extends Base_Controller {
     $this->load->view('cart', $data);
   }
 
-  # My account
-  public function makekitMyAccount() {
-    $data['activePage'] = 'MY-ACCOUNT';
-    $data['pageMain'] = $this->Front_model->fetchPage(17);
-
-    if($this->session->userdata('user_logged_in')==null){
-      $this->load->view('login', $data);
-    } else {
-      
-      $this->load->view('my_account', $data);
-    }
-  }
-
   # sign in
   public function signIn() {
     try {
@@ -649,5 +636,70 @@ class FrontController extends Base_Controller {
       $this->clear_cache();
       redirect(base_url());
     }
+  }
+
+  // USER ACCOUNT - SECTION
+  
+  # My account
+  public function makekitMyAccount() {
+    $data['activePage'] = 'MY-ACCOUNT';
+    $data['pageMain'] = $this->Front_model->fetchPage(17);
+
+    if($this->session->userdata('user_logged_in')==null){
+      $this->load->view('login', $data);
+    } else {
+      $data['activeUserPage'] = 'MY_ACCOUNT';
+
+      $this->load->view('my_account', $data);
+    }
+  }
+
+  // check logged in or not
+  private function check_login_redirect() {
+    if ($this->session->userdata('user_logged_in') === null) {
+      redirect(base_url('my-account/'));
+      exit;
+    }
+  }
+
+  # My orders
+  public function myOrders() {
+    $this->check_login_redirect();
+
+    $data['activePage'] = 'MY-ACCOUNT';
+    $data['activeUserPage'] = 'MY_ORDERS';
+    $data['pageMain'] = $this->Front_model->fetchPage(19);
+
+    $this->load->view('my_orders', $data);
+  }
+
+  public function myDownloads() {
+    $this->check_login_redirect();
+
+    $data['activePage'] = 'MY-ACCOUNT';
+    $data['activeUserPage'] = 'MY_DOWNLOADS';
+    $data['pageMain'] = $this->Front_model->fetchPage(20);
+
+    $this->load->view('my_downloads', $data);
+  }
+
+  public function myAddress() {
+    $this->check_login_redirect();
+
+    $data['activePage'] = 'MY-ACCOUNT';
+    $data['activeUserPage'] = 'MY_ADDRESS';
+    $data['pageMain'] = $this->Front_model->fetchPage(21);
+
+    $this->load->view('my_address', $data);
+  }
+
+  public function editAccount() {
+    $this->check_login_redirect();
+
+    $data['activePage'] = 'MY-ACCOUNT';
+    $data['activeUserPage'] = 'EDIT_ACCOUNT';
+    $data['pageMain'] = $this->Front_model->fetchPage(21);
+
+    $this->load->view('edit_account', $data);
   }
 }

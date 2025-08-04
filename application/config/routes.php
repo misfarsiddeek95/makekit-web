@@ -64,7 +64,6 @@ $route['product-category/(:any)/page/(:num)'] = 'FrontController/makekitProducts
 
 $route['product/(:any)'] = 'FrontController/makekitProductDetail/$1';
 $route['cart'] = 'FrontController/makekitCart';
-$route['my-account'] = 'FrontController/makekitMyAccount';
 $route['student-registration'] = 'FrontController/makekitStudentRegistraion';
 $route['load-intitute-circles'] = 'FrontController/loadInstituteCircles';
 $route['load-subject-instructor'] = 'FrontController/loadSubjectInstructor';
@@ -75,3 +74,10 @@ $route['remove-cart-item'] = 'FrontController/removeCartItem';
 
 $route['signin'] = 'FrontController/signIn';
 $route['logout'] = 'FrontController/logout';
+
+# USER ACCOUNT RELATED
+$route['my-account'] = 'FrontController/makekitMyAccount';
+$route['my-account/orders'] = 'FrontController/myOrders';
+$route['my-account/downloads'] = 'FrontController/myDownloads';
+$route['my-account/edit-address'] = 'FrontController/myAddress';
+$route['my-account/edit-account'] = 'FrontController/editAccount';

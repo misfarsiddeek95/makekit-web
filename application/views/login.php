@@ -109,7 +109,7 @@
                                 success: function(result) {
                                     const resp = $.parseJSON(result);
                                     if (resp.status == 'success') {
-                                        location.href=`<?=base_url()?>${resp.redirect_url}`;
+                                        location.href=`<?=base_url()?>${resp.redirect_url}/`;
                                     } else {
                                         console.error(resp.message);
                                         $('#error-alert').html(resp.message).removeClass('d-none');

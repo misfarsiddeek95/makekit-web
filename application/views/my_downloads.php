@@ -28,10 +28,7 @@
                             <?php $this->load->view('includes/account/user_header'); ?>
                         </div>
                         <div class="col-12 col-md-9 p-4">
-                            <p> שלום <strong><?=$this->session->userdata['user_logged_in']['name']?></strong> (לא <strong><?=$this->session->userdata['user_logged_in']['name']?></strong>? <a href="<?=base_url('logout');?>">התנתק</a>)</p>
-                            <p>
-	                            ב‬לוח הבקרה של החשבון ‫שלך ‬ניתן לראות את ה<a href="<?=base_url('orders/');?>">הזמנות האחרונות</a>, לנהל את <a href="<?=base_url('edit-address/');?>">כתובות המשלוח והחיוב</a>, ו<a href="<?=base_url('edit-account/');?>">לערוך את הסיסמה ופרטי החשבון</a>‫, להגיש בקשת החזרה של פריט ואפשרויות מתקדמות נוספות‬.
-                            </p>
+                           
                         </div>
                     </div>
                 </div>
