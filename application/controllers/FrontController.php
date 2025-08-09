@@ -670,6 +670,16 @@ class FrontController extends Base_Controller {
     $data['activeUserPage'] = 'MY_ORDERS';
     $data['pageMain'] = $this->Front_model->fetchPage(19);
 
+    $userId = $this->session->userdata['user_logged_in']['user_id'];
+
+    $_fields = array('o.order_code','o.payment_status', 'o.payment_method', 'o.cart_total', 'o.order_status', 'o.order_date');
+   
+    $_conditions = array(
+      array('field' => 'o.cust_id', 'value' => $userId),
+    );
+    
+    $data['orders'] = $this->Front_model->get_data_with_conditions_and_joins('orders o',$_fields,[],$_conditions);
+
     $this->load->view('my_orders', $data);
   }
 

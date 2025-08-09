@@ -28,7 +28,10 @@
                             <?php $this->load->view('includes/account/user_header'); ?>
                         </div>
                         <div class="col-12 col-md-9 p-4">
-                           
+                            <div class="alert alert-primary d-flex justify-content-between flex-row-reverse" role="alert">
+                                <a href="">לעיין במוצרים</a>
+                                <span>אין הורדות זמינות כעת.</span>
+                            </div>
                         </div>
                     </div>
                 </div>

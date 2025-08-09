@@ -28,7 +28,27 @@
                             <?php $this->load->view('includes/account/user_header'); ?>
                         </div>
                         <div class="col-12 col-md-9 p-4">
-                           
+                           <p>הכתובות הנ"ל תשמשו כברירת מחדל במהלך התשלום.</p>
+
+                            <div class="row flex-row-reverse">
+                                <!-- Billing Address -->
+                                <div class="col-md-6">
+                                    <h2>כתובת לחיוב</h2>
+                                    <div class="d-flex">
+                                        <a href="" class="me-auto">להוסיף כתובת לחיוב</a>
+                                    </div>
+                                    <address class="fst-italic">לא הגדרת כתובת זאת עדיין.</address>
+                                </div>
+
+                                <!-- Shipping Address -->
+                                <div class="col-md-6">
+                                    <h2>כתובת משלוח</h2>
+                                    <div class="d-flex">
+                                        <a href="" class="me-auto">להוסיף כתובת משלוח</a>
+                                    </div>
+                                    <address class="fst-italic">לא הגדרת כתובת זאת עדיין.</address>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
