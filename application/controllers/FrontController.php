@@ -708,8 +708,18 @@ class FrontController extends Base_Controller {
 
     $data['activePage'] = 'MY-ACCOUNT';
     $data['activeUserPage'] = 'EDIT_ACCOUNT';
-    $data['pageMain'] = $this->Front_model->fetchPage(21);
+    $data['pageMain'] = $this->Front_model->fetchPage(22);
 
     $this->load->view('edit_account', $data);
+  }
+
+  public function makeKitQuestionaire() {
+    $this->check_login_redirect();
+
+    $data['activePage'] = 'MY-ACCOUNT';
+    $data['activeUserPage'] = 'MAKEKIT_QUESTIONAIRE';
+    $data['pageMain'] = $this->Front_model->fetchPage(23);
+
+    $this->load->view('make_it_currency_questionaire', $data);
   }
 }
