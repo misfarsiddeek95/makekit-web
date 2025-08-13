@@ -50,7 +50,7 @@
                                                             </div>';
                                         }
                                 ?>
-                                <div class="card mb-4 border-0">
+                                <div class="card mb-4 border-b-1">
                                     <div class="card-body">
                                         <div class="row g-3 align-items-start">
                                             <p id="q1-label" class="mb-3 fs-5"><?=$mcqIndex+1?>) <?=$mcqs->question?></p>
@@ -73,7 +73,7 @@
                                                             }
                                                     ?>
 
-                                                    <div class="col">
+                                                    <div class="col col-md-12 col-lg-6">
                                                         <label class="list-group-item d-flex align-items-center">
                                                             <input class="form-check-input me-3" type="radio" name="q[<?=$mcqIndex?>]" value="<?=$ans->qa_id?>">
                                                             <div class="flex-grow-1 mx-2"><?=$ans->answer?></div>
