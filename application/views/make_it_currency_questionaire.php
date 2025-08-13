@@ -40,22 +40,25 @@
                                     foreach ($paper_detail['mcq_ques_ans'] as $mcqIndex => $mcqs) {
                                         $mcqQueImage = '';
                                         if ($mcqs->queHasImg == 1) {
-                                            $mcqQueImage = '<div class="col-12 col-md-4 text-center">
+                                            $mcqQueImage = '<div class="col-12 col-md-4">
                                                                 <img src="'.PHOTO_DOMAIN.'questionaire/'.$mcqs->questionImage.'"
                                                                     alt="Question image"
-                                                                    class="img-fluid rounded">
+                                                                    class="img-thumbnail rounded"
+                                                                    width="150"
+                                                                    height="150"
+                                                                    >
                                                             </div>';
                                         }
                                 ?>
                                 <div class="card mb-4 border-0">
                                     <div class="card-body">
                                         <div class="row g-3 align-items-start">
+                                            <p id="q1-label" class="mb-3 fs-5"><?=$mcqIndex+1?>) <?=$mcqs->question?></p>
                                             <!-- Image column (shows only when you include an image here) -->
                                             <?=$mcqQueImage?>
 
                                             <!-- Text + answers -->
                                             <div class="col-12 col-md-8">
-                                                <p id="q1-label" class="mb-3 fs-5"><?=$mcqs->question?></p>
 
                                                 <!-- answers: 1 column on xs, 2 columns on md+ -->
                                                 <div class="row row-cols-1 row-cols-md-2 g-2" role="radiogroup" aria-labelledby="q1-label">
