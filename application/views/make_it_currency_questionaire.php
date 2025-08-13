@@ -75,7 +75,7 @@
 
                                                     <div class="col">
                                                         <label class="list-group-item d-flex align-items-center">
-                                                            <input class="form-check-input me-3" type="radio" name="q[<?=$mcqIndex?>]" value="2">
+                                                            <input class="form-check-input me-3" type="radio" name="q[<?=$mcqIndex?>]" value="<?=$ans->qa_id?>">
                                                             <div class="flex-grow-1 mx-2"><?=$ans->answer?></div>
                                                             <!-- thumbnail using plain HTML width/height attributes -->
                                                             <?=$mcqAnsImage?>
