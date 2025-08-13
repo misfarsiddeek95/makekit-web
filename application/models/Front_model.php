@@ -239,6 +239,67 @@ class Front_model extends CI_Model {
         return $main;
     }
 
+    public function makekit_questions($class_id,$subject_id) {
+        $this->db->select('q.*');
+        $this->db->from('question_paper_main q');
+        $this->db->where('q.class_id', $class_id);
+        $this->db->where('q.subject_id', $subject_id);
+        $this->db->where('q.status', 1);
+        $this->db->order_by('q.paper_id', 'DESC');
+        $this->db->limit(1);
+        $q= $this->db->get();
+        $ret = false;
+        if ($q->num_rows() > 0) {
+            $ret = $q->row_array();
+            $queIds = $this->exist_question($ret['paper_id']);
+            $question_types = $this->getAll('question_type');
+            foreach ($question_types as $qt) {
+                if (!empty($queIds)) {
+                    $ret[strtolower($qt->question_type) . '_ques_ans'] = $this->get_questions_and_answers($queIds, $qt->qt_id);
+                } else {
+                    $ret[strtolower($qt->question_type) . '_ques_ans'] = [];
+                }
+            }
+        }
+        return $ret;
+    }
+
+    public function exist_question($paperId=0) {
+        $this->db->select('question_id');
+        $this->db->from('question_paper_child');
+        if ($paperId != 0) {
+            $this->db->where('paper_id', $paperId);
+        }
+        $q = $this->db->get();
+        $result = $q->result();
+        return array_unique(array_column($result, 'question_id'));
+    }
+
+    public function get_questions_and_answers($queIds,$questionType) {
+        if (empty($queIds)) {
+            return [];  // or return false, whatever fits your logic
+        }
+        $this->db->select('q.que_id,q.question,q.answer_method,q.qt_id,q.has_img as queHasImg,pq.photo_path as questionImage');
+        $this->db->from('questions q');
+        $this->db->where_in('q.que_id', $queIds);
+        $this->db->where('q.qt_id', $questionType);
+        $this->db->join('photo pq','pq.table="questions" AND pq.field_id = q.que_id', 'left outer');
+        $this->db->order_by('q.que_id', 'ASC');
+        $q = $this->db->get();
+        $main = $q->result();
+        foreach ($main as $row) {
+            $this->db->select('qa.qa_id,qa.answer,qa.has_img as ansHasImg,pa.photo_path as answerImage,qa.correct_answer');
+            $this->db->from('question_answers qa');
+            $this->db->where('qa.que_id', $row->que_id);
+            $this->db->join('photo pa','pa.table="question_answers" AND pa.field_id=qa.qa_id', 'left outer');
+            $this->db->order_by('qa.qa_id', 'ASC');
+            $qa = $this->db->get();
+            $row->answerHasImgs = array_unique(array_column($qa->result(), 'ansHasImg'));
+            $row->answers = $qa->result();
+        }
+        return $main;
+    }
+
 
     // =========================================================================
 }

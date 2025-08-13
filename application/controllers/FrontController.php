@@ -720,6 +720,24 @@ class FrontController extends Base_Controller {
     $data['activeUserPage'] = 'MAKEKIT_QUESTIONAIRE';
     $data['pageMain'] = $this->Front_model->fetchPage(23);
 
+    $userId = $this->session->userdata['user_logged_in']['user_id'];
+
+    $user_condition = array(
+      array('field' => 'id', 'value' => $userId),
+    );
+
+    $studentRecord = $this->Front_model->get_data_with_conditions_and_joins('external_users', ['class_id', 'subject_id'],[],$user_condition,1);
+
+    if (!$studentRecord) {
+      redirect(base_url('my-account'));
+    }
+
+    $data['paper_detail'] = $this->Front_model->makekit_questions($studentRecord->class_id,$studentRecord->subject_id);
+
+   /*  print '<pre>';
+    print_r($data['paper_detail']);
+    exit; */
+
     $this->load->view('make_it_currency_questionaire', $data);
   }
 }
