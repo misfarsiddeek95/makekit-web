@@ -300,6 +300,47 @@ class Front_model extends CI_Model {
         return $main;
     }
 
+    public function start_attempt($student_id, $paper_id) {
+        $query = $this->db->where('student_id', $student_id)
+                          ->where('paper_id', $paper_id)
+                          ->where('status', 'in_progress')
+                          ->limit(1)
+                          ->get('student_attempts');
+        if ($query->num_rows() > 0) {
+            return $query->row()->attempt_id;
+        }
+
+        $attempt_count = $this->db->where('student_id', $student_id)
+                                  ->where('paper_id', $paper_id)
+                                  ->where('status', 'completed')
+                                  ->count_all_results('student_attempts');
+
+        $paper = $this->db->select('no_of_attempts')
+                          ->where('paper_id', $paper_id)
+                          ->get('question_paper_main')
+                          ->row();
+
+        if ($attempt_count >= $paper->no_of_attempts) {
+            return false;
+        }
+
+        $max_attempt = $this->db->select_max('attempt_number')
+                                ->where('student_id', $student_id)
+                                ->where('paper_id', $paper_id)
+                                ->get('student_attempts')
+                                ->row()->attempt_number;
+
+        $next_attempt_number = ($max_attempt) ? $max_attempt + 1 : 1;
+
+        $this->db->insert('student_attempts', [
+            'student_id'     => $student_id,
+            'paper_id'       => $paper_id,
+            'attempt_number' => $next_attempt_number
+        ]);
+
+        return $this->db->insert_id();
+    }
+
 
     // =========================================================================
 }

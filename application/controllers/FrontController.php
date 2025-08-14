@@ -732,9 +732,19 @@ class FrontController extends Base_Controller {
       redirect(base_url('my-account'));
     }
 
-    $data['paper_detail'] = $this->Front_model->makekit_questions($studentRecord->class_id,$studentRecord->subject_id);
+    $paper_detail = $this->Front_model->makekit_questions($studentRecord->class_id,$studentRecord->subject_id);
 
-   /*  print '<pre>';
+    $attempt_id = $this->Front_model->start_attempt($userId, $paper_detail['paper_id']);
+
+    $data['attempt_id'] = $attempt_id;
+    $data['paper_detail'] = $paper_detail;
+
+    if (!$attempt_id) {
+      $data['paper_detail'] = [];
+      $data['attempt_id'] = 0;
+    }
+    
+    /* print '<pre>';
     print_r($data['paper_detail']);
     exit; */
 

@@ -30,6 +30,9 @@
                         <div class="col-12 col-md-9 p-4">
                             <?php if (!empty($paper_detail['mcq_ques_ans'])) { ?>
                             <form>
+                                <input type="hidden" name="attempt_id" value="<?=$attempt_id;?>">
+                                <input type="hidden" name="paper_id" value="<?=$paper_detail['paper_id'];?>">
+                                
                                 <div class="row m-x-30 m-b-20 text-center">
                                     <div class="col-md-12">
                                         <?=$paper_detail['mcq_main_title']?>
@@ -95,6 +98,8 @@
                                 </div>
 
                             </form>
+                            <?php } else { ?>
+                                <div class="alert alert-warning" role="alert">לא נותרו לך ניסיונות למשימה זו.</div>
                             <?php } ?>
                         </div>
                     </div>
