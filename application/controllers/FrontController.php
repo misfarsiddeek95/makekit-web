@@ -713,6 +713,34 @@ class FrontController extends Base_Controller {
     $this->load->view('edit_account', $data);
   }
 
+  public function makeKitQuestionairePage() {
+    $this->check_login_redirect();
+
+    $data['activePage'] = 'MY-ACCOUNT';
+    $data['activeUserPage'] = 'MAKEKIT_QUESTIONAIRE';
+    $data['pageMain'] = $this->Front_model->fetchPage(23);
+
+    $userId = $this->session->userdata['user_logged_in']['user_id'];
+
+    $user_condition = array(
+      array('field' => 'id', 'value' => $userId),
+    );
+
+    $studentRecord = $this->Front_model->get_data_with_conditions_and_joins('external_users', ['class_id', 'subject_id'],[],$user_condition,1);
+
+    if (!$studentRecord) {
+      redirect(base_url('my-account'));
+    }
+
+    $data['questionaires'] = $this->Front_model->questionaires($studentRecord->class_id,$studentRecord->subject_id,$userId);
+
+    print '<pre>';
+    print_r($data);
+    exit;
+
+    $this->load->view('questionaire_page', $data);
+  }
+
   public function makeKitQuestionaire() {
     $this->check_login_redirect();
 
@@ -750,4 +778,51 @@ class FrontController extends Base_Controller {
 
     $this->load->view('make_it_currency_questionaire', $data);
   }
+
+  public function saveAnswers() {
+    try {
+      $attempt_id = $this->input->post('attempt_id');
+      $paper_id   = $this->input->post('paper_id');
+      $answers    = $this->input->post('q'); // question_id => answer_id
+
+      if (!$attempt_id || !$paper_id || !is_array($answers)) {
+        throw new Exception("Invalid submission.");
+      }
+
+      $student_answers = [];
+
+      foreach ($answers as $que => $ans) {
+        $is_correct = $this->Front_model->is_correct_answer($que, $ans);
+
+        $_data = array(
+          'attempt_id' => $attempt_id,
+          'question_id' => $que,
+          'selected_option' => $ans,
+          'is_correct' => $is_correct,
+          'answered_at' => date('Y-m-d H:i:s')
+        );
+
+        $student_answers[] = $_data;
+      }
+
+      $answered = $this->Front_model->save_answer($student_answers);
+
+      if ($answered) {
+        $update_attempts = [
+          'end_time' => date('Y-m-d H:i:s'),
+          'status' => 'completed'
+        ];
+
+        $this->Front_model->update('attempt_id', $attempt_id, 'student_attempts', $update_attempts);
+        
+        $message = array('status' => 'success', 'message' => 'Successfully submitted the answers.');
+      }
+      
+    } catch (Exception $ex) {
+      $message = array('status' => 'error', 'message' => $ex->getMessage());
+    }
+
+    echo json_encode($message);
+  }
+
 }

@@ -33,6 +33,19 @@ class Front_model extends CI_Model {
 		return  $this->db->insert_id();
 	}
 
+    function update($idName,$id,$table,$data){
+        $this->db->trans_start();
+		$this->db->where($idName, $id);
+		$this->db->update($table, $data); 
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            return FALSE;
+        } else {
+            $this->db->trans_commit();
+            return TRUE;
+        }
+	}
+
     // This function is a common function to fetch data from the table. Can join the tables, can check the conditions as well.
     public function get_data_with_conditions_and_joins($main_table, $fields, $joins = array(), $conditions = array(), $limit = null, $orderBy = array()) {
         $this->db->select($fields)->from($main_table);
@@ -239,6 +252,47 @@ class Front_model extends CI_Model {
         return $main;
     }
 
+    public function questionaires($class_id, $subject_id, $student_id) {
+        $this->db->select("
+            q.paper_id,
+            q.class_id,
+            q.subject_id,
+            q.no_of_attempts,
+            q.paper_duration,
+            q.total_marks_count,
+            q.mcq_main_title,
+            q.status,
+            
+            -- Remaining attempts calculation
+            (q.no_of_attempts - IFNULL(COUNT(DISTINCT sa.attempt_id), 0)) AS remaining_attempts,
+            
+            -- Correct answers count
+            IFNULL(SUM(CASE WHEN san.is_correct = 1 THEN 1 ELSE 0 END), 0) AS correct_answers
+        ");
+
+        $this->db->from('question_paper_main q');
+
+        // Join attempts for this student
+        $this->db->join(
+            'student_attempts sa',
+            "sa.paper_id = q.paper_id AND sa.student_id = {$this->db->escape_str($student_id)}",
+            'left'
+        );
+
+        // Join answers
+        $this->db->join('student_answers san', 'san.attempt_id = sa.attempt_id', 'left');
+
+        $this->db->where('q.class_id', $class_id);
+        $this->db->where('q.subject_id', $subject_id);
+        $this->db->where('q.status', 1);
+
+        $this->db->group_by('q.paper_id');
+
+        $q = $this->db->get();
+        return $q->result();
+    }
+
+
     public function makekit_questions($class_id,$subject_id) {
         $this->db->select('q.*');
         $this->db->from('question_paper_main q');
@@ -341,6 +395,57 @@ class Front_model extends CI_Model {
         return $this->db->insert_id();
     }
 
+    public function is_correct_answer($question_id, $answer_id) {
+        $this->db->where('que_id', $question_id);
+        $this->db->where('qa_id', $answer_id);
+        $this->db->where('correct_answer', 1);
+        return $this->db->count_all_results('question_answers') > 0;
+    }
+
+    public function save_answer($student_answers) {
+        if (empty($student_answers)) {
+            return false;
+        }
+    
+        $attempt_id = $student_answers[0]['attempt_id']; // all have same attempt_id
+        $question_ids = array_column($student_answers, 'question_id');
+    
+        // Get existing answers for this attempt + these questions
+        $this->db->where('attempt_id', $attempt_id);
+        $this->db->where_in('question_id', $question_ids);
+        $existing = $this->db->get('student_answers')->result_array();
+    
+        $existing_map = [];
+        foreach ($existing as $row) {
+            $existing_map[$row['question_id']] = $row['answer_id']; // store PK
+        }
+    
+        $to_insert = [];
+        $to_update = [];
+    
+        foreach ($student_answers as $ans) {
+            if (isset($existing_map[$ans['question_id']])) {
+                // update existing
+                $ans['answer_id'] = $existing_map[$ans['question_id']];
+                $to_update[] = $ans;
+            } else {
+                // insert new
+                $to_insert[] = $ans;
+            }
+        }
+    
+        // Insert new answers
+        if (!empty($to_insert)) {
+            $this->db->insert_batch('student_answers', $to_insert);
+        }
+    
+        // Update existing answers
+        if (!empty($to_update)) {
+            $this->db->update_batch('student_answers', $to_update, 'answer_id');
+        }
+    
+        return true;
+    }
 
     // =========================================================================
 }

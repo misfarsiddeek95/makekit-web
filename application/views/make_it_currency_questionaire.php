@@ -29,7 +29,7 @@
                         </div>
                         <div class="col-12 col-md-9 p-4">
                             <?php if (!empty($paper_detail['mcq_ques_ans'])) { ?>
-                            <form>
+                            <form id="question_form" method="POST">
                                 <input type="hidden" name="attempt_id" value="<?=$attempt_id;?>">
                                 <input type="hidden" name="paper_id" value="<?=$paper_detail['paper_id'];?>">
                                 
@@ -78,7 +78,7 @@
 
                                                     <div class="col col-md-12 col-lg-6">
                                                         <label class="list-group-item d-flex align-items-center">
-                                                            <input class="form-check-input me-3" type="radio" name="q[<?=$mcqIndex?>]" value="<?=$ans->qa_id?>">
+                                                            <input class="form-check-input me-3" type="radio" name="q[<?=$mcqs->que_id?>]" value="<?=$ans->qa_id?>" required />
                                                             <div class="flex-grow-1 mx-2"><?=$ans->answer?></div>
                                                             <!-- thumbnail using plain HTML width/height attributes -->
                                                             <?=$mcqAnsImage?>
@@ -111,5 +111,26 @@
 
         <?php $this->load->view('includes/js') ?>
         
+        <script>
+            $('#question_form').on('submit', function(e){
+                e.preventDefault();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '<?=base_url()?>save-answers',
+                    data: $('#question_form').serialize(),
+                    success: function(result) {
+                        const resp = $.parseJSON(result);
+
+                        if (resp.status == 'success') {
+                            location.href="<?=base_url('my-account')?>";
+                        }
+                    },
+                    error: function(result) {
+                        console.error('Error : ', result)
+                    }
+                });
+            });
+        </script>
     </body>
 </html>
