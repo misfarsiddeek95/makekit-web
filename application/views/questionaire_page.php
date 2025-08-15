@@ -56,7 +56,7 @@
                                 <p>סה"כ שאלונים שבוצעו: <?=$summary['total_completed']?></p>
                                 <p>סה"כ תשובות נכונות: <?=$summary['total_correct']?></p>
                                 <p>מספר נקודות שנשארו: <?=$summary['remaining_points']?></p>
-                                <a href="<?=base_url()?>product-category/award/">לרכישת פרסים</a>
+                                <a href="<?=base_url()?>product-category/awards/">לרכישת פרסים</a>
                             </div>
                         </div>
                     </div>

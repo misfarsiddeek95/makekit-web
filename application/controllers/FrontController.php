@@ -799,20 +799,38 @@ class FrontController extends Base_Controller {
         throw new Exception("Invalid submission.");
       }
 
+      $_condition = array(
+        array('field' => 'paper_id', 'value' => $paper_id),
+      );
+  
+      $score_value = $this->Front_model->get_data_with_conditions_and_joins('question_paper_main', ['score_per_mcq', 'score_per_structure', 'score_per_essay'],[],$_condition,1);
+
       $student_answers = [];
+
+      $total_awarded_marks = 0;
+
+      $userId = $this->session->userdata['user_logged_in']['user_id'];
+      $user_condition = array(
+        array('field' => 'id', 'value' => $userId),
+      );
+      $studentRecord = $this->Front_model->get_data_with_conditions_and_joins('external_users', ['points_earned'],[],$user_condition,1);
 
       foreach ($answers as $que => $ans) {
         $is_correct = $this->Front_model->is_correct_answer($que, $ans);
+        $mark_awarded = $is_correct ? $score_value->score_per_mcq : 0;
 
         $_data = array(
           'attempt_id' => $attempt_id,
           'question_id' => $que,
           'selected_option' => $ans,
           'is_correct' => $is_correct,
+          'marks_awarded' => $mark_awarded,
           'answered_at' => date('Y-m-d H:i:s')
         );
 
         $student_answers[] = $_data;
+
+        $total_awarded_marks += $mark_awarded;
       }
 
       $answered = $this->Front_model->save_answer($student_answers);
@@ -820,11 +838,20 @@ class FrontController extends Base_Controller {
       if ($answered) {
         $update_attempts = [
           'end_time' => date('Y-m-d H:i:s'),
+          'score' => $total_awarded_marks,
           'status' => 'completed'
         ];
 
         $this->Front_model->update('attempt_id', $attempt_id, 'student_attempts', $update_attempts);
+
+        $total_points_earned = $total_awarded_marks + $studentRecord->points_earned;
+
+        $u_data = [
+          'points_earned' => $total_points_earned
+        ];
         
+        $this->Front_model->update('id', $userId, 'external_users', $u_data);
+
         $message = array('status' => 'success', 'message' => 'Successfully submitted the answers.');
       }
       
