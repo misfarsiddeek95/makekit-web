@@ -252,7 +252,7 @@ class Front_model extends CI_Model {
         return $main;
     }
 
-    public function questionaires($class_id, $subject_id, $student_id) {
+    /* public function questionaires($class_id, $subject_id, $student_id) {
         $this->db->select("
             q.paper_id,
             q.class_id,
@@ -291,7 +291,79 @@ class Front_model extends CI_Model {
 
         $q = $this->db->get();
         return $q->result();
+    } */
+
+    public function questionaires($class_id, $subject_id, $student_id) {
+        $student_id = (int)$student_id; // safety
+
+        // 1) Last completed attempt_id per paper for this student
+        //    (If you prefer "latest by time", use MAX(end_time) approach noted below)
+        $lastAttemptSub = "
+            SELECT paper_id, MAX(attempt_id) AS last_attempt_id
+            FROM student_attempts
+            WHERE student_id = {$student_id}
+            AND status = 'completed'
+            GROUP BY paper_id
+        ";
+
+        // 2) Number of completed attempts per paper (for remaining attempts calc)
+        $completedAttemptsSub = "
+            SELECT paper_id, COUNT(*) AS completed_attempts
+            FROM student_attempts
+            WHERE student_id = {$student_id}
+            AND status = 'completed'
+            GROUP BY paper_id
+        ";
+
+        // 3) Correct answers from ONLY the last completed attempt per paper
+        $correctOnLastAttemptSub = "
+            SELECT sa.paper_id, COUNT(*) AS correct_answers
+            FROM student_answers ans
+            JOIN student_attempts sa
+                ON sa.attempt_id = ans.attempt_id
+            JOIN ({$lastAttemptSub}) last
+                ON last.last_attempt_id = sa.attempt_id
+            WHERE sa.student_id = {$student_id}
+            AND ans.is_correct = 1
+            GROUP BY sa.paper_id
+        ";
+
+        $this->db->select("
+            q.paper_id,
+            q.class_id,
+            q.subject_id,
+            q.no_of_attempts,
+            q.paper_duration,
+            q.total_marks_count,
+            q.school_name AS paper_title,
+            q.status,
+            q.created_at,
+
+            -- Remaining attempts: paper limit minus COMPLETED attempts
+            GREATEST(q.no_of_attempts - IFNULL(comp.completed_attempts, 0), 0) AS remaining_attempts,
+
+            -- Correct answers ONLY from the last completed attempt
+            IFNULL(correct.correct_answers, 0) AS correct_answers_last_attempt
+        ", false);
+
+        $this->db->from('question_paper_main q');
+
+        // Join completed attempts count (1 row per paper)
+        $this->db->join("({$completedAttemptsSub}) comp", 'comp.paper_id = q.paper_id', 'left', false);
+
+        // Join correct answers from last attempt (1 row per paper)
+        $this->db->join("({$correctOnLastAttemptSub}) correct", 'correct.paper_id = q.paper_id', 'left', false);
+
+        // Filters
+        $this->db->where('q.class_id', $class_id);
+        $this->db->where('q.subject_id', $subject_id);
+        $this->db->where('q.status', 1);
+
+        // No GROUP BY needed because each join is pre-aggregated to 1 row per paper
+        $query = $this->db->get();
+        return $query->result();
     }
+
 
 
     public function makekit_questions($paper_id) {
@@ -446,6 +518,50 @@ class Front_model extends CI_Model {
     
         return true;
     }
+
+    public function get_student_summary($student_id) {
+        // 1️⃣ Get total completed papers and total correct answers (last attempt only)
+        $this->db->select("
+            COUNT(latest.paper_id) AS total_completed,
+            IFNULL(SUM(correct_answers.correct_count), 0) AS total_correct
+        ");
+        $this->db->from("
+            (
+                SELECT sa.paper_id, MAX(sa.attempt_id) AS latest_attempt_id
+                FROM student_attempts sa
+                WHERE sa.student_id = " . (int)$student_id . "
+                  AND sa.status = 'completed'
+                GROUP BY sa.paper_id
+            ) AS latest
+        ", NULL, FALSE);
+    
+        // Join to get correct answers from only the latest attempts
+        $this->db->join("
+            (
+                SELECT sa.attempt_id, COUNT(*) AS correct_count
+                FROM student_answers sa
+                WHERE sa.is_correct = 1
+                GROUP BY sa.attempt_id
+            ) AS correct_answers
+        ", 'correct_answers.attempt_id = latest.latest_attempt_id', 'left', FALSE);
+    
+        $summary = $this->db->get()->row_array();
+    
+        // 2️⃣ Remaining points from students table
+        $this->db->select("
+            (IFNULL(points_earned, 0) - IFNULL(points_spent, 0)) AS remaining_points
+        ");
+        $this->db->from('external_users');
+        $this->db->where('id', $student_id);
+        $points = $this->db->get()->row_array();
+    
+        return [
+            'total_completed'   => (int)$summary['total_completed'],
+            'total_correct'     => (int)$summary['total_correct'],
+            'remaining_points'  => (int)$points['remaining_points']
+        ];
+    }    
+
 
     // =========================================================================
 }
