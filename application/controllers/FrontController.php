@@ -777,13 +777,14 @@ class FrontController extends Base_Controller {
     $data['attempt_id'] = $attempt_id;
     $data['paper_detail'] = $paper_detail;
 
+
     if (!$attempt_id) {
       $data['paper_detail'] = [];
       $data['attempt_id'] = 0;
     }
     
     /* print '<pre>';
-    print_r($data['paper_detail']);
+    print_r($data);
     exit; */
 
     $this->load->view('make_it_currency_questionaire', $data);
@@ -844,12 +845,21 @@ class FrontController extends Base_Controller {
 
         $this->Front_model->update('attempt_id', $attempt_id, 'student_attempts', $update_attempts);
 
-        $total_points_earned = $total_awarded_marks + $studentRecord->points_earned;
-
-        $u_data = [
-          'points_earned' => $total_points_earned
+        $score_data = [
+          'student_id' => $userId,
+          'paper_id' => $paper_id,
+          'attempt_id' => $attempt_id,
+          'points' => $total_awarded_marks,
+          'earned_date' => date('Y-m-d H:i:s')
         ];
-        
+
+        $this->Front_model->insert_me('student_points', $score_data);
+
+        // update the score in the students table.
+        $actualTotalScore = $this->Front_model->get_total_score($userId);
+        $u_data = [
+          'points_earned' => $actualTotalScore
+        ];
         $this->Front_model->update('id', $userId, 'external_users', $u_data);
 
         $message = array('status' => 'success', 'message' => 'Successfully submitted the answers.');

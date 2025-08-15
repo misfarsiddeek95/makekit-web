@@ -562,6 +562,34 @@ class Front_model extends CI_Model {
         ];
     }    
 
+    public function get_score_list($studentId) {
+        $this->db->select('sp.*');
+        $this->db->from('student_points sp');
+        $this->db->where('sp.student_id', $studentId);
+        $this->db->where('sp.attempt_id = (
+            SELECT MAX(attempt_id)
+            FROM student_points
+            WHERE student_id = ' . $this->db->escape_str($studentId) . '
+              AND paper_id = sp.paper_id
+        )', null, false);
+        $q = $this->db->get();
+        return $q->result();
+    }
 
+    public function get_total_score($studentId) {
+        $this->db->select('SUM(points) as total_points');
+        $this->db->from('student_points sp');
+        $this->db->where('sp.student_id', $studentId);
+        $this->db->where('sp.attempt_id = (
+            SELECT MAX(attempt_id)
+            FROM student_points
+            WHERE student_id = ' . $this->db->escape_str($studentId) . '
+              AND paper_id = sp.paper_id
+        )', null, false);
+    
+        $row = $this->db->get()->row();
+        return $row ? (int)$row->total_points : 0;
+    }
+        
     // =========================================================================
 }
