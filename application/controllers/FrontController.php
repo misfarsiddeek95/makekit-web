@@ -744,6 +744,12 @@ class FrontController extends Base_Controller {
   public function makeKitQuestionaire() {
     $this->check_login_redirect();
 
+    $paperId = $this->input->get('formId');
+
+    if (!$paperId) {
+      redirect(base_url('my-account'));
+    }
+
     $data['activePage'] = 'MY-ACCOUNT';
     $data['activeUserPage'] = 'MAKEKIT_QUESTIONAIRE';
     $data['pageMain'] = $this->Front_model->fetchPage(23);
@@ -760,7 +766,9 @@ class FrontController extends Base_Controller {
       redirect(base_url('my-account'));
     }
 
-    $paper_detail = $this->Front_model->makekit_questions($studentRecord->class_id,$studentRecord->subject_id);
+    $paperId = base64_decode($paperId);
+
+    $paper_detail = $this->Front_model->makekit_questions($paperId);
 
     $attempt_id = $this->Front_model->start_attempt($userId, $paper_detail['paper_id']);
 

@@ -294,11 +294,10 @@ class Front_model extends CI_Model {
     }
 
 
-    public function makekit_questions($class_id,$subject_id) {
+    public function makekit_questions($paper_id) {
         $this->db->select('q.*');
         $this->db->from('question_paper_main q');
-        $this->db->where('q.class_id', $class_id);
-        $this->db->where('q.subject_id', $subject_id);
+        $this->db->where('q.paper_id', $paper_id);
         $this->db->where('q.status', 1);
         $this->db->order_by('q.paper_id', 'DESC');
         $this->db->limit(1);
@@ -306,7 +305,7 @@ class Front_model extends CI_Model {
         $ret = false;
         if ($q->num_rows() > 0) {
             $ret = $q->row_array();
-            $queIds = $this->exist_question($ret['paper_id']);
+            $queIds = $this->exist_question($paper_id);
             $question_types = $this->getAll('question_type');
             foreach ($question_types as $qt) {
                 if (!empty($queIds)) {

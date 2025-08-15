@@ -82,4 +82,5 @@ $route['my-account/downloads'] = 'FrontController/myDownloads';
 $route['my-account/edit-address'] = 'FrontController/myAddress';
 $route['my-account/edit-account'] = 'FrontController/editAccount';
 $route['my-account/makekit-questionnaires'] = 'FrontController/makeKitQuestionairePage';
+$route['my-account/questionnaires'] = 'FrontController/makeKitQuestionaire';
 $route['save-answers'] = 'FrontController/saveAnswers';

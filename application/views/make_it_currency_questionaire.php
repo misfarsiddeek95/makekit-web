@@ -123,7 +123,7 @@
                         const resp = $.parseJSON(result);
 
                         if (resp.status == 'success') {
-                            location.href="<?=base_url('my-account')?>";
+                            location.href="<?=base_url('my-account/makekit-questionnaires')?>";
                         }
                     },
                     error: function(result) {
