@@ -260,8 +260,9 @@ class Front_model extends CI_Model {
             q.no_of_attempts,
             q.paper_duration,
             q.total_marks_count,
-            q.mcq_main_title,
+            q.school_name as paper_title,
             q.status,
+            q.created_at,
             
             -- Remaining attempts calculation
             (q.no_of_attempts - IFNULL(COUNT(DISTINCT sa.attempt_id), 0)) AS remaining_attempts,

@@ -734,9 +734,9 @@ class FrontController extends Base_Controller {
 
     $data['questionaires'] = $this->Front_model->questionaires($studentRecord->class_id,$studentRecord->subject_id,$userId);
 
-    print '<pre>';
+    /* print '<pre>';
     print_r($data);
-    exit;
+    exit; */
 
     $this->load->view('questionaire_page', $data);
   }

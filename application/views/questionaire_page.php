@@ -28,7 +28,30 @@
                             <?php $this->load->view('includes/account/user_header'); ?>
                         </div>
                         <div class="col-12 col-md-9 p-4">
-                            
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>תאריך</th>
+                                            <th>מספר שאלון</th>
+                                            <th>נסיונות שנותרו</th>
+                                            <th>תשובות נכונות</th>
+                                            <th>כניסה לשאלון</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($questionaires as $que) { ?>
+                                        <tr>
+                                            <td><?=date('d/m/Y', strtotime($que->created_at))?></td>
+                                            <td><?=$que->paper_id?></td>
+                                            <td><?=$que->remaining_attempts?></td>
+                                            <td><?=$que->correct_answers?></td>
+                                            <td><?=$que->paper_title?></td>
+                                        </tr>
+                                        <?php } ?>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -36,29 +59,6 @@
         </main>
 
         <?php $this->load->view('includes/footer') ?>
-
         <?php $this->load->view('includes/js') ?>
-        
-        <script>
-            $('#question_form').on('submit', function(e){
-                e.preventDefault();
-
-                $.ajax({
-                    type: 'POST',
-                    url: '<?=base_url()?>save-answers',
-                    data: $('#question_form').serialize(),
-                    success: function(result) {
-                        const resp = $.parseJSON(result);
-
-                        if (resp.status == 'success') {
-                            location.href="<?=base_url('my-account')?>";
-                        }
-                    },
-                    error: function(result) {
-                        console.error('Error : ', result)
-                    }
-                });
-            });
-        </script>
     </body>
 </html>
