@@ -44,7 +44,7 @@
                                         <tr>
                                             <td><?=date('d/m/Y', strtotime($que->created_at))?></td>
                                             <td><?=$que->paper_id?></td>
-                                            <td><?=$que->remaining_attempts?></td>
+                                            <td><?=$que->remaining_attempts?> / <?=$que->no_of_attempts?></td>
                                             <td><?=$que->correct_answers?></td>
                                             <td><a href=""><?=$que->paper_title?></a></td>
                                         </tr>
