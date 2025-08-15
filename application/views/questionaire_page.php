@@ -46,7 +46,7 @@
                                             <td><?=$que->paper_id?></td>
                                             <td><?=$que->remaining_attempts?></td>
                                             <td><?=$que->correct_answers?></td>
-                                            <td><?=$que->paper_title?></td>
+                                            <td><a href=""><?=$que->paper_title?></a></td>
                                         </tr>
                                         <?php } ?>
                                     </tbody>
