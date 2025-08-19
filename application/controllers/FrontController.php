@@ -161,14 +161,35 @@ class FrontController extends Base_Controller {
     // $result_text = "Showing {$start_result}–{$end_result} of {$total_products} results";
     $result_text = "מציג {$start_result}–{$end_result} מתוך {$total_products} תוצאות";
 
+    // student available points.
+    $isLoggedIn = $this->session->userdata('user_logged_in') != null;
+
+    if ($isLoggedIn) {
+      $userId = $this->session->userdata['user_logged_in']['user_id'];
+    
+      $_conditions = array(
+        array('field' => 'eu.id', 'value' => $userId),
+      );
+  
+      $loggedUser = $this->Front_model->get_data_with_conditions_and_joins('external_users eu', ['points_earned', 'points_spent'], [], $_conditions, 1);
+      
+      $availablePoints = (int)$loggedUser->points_earned - (int)$loggedUser->points_spent;
+    }
+
     $data = [
-        'activePage'    => 'PRODUCT',
-        'pageMain'      => [],
-        'selectedCate'  => $selectedCate,
-        'products'      => $products,
-        'pagination'    => $this->pagination->create_links(),
-        'result_text'   => $result_text,
+      'activePage'    => 'PRODUCT',
+      'pageMain'      => [],
+      'selectedCate'  => $selectedCate,
+      'products'      => $products,
+      'pagination'    => $this->pagination->create_links(),
+      'result_text'   => $result_text,
+      'is_logged_id'  => $isLoggedIn,
+      'available_points'  => $isLoggedIn ? $availablePoints : 'NOT_LOGGED_IN'
     ];
+
+    /* print '<pre>';
+    print_r($data);
+    exit; */
 
     $this->load->view('products', $data);
   }

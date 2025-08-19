@@ -78,8 +78,18 @@
                         <?php 
                             foreach ($products as $p) {
                                 $cartQty = $p->qty > 5 ? 5 : $p->qty;
+
+                                // Default disabled check
+                                $isDisabled = ($p->qty <= 0);
+
+                                // Extra condition if user logged in + category = awards
+                                if ($is_logged_id && $selectedCate->seo_url == 'awards') {
+                                    if ($available_points < $p->price) {
+                                        $isDisabled = true;
+                                    }
+                                }
                         ?>
-                            <div class="col-6 col-lg-3 mb-4 text-center products <?= $p->qty < 1 ? 'disabled' : '' ?>">
+                            <div class="col-6 col-lg-3 mb-4 text-center products <?= $isDisabled ? 'disabled' : '' ?>">
                                 <a href="<?=base_url()?>product/<?=$p->product_url?>/">
                                     <div class="card product-card">
                                         <?php 
@@ -104,6 +114,18 @@
                                     <h2><?= $p->name ?></h2>
                                     <span class="price">החל מ: <?=$cur?><?= number_format($p->price, 2) ?></span>
                                 </a>
+
+                                <?php if ($is_logged_id && $selectedCate->seo_url == 'awards') { ?>
+                                    <div class="mt-2">
+                                        <small>נקודות זמינות: <?= $available_points ?></small><br>
+                                        <?php if ($available_points >= $p->price) { ?>
+                                            <span class="text-success">יש לך מספיק נקודות.</span>
+                                        <?php } else { ?>
+                                            <span class="text-danger">אין לך מספיק נקודות.</span>
+                                        <?php } ?>
+                                    </div>
+                                <?php } ?>
+
                                 <button class="btn d-block curved-button btn-add-to-cart" onclick="addToCart(this,<?=$p->id?>,<?=$cartQty?>);">הוספה לסל</button>
                             </div>
                         <?php } ?>
