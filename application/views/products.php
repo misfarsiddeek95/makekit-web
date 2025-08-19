@@ -83,8 +83,8 @@
                                 $isDisabled = ($p->qty <= 0);
 
                                 // Extra condition if user logged in + category = awards
-                                if ($is_logged_id && $selectedCate->seo_url == 'awards') {
-                                    if ($available_points < $p->price) {
+                                if ($selectedCate->seo_url == 'awards') {
+                                    if (($is_logged_id && $available_points < $p->price) || $available_points == 'NOT_LOGGED_IN') {
                                         $isDisabled = true;
                                     }
                                 }
@@ -125,8 +125,9 @@
                                         <?php } ?>
                                     </div>
                                 <?php } ?>
-
+                                <?php if(!$isDisabled) { ?>
                                 <button class="btn d-block curved-button btn-add-to-cart" onclick="addToCart(this,<?=$p->id?>,<?=$cartQty?>);">הוספה לסל</button>
+                                <?php } ?>
                             </div>
                         <?php } ?>
                     </div>
