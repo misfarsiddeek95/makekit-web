@@ -10,7 +10,7 @@ class FrontController extends Base_Controller {
     $this->load->library('cart'); // load cart
 
     $cate_cond = array(
-      array('field' => 'status', 'value' => 0),
+      array('field' => 'show_in_site', 'value' => 1),
     );
     $commonData['categoryList'] = $this->Front_model->get_data_with_conditions_and_joins('categories',['*'],[],$cate_cond);
     $this->load->vars($commonData);
