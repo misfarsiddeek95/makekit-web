@@ -28,6 +28,7 @@
                             <?php $this->load->view('includes/account/user_header'); ?>
                         </div>
                         <div class="col-12 col-md-9 p-4">
+                            <?php if(!empty($questionaires)) { ?>
                             <div class="table-responsive">
                                 <table class="table table-bordered">
                                     <thead>
@@ -58,6 +59,9 @@
                                 <p>מספר נקודות שנשארו: <?=$summary['remaining_points']?></p>
                                 <a href="<?=base_url()?>product-category/awards/">לרכישת פרסים</a>
                             </div>
+                            <?php } else { ?>
+                                <div class="alert alert-warning" role="alert">לא נותרו לך ניסיונות למשימה זו.</div>
+                            <?php } ?>
                         </div>
                     </div>
                 </div>
