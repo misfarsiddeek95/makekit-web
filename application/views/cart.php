@@ -80,7 +80,7 @@
                                     </div>
                                 </td>
                                 <!-- Subtotal -->
-                                <td data-label="סכום ביניים" class="d-block d-md-table-cell text-md-center"><?=$cur.number_format($item['subtotal'], 2);?></td>
+                                <td data-label="סכום ביניים" class="d-block d-md-table-cell text-md-center" id="subtotal-td<?=$item['rowid']?>"><?=$cur.number_format($item['subtotal'], 2);?></td>
                             </tr>
                             <?php } ?>
                         </tbody>
@@ -118,7 +118,7 @@
                                         <!-- Subtotal -->
                                         <tr>
                                             <th class="fw-semibold w-30 border-0">סכום ביניים</th>
-                                            <td><?=$cur.number_format($this->cart->total(), 2)?></td>
+                                            <td id="cart_total_td"><?=$cur.number_format($this->cart->total(), 2)?></td>
                                         </tr>
 
                                         <!-- Shipping Methods -->
@@ -206,12 +206,20 @@
                         const resp = $.parseJSON(result);
                         if (resp.status == 'success') {
                             
+                            // updating the price of every product after updating the cart.
                             Object.entries(resp.price_html).forEach(([rowId, htmlPrice]) => {
                                 $(`#price-td${rowId}`).html(htmlPrice);
                             });
 
-                            $(elem).html('לעדכן סל קניות').prop('disabled', true);
-                            $('.cart-count').text(resp.total_item_count).removeClass('d-none');
+                            // updating subtotal of every product after updating the cart
+                            Object.entries(resp.subtotal_html).forEach(([rowId, subTotal]) => {
+                                $(`#subtotal-td${rowId}`).html(subTotal);
+                            });
+
+                            $('#cart_total_td').html(resp.cart_total_html); // update cart total value after updating the cart.
+
+                            $(elem).html('לעדכן סל קניות').prop('disabled', true); // disable the button again.
+                            $('.cart-count').text(resp.total_item_count).removeClass('d-none'); // cart count updating.
                         }
                     },
                     error: function(result) {
@@ -234,6 +242,8 @@
                             } else {
                                 $('.cart-count').text(resp.total_item_count).removeClass('d-none');
                             }
+
+                            $('#cart_total_td').html(resp.cart_total_html); // update cart total value after remove the item from the cart.
                         }
                     },
                     error: function(result) {

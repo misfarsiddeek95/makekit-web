@@ -486,6 +486,7 @@ class FrontController extends Base_Controller {
       // CASE 1: Bulk update (from cart page)
       if (!empty($items) && is_array($items)) {
         $htmlPrice = []; // initiation of the html show price list to show instantly when update.
+        $htmlSubtotal = []; // initialization of the subtotal of cart item after updated.
 
         foreach ($items as $prodId => $newQty) {
           $newQty = (int)$newQty;
@@ -545,15 +546,20 @@ class FrontController extends Base_Controller {
 
           // to show instantly when update the cart items from the cart page.
           $updatedPriceShow = '';
+          $updatedSubtotal = '';
           if (!empty($hasDiscount) && $hasDiscount) {
             $updatedPriceShow .= '<del>' . $this->cur . number_format($originalPrice, 2) . '</del> ';
           }
           $updatedPriceShow .= $this->cur . number_format($productPrice, 2);
 
           $htmlPrice[$rowId] = $updatedPriceShow;
+
+          $calculateSubTotal = floatval($productPrice) * $newQty;
+
+          $htmlSubtotal[$rowId] = $this->cur . number_format($calculateSubTotal, 2);
         }
 
-        $message = ['status' => 'success', 'message' => 'Cart updated successfully.', 'total_item_count' => $this->cart->total_items(), 'price_html' => $htmlPrice];
+        $message = ['status' => 'success', 'message' => 'Cart updated successfully.', 'total_item_count' => $this->cart->total_items(), 'price_html' => $htmlPrice, 'subtotal_html' => $htmlSubtotal, 'cart_total'=>$this->cart->total(), 'cart_total_html' => $this->cur . number_format($this->cart->total(), 2)];
       }
         // CASE 2: Single item add/update (from product page)
       elseif ($productId && $qty) {
@@ -621,7 +627,7 @@ class FrontController extends Base_Controller {
           ]);
         }
 
-        $message = ['status' => 'success', 'message' => 'Item added/updated in cart.', 'total_item_count' => $this->cart->total_items()];
+        $message = ['status' => 'success', 'message' => 'Item added/updated in cart.', 'total_item_count' => $this->cart->total_items(), 'cart_total' => $this->cart->total(), 'cart_total_html' => $this->cur . number_format($this->cart->total(), 2)];
       } else {
         throw new Exception("Invalid input.");
       }
@@ -636,7 +642,7 @@ class FrontController extends Base_Controller {
 
     if ($rowId) {
       $this->cart->remove($rowId);
-      $message = ['status' => 'success', 'message' => 'Item removed from cart.', 'total_item_count' => $this->cart->total_items()];
+      $message = ['status' => 'success', 'message' => 'Item removed from cart.', 'total_item_count' => $this->cart->total_items(), 'cart_total' => $this->cart->total(), 'cart_total_html' => $this->cur . number_format($this->cart->total(), 2)];
     } else {
       $message = ['status' => 'error', 'message' => 'Invalid request.'];
     }
