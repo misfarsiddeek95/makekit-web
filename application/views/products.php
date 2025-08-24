@@ -84,7 +84,7 @@
 
                                 // Extra condition if user logged in + category = awards
                                 if ($selectedCate->seo_url == 'awards') {
-                                    if (($is_logged_id && $available_points < $p->price) || $available_points == 'NOT_LOGGED_IN') {
+                                    if (($is_logged_id && $available_points < $p->minimum_eligiblity_value) || $available_points == 'NOT_LOGGED_IN') {
                                         $isDisabled = true;
                                     }
                                 }
@@ -117,8 +117,9 @@
 
                                 <?php if ($is_logged_id && $selectedCate->seo_url == 'awards') { ?>
                                     <div class="mt-2">
+                                        <small>מייקיטים <?= $p->minimum_eligiblity_value ?></small><br>
                                         <small>נקודות זמינות: <?= $available_points ?></small><br>
-                                        <?php if ($available_points >= $p->price) { ?>
+                                        <?php if ($available_points >= $p->minimum_eligiblity_value) { ?>
                                             <span class="text-success">יש לך מספיק נקודות.</span>
                                         <?php } else { ?>
                                             <span class="text-danger">אין לך מספיק נקודות.</span>
