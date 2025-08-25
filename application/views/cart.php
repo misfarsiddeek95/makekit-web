@@ -118,7 +118,7 @@
                                         <!-- Subtotal -->
                                         <tr>
                                             <th class="fw-semibold w-30 border-0">סכום ביניים</th>
-                                            <td id="cart_total_td"><?=$cur.number_format($this->cart->total(), 2)?></td>
+                                            <td id="cart_total_td" cart-total="<?=$this->cart->total()?>"><?=$cur.number_format($this->cart->total(), 2)?></td>
                                         </tr>
 
                                         <!-- Shipping Methods -->
@@ -218,6 +218,8 @@
 
                             $('#cart_total_td').html(resp.cart_total_html); // update cart total value after updating the cart.
 
+                            $('#cart_total_td').attr('cart-total', resp.cart_total); // update cart total value as attribute.
+
                             $(elem).html('לעדכן סל קניות').prop('disabled', true); // disable the button again.
                             $('.cart-count').text(resp.total_item_count).removeClass('d-none'); // cart count updating.
                         }
@@ -244,6 +246,7 @@
                             }
 
                             $('#cart_total_td').html(resp.cart_total_html); // update cart total value after remove the item from the cart.
+                            $('#cart_total_td').attr('cart-total', resp.cart_total); // update cart total value as attribute.
                         }
                     },
                     error: function(result) {
