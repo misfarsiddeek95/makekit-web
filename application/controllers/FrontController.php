@@ -732,6 +732,57 @@ class FrontController extends Base_Controller {
     $this->load->view('my_address', $data);
   }
 
+  public function saveAddress() {
+    try {
+      $this->check_login_redirect();
+
+      $userId = $this->session->userdata['user_logged_in']['user_id'];
+
+      $add_id = $this->input->post('add_id');
+      $add_type = $this->input->post('add_type');
+
+      $firstName = $this->input->post('firstName');
+      $lastName = $this->input->post('lastName');
+      $company = $this->input->post('company');
+      $address = $this->input->post('address');
+      $zip = $this->input->post('zip');
+      $city = $this->input->post('city');
+      $phone = $this->input->post('phone');
+      $email = $this->input->post('email');
+
+      $_arr = array(
+        'fname' => $firstName,
+        'lname' => $lastName,
+        'address' => $address,
+        'city_id' => $city,
+        'phone' => $phone ? $phone : null,
+        'postal_code' => $zip,
+        'add_type' => $add_type == 'PRIRMARY' ? 0 : 1,
+        'company' => $company ? $company : null,
+        'user_id' => $userId,
+        'status' => 1,
+        'user_type' => 2,
+        'email' => $email,
+      );
+
+      if ($add_id == 0) {
+        $type = 'save';
+        $msg = 'הכתובת נשמרה בהצלחה.';
+      } {
+        $type = 'update';
+        $msg = 'הכתובת עודכנה בהצלחה.';
+      }
+
+      $is_submitted = $this->Front_model->upsert($add_id,$_arr,'addresses','add_id');
+
+      $message = array('status' => 'success', 'message' => $msg);
+
+    } catch (Exception $ex) {
+      $message = array('status' => 'error', 'message' => $ex->getMessage());
+    }
+    echo json_encode($message);
+  }
+
   public function editAccount() {
     $this->check_login_redirect();
 

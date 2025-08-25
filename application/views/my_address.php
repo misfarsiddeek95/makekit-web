@@ -50,21 +50,21 @@
                                 </div>
                             </div>
                             <div class="container my-4" id="shippingAddressForm" style="display: none;">
+                                <div class="alert" role="alert"></div>
                                 <h2 id="form-title"></h2>
                                 <form method="POST" class="needs-validation has-cart-button w-75" novalidate>
-                                    <input type="hidden" name="user_id" id="user_id" value="0" />
                                     <input type="hidden" name="add_id" id="add_id" value="0" />
                                     <input type="hidden" name="add_type" id="add_type" value="" />
                                     <!-- First Name and Last Name in one row -->
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <input type="text" class="form-control form-control-lg" id="firstName" placeholder="שם פרטי" required>
+                                            <input type="text" class="form-control form-control-lg" id="firstName" name="firstName" placeholder="שם פרטי" required>
                                             <div class="invalid-feedback">
                                                 שם פרטי הוא שדה חובה.
                                             </div>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <input type="text" class="form-control form-control-lg" id="lastName" placeholder="שם משפחה" required>
+                                            <input type="text" class="form-control form-control-lg" id="lastName" name="lastName" placeholder="שם משפחה" required>
                                             <div class="invalid-feedback">
                                                 שם משפחה הוא שדה חובה.
                                             </div>
@@ -73,12 +73,12 @@
 
                                     <!-- Company Name -->
                                     <div class="mb-3">
-                                        <input type="text" class="form-control form-control-lg" id="company" placeholder="שם החברה">
+                                        <input type="text" class="form-control form-control-lg" id="company" name="company" placeholder="שם החברה">
                                     </div>
 
                                     <!-- Street and House Number -->
                                     <div class="mb-3">
-                                        <input type="text" class="form-control form-control-lg" id="address" placeholder="מספר בית ושם רחוב" required>
+                                        <input type="text" class="form-control form-control-lg" id="address" name="address" placeholder="מספר בית ושם רחוב" required>
                                         <div class="invalid-feedback">
                                             אנא הזן את כתובתך.
                                         </div>
@@ -86,7 +86,7 @@
 
                                     <!-- Postal Code -->
                                     <div class="mb-3">
-                                        <input type="text" class="form-control form-control-lg" id="zip" placeholder="מיקוד / תא דואר">
+                                        <input type="text" class="form-control form-control-lg" id="zip" name="zip" placeholder="מיקוד / תא דואר">
                                     </div>
                                     
                                     <!-- City -->
@@ -102,7 +102,7 @@
 
                                     <!-- Phone Number -->
                                     <div class="mb-3">
-                                        <input type="tel" class="form-control form-control-lg" id="phone" placeholder="טלפון" >
+                                        <input type="tel" class="form-control form-control-lg" id="phone" name="phone" placeholder="טלפון" >
                                         <div class="invalid-feedback">
                                             אנא הזן מספר טלפון.
                                         </div>
@@ -110,14 +110,14 @@
 
                                     <!-- Email Address -->
                                     <div class="mb-3">
-                                        <input type="email" class="form-control form-control-lg" id="email" placeholder="כתובת אימייל" required>
+                                        <input type="email" class="form-control form-control-lg" id="email" name="email" placeholder="כתובת אימייל" required>
                                         <div class="invalid-feedback">
                                             אנא הזן כתובת אימייל חוקית.
                                         </div>
                                     </div>
 
                                     <div class="mt-2">
-                                        <button type="submit" id="submitButton" class="btn curved-button btn-add-to-cart">התחברות</button>
+                                        <button type="submit" id="submitButton" class="btn curved-button btn-add-to-cart">שמירת כתובת</button>
                                     </div>
                                 </form>
                             </div>
@@ -171,17 +171,23 @@
                             $('#submitButton').html('הַגָשָׁה...').attr('disabled','disabled')
                             const formData = new FormData(form);
                             $.ajax({
-                                url: '<?=base_url()?>register-student',
+                                url: '<?=base_url()?>my-account/save-address',
                                 type: 'POST',
                                 data: formData,
                                 processData: false,
                                 contentType: false,
                                 success: function(result) {
                                     const resp = $.parseJSON(result);
-                                    console.log(resp);
-                                    setTimeout(() => {
-                                        location.reload();
-                                    }, 1000);
+
+                                    if (resp.status == 'success') {
+                                        $('.alert').addClass('alert-success').text(resp.message);
+
+                                        setTimeout(() => {
+                                            location.reload();
+                                        }, 3000);
+                                    } else {
+                                        $('.alert').addClass('alert-danger').text(resp.message);
+                                    }
                                 },
                                 error: function(xhr, status, error) {
                                     console.error("AJAX Error:", error);

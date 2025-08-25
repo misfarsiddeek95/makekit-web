@@ -81,6 +81,7 @@ $route['my-account'] = 'FrontController/makekitMyAccount';
 $route['my-account/orders'] = 'FrontController/myOrders';
 $route['my-account/downloads'] = 'FrontController/myDownloads';
 $route['my-account/edit-address'] = 'FrontController/myAddress';
+$route['my-account/save-address'] = 'FrontController/saveAddress';
 $route['my-account/edit-account'] = 'FrontController/editAccount';
 $route['my-account/makekit-questionnaires'] = 'FrontController/makeKitQuestionairePage';
 $route['my-account/questionnaires'] = 'FrontController/makeKitQuestionaire';

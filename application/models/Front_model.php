@@ -46,6 +46,20 @@ class Front_model extends CI_Model {
         }
 	}
 
+    public function upsert($id,$arr,$table,$whereField) {
+        $this->db->trans_start();
+
+        if ($id==0) {
+            $this->db->insert($table,$arr);
+            $id =  $this->db->insert_id();
+        }else{
+            $this->db->where($whereField, $id);
+            $this->db->update($table, $arr);
+        }
+        $this->db->trans_complete();
+        return $id ; 
+    }
+
     // This function is a common function to fetch data from the table. Can join the tables, can check the conditions as well.
     public function get_data_with_conditions_and_joins($main_table, $fields, $joins = array(), $conditions = array(), $limit = null, $orderBy = array()) {
         $this->db->select($fields)->from($main_table);
