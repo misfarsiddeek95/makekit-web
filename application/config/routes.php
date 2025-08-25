@@ -71,6 +71,7 @@ $route['register-student'] = 'FrontController/registerStudent';
 
 $route['add-to-cart'] = 'FrontController/addToCart';
 $route['remove-cart-item'] = 'FrontController/removeCartItem';
+$route['checkout'] = 'FrontController/checkout';
 
 $route['signin'] = 'FrontController/signIn';
 $route['logout'] = 'FrontController/logout';

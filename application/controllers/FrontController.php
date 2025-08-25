@@ -899,4 +899,14 @@ class FrontController extends Base_Controller {
     echo json_encode($message);
   }
 
+  public function checkout() {
+    $this->check_login_redirect();
+
+    $data['activePage'] = 'MY-ACCOUNT';
+    $data['activeUserPage'] = 'CHECKOUT';
+    $data['pageMain'] = $this->Front_model->fetchPage(24);
+
+    $this->load->view('checkout', $data);
+  }
+
 }
