@@ -224,6 +224,9 @@
 
                             $('#cart_total_td').attr('cart-total', resp.cart_total); // update cart total value as attribute.
 
+                            // update final total
+                            updateFinalTotal(resp.cart_total);
+
                             $(elem).html('לעדכן סל קניות').prop('disabled', true); // disable the button again.
                             $('.cart-count').text(resp.total_item_count).removeClass('d-none'); // cart count updating.
                         }
@@ -251,6 +254,9 @@
 
                             $('#cart_total_td').html(resp.cart_total_html); // update cart total value after remove the item from the cart.
                             $('#cart_total_td').attr('cart-total', resp.cart_total); // update cart total value as attribute.
+
+                            // update final total
+                            updateFinalTotal(resp.cart_total);
                         }
                     },
                     error: function(result) {
@@ -277,6 +283,19 @@
 
                 $('#final_total_td').html(finalOutput);
             });
+
+            const updateFinalTotal = (cartTotalVal) => {
+                const currency = '<?=$cur?>';
+
+                const selectedShippingMethod = sessionStorage.getItem('shipping_method');
+                let delCharge = 0;
+                if (selectedShippingMethod == 'DEL') {
+                    delCharge = 50;
+                }
+
+                const finalTotalCalc = parseFloat(cartTotalVal) + parseFloat(delCharge);
+                $('#final_total_td').html(formatCurrency(finalTotalCalc, currency));
+            }
         </script>
     </body>
 </html>
