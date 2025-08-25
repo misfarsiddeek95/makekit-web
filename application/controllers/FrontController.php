@@ -729,6 +729,10 @@ class FrontController extends Base_Controller {
 
     $data['loadCities'] = $this->Front_model->getAll('cities');
 
+    $userId = $this->session->userdata['user_logged_in']['user_id'];
+
+    list($data['primaryAddress'], $data['secondaryAddress']) = $this->Front_model->my_address($userId);
+
     $this->load->view('my_address', $data);
   }
 

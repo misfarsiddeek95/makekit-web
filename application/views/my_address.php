@@ -35,18 +35,39 @@
                                 <div class="col-md-6">
                                     <h2>כתובת לחיוב</h2>
                                     <div class="d-flex">
-                                        <a href="javascript:void(0)" class="me-auto" onclick="showForm('PRIMARY');">להוסיף כתובת לחיוב</a>
+                                        <a href="javascript:void(0)" class="me-auto" onclick="showForm('PRIMARY', '<?php if(!empty($primaryAddress)) { echo($primaryAddress->add_id); } else { echo(0); } ?>');">להוסיף כתובת לחיוב</a>
                                     </div>
-                                    <address class="fst-italic">לא הגדרת כתובת זאת עדיין.</address>
+                                    
+                                    <address class="fst-italic">
+                                        <?php if (empty($primaryAddress)) {
+                                            echo("לא הגדרת כתובת זאת עדיין.");
+                                        } else {?>
+                                            <?=$primaryAddress->fname." ".$primaryAddress->lname?> <br/>
+                                            <?=$primaryAddress->company ? $primaryAddress->company.'<br/>' : ''?>
+                                            <?=$primaryAddress->address?> <br/>
+                                            <?=$primaryAddress->city_name_hebrew?> <br/>
+                                            <?=$primaryAddress->postal_code?>
+                                        <?php } ?>
+                                    </address>
                                 </div>
 
                                 <!-- Shipping Address -->
                                 <div class="col-md-6">
                                     <h2>כתובת משלוח</h2>
                                     <div class="d-flex">
-                                        <a href="javascript:void(0)" class="me-auto" onclick="showForm('SECONDARY');">להוסיף כתובת משלוח</a>
+                                        <a href="javascript:void(0)" class="me-auto" onclick="showForm('SECONDARY','<?php if(!empty($secondaryAddress)) { echo($secondaryAddress->add_id); } else { echo(0); } ?>');">להוסיף כתובת משלוח</a>
                                     </div>
-                                    <address class="fst-italic">לא הגדרת כתובת זאת עדיין.</address>
+                                    <address class="fst-italic">
+                                        <?php if (empty($secondaryAddress)) {
+                                            echo("לא הגדרת כתובת זאת עדיין.");
+                                        } else {?>
+                                            <?=$secondaryAddress->fname." ".$secondaryAddress->lname?> <br/>
+                                            <?=$secondaryAddress->company ? $secondaryAddress->company.'<br/>' : ''?>
+                                            <?=$secondaryAddress->address?> <br/>
+                                            <?=$secondaryAddress->city_name_hebrew?> <br/>
+                                            <?=$secondaryAddress->postal_code?>
+                                        <?php } ?>
+                                    </address>
                                 </div>
                             </div>
                             <div class="container my-4" id="shippingAddressForm" style="display: none;">
@@ -132,7 +153,7 @@
         <?php $this->load->view('includes/js') ?>
         
         <script>
-            const showForm = (addType) => {
+            const showForm = (addType, addId) => {
                 if (addType == 'PRIMARY') {
                     $('#form-title').text('כתובת לחיוב');
                 } else {
@@ -144,6 +165,7 @@
                 $('#form-type-section').hide();
                 
                 $('#shippingAddressForm').slideDown('slow');
+                $('#add_id').val(addId);
                 $('#add_type').val(addType);
 
                 // Select all inputs EXCEPT #company and #phone, and all selects

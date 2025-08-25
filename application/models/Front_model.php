@@ -604,6 +604,31 @@ class Front_model extends CI_Model {
         $row = $this->db->get()->row();
         return $row ? (int)$row->total_points : 0;
     }
+
+    public function my_address($user_id) {
+        $primary_addr = $this->fetch_single_address($user_id, 0);
+        $secondary_addr = $this->fetch_single_address($user_id, 1);
+
+        return [$primary_addr, $secondary_addr];
+    }
+
+    public function fetch_single_address($user_id, $addType) {
+        $this->db->select('a.*, c.city_name, c.city_name_hebrew');
+        $this->db->from('addresses a');
+        $this->db->where('a.user_id', $user_id);
+        $this->db->where('a.user_type', 2);
+        $this->db->where('a.add_type', $addType);
+        $this->db->join('cities c', 'c.city_id=a.city_id');
+        $this->db->limit(1);
+        $this->db->order_by('a.add_id', 'DESC');
+        $q = $this->db->get();
+        if ($q->num_rows() == 1) {
+            return $q->row();
+        } else {
+            return false;
+        }
+    }
+
         
     // =========================================================================
 }
