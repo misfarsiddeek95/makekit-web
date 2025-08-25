@@ -727,6 +727,8 @@ class FrontController extends Base_Controller {
     $data['activeUserPage'] = 'MY_ADDRESS';
     $data['pageMain'] = $this->Front_model->fetchPage(21);
 
+    $data['loadCities'] = $this->Front_model->getAll('cities');
+
     $this->load->view('my_address', $data);
   }
 
