@@ -128,15 +128,15 @@
                                                 <span class="d-block d-md-none fw-semibold mb-2">משלוח</span>
                                                 <div class="bg-white small lh-lg">
                                                     <div class="form-check form-check-reverse">
-                                                        <input class="form-check-input ms-2" type="radio" name="shipping" id="ship1">
+                                                        <input class="form-check-input ms-2" type="radio" name="shipping" id="ship1" value="DEL" del-charge="50" checked>
                                                         <label class="form-check-label w-100" for="ship1">משלוח מהיר: ₪50.00</label>
                                                     </div>
                                                     <div class="form-check form-check-reverse">
-                                                        <input class="form-check-input ms-2" type="radio" name="shipping" id="ship2">
+                                                        <input class="form-check-input ms-2" type="radio" name="shipping" id="ship2" value="LOCAL_PICK">
                                                         <label class="form-check-label w-100" for="ship2">איסוף מקומי</label>
                                                     </div>
                                                     <div class="form-check form-check-reverse">
-                                                        <input class="form-check-input ms-2" type="radio" name="shipping" id="ship3">
+                                                        <input class="form-check-input ms-2" type="radio" name="shipping" id="ship3" value="DEL_VIA_CONTACT">
                                                         <label class="form-check-label w-100" for="ship3">אספקה דרך איש קשר (פרסים בלבד)</label>
                                                     </div>
                                                     <div class="text-muted mt-2">אפשרויות המשלוח יעודכנו במהלך התשלום בקופה.</div>
@@ -146,7 +146,7 @@
                                         <!-- Total -->
                                         <tr class="fw-bold fs-5">
                                             <th class="fw-semibold">סה"כ</th>
-                                            <td>₪322.00</td>
+                                            <td id="final_total_td"><?=$cur.number_format(($this->cart->total() +  50), 2)?></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -166,6 +166,10 @@
 
         <?php $this->load->view('includes/js') ?>
         <script>
+            $(document).ready(function() {
+                sessionStorage.setItem('shipping_method', 'DEL');
+            });
+
             function decreaseQty(rowId) {
                 $('#update-btn').prop('disabled', false);
                 const input = document.getElementById('qtyInput' + rowId);
@@ -254,6 +258,25 @@
                     }
                 })
             }
+
+            $('input[name="shipping"]').on('change', function() {
+                const rValue = this.value;
+                let delCharge = 0;
+                const cartTotal = parseFloat($('#cart_total_td').attr('cart-total'));
+
+                sessionStorage.setItem('shipping_method', rValue);
+
+                if (rValue == 'DEL') {
+                    delCharge = parseFloat($(this).attr('del-charge'));
+                }
+
+                const finalTotal = cartTotal + delCharge;
+                const currency = '<?=$cur?>';
+
+                const finalOutput = formatCurrency(finalTotal, currency);
+
+                $('#final_total_td').html(finalOutput);
+            });
         </script>
     </body>
 </html>
