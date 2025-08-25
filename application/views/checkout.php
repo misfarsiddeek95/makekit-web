@@ -152,9 +152,8 @@
                                             
                                             <!-- City -->
                                             <div class="mb-3">
-                                                <label for="city" class="form-label">עיר</label>
                                                 <select class="form-select form-select-lg" id="city" name="city" aria-label="city" required>
-                                                    <option selected disabled value="">לִבחוֹר</option>
+                                                    <option selected disabled value="">בחר עיר</option>
                                                     <?php foreach ($loadCities as $row) { ?>
                                                         <option value="<?=$row->city_id?>"><?=$row->city_name?> [ <?=$row->city_name_hebrew?>  ]</option>
                                                     <?php } ?>
@@ -186,6 +185,46 @@
                                                 </label>
                                             </div>
 
+                                            <!-- SHIPPING ADDRESS FORM (Initially hidden) -->
+                                            <div id="shippingAddressForm" style="display: none;">
+                                                <!-- Shipping First Name and Last Name -->
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <input type="text" class="form-control form-control-lg" id="shippingFirstName" name="shipping_first_name" placeholder="שם פרטי">
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <input type="text" class="form-control form-control-lg" id="shippingLastName" name="shipping_last_name" placeholder="שם משפחה">
+                                                    </div>
+                                                </div>
+
+                                                <!-- Shipping Company Name -->
+                                                <div class="mb-3">
+                                                    <input type="text" class="form-control form-control-lg" id="shippingCompany" name="shipping_company" placeholder="שם החברה">
+                                                </div>
+
+                                                <!-- Shipping Street and House Number -->
+                                                <div class="mb-3">
+                                                    <label for="shippingAddress" class="form-label fw-bold">ישראל</label>
+                                                    <input type="text" class="form-control form-control-lg" id="shippingAddress" name="shipping_address" placeholder="מספר בית ושם רחוב">
+                                                </div>
+
+                                                <!-- Shipping Postal Code -->
+                                                <div class="mb-3">
+                                                    <input type="text" class="form-control form-control-lg" id="shippingZip" name="shipping_zip" placeholder="מיקוד / תא דואר">
+                                                </div>
+                                                
+                                                <!-- Shipping City -->
+                                                <div class="mb-3">
+                                                    <select class="form-select form-select-lg" id="shipping_city" name="shipping_city" aria-label="shipping_city" required>
+                                                        <option selected disabled value="">בחר עיר</option>
+                                                        <?php foreach ($loadCities as $row) { ?>
+                                                            <option value="<?=$row->city_id?>"><?=$row->city_name?> [ <?=$row->city_name_hebrew?>  ]</option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <!-- END SHIPPING ADDRESS FORM -->
+
                                             <!-- Order Notes -->
                                             <div class="mb-3">
                                                 <textarea class="form-control form-control-lg" id="notes" rows="3" placeholder="הערות להזמנה"></textarea>
@@ -207,6 +246,22 @@
         <script>
             $(document).ready(function() {
                 sessionStorage.setItem('shipping_method', 'DEL');
+
+                // Listen for changes on the checkbox
+                $('#shippingAddressCheck').on('change', function() {
+                    // Check if the checkbox is checked
+                    if ($(this).is(':checked')) {
+                        // If checked, slowly show the shipping form
+                        $('#shippingAddressForm').slideDown('slow');
+                        // Make the inputs inside the shipping form required for validation
+                        $('#shippingAddressForm').find('input, select').prop('required', true);
+                    } else {
+                        // If unchecked, slowly hide the shipping form
+                        $('#shippingAddressForm').slideUp('slow');
+                        // Remove the required attribute so the form can be submitted without them
+                        $('#shippingAddressForm').find('input, select').prop('required', false);
+                    }
+                });
             });
 
             function decreaseQty(rowId) {
