@@ -77,15 +77,15 @@
                                                 <span class="d-block d-md-none fw-semibold mb-2">משלוח</span>
                                                 <div class="bg-white small lh-lg">
                                                     <div class="form-check form-check-reverse">
-                                                        <input class="form-check-input ms-2" type="radio" name="shipping" id="ship1" value="DEL" del-charge="50" checked>
+                                                        <input class="form-check-input" type="radio" name="shipping" id="ship1" value="DEL" del-charge="50" checked>
                                                         <label class="form-check-label w-100" for="ship1">משלוח מהיר: ₪50.00</label>
                                                     </div>
                                                     <div class="form-check form-check-reverse">
-                                                        <input class="form-check-input ms-2" type="radio" name="shipping" id="ship2" value="LOCAL_PICK">
+                                                        <input class="form-check-input" type="radio" name="shipping" id="ship2" value="LOCAL_PICK">
                                                         <label class="form-check-label w-100" for="ship2">איסוף מקומי</label>
                                                     </div>
                                                     <div class="form-check form-check-reverse">
-                                                        <input class="form-check-input ms-2" type="radio" name="shipping" id="ship3" value="DEL_VIA_CONTACT">
+                                                        <input class="form-check-input" type="radio" name="shipping" id="ship3" value="DEL_VIA_CONTACT">
                                                         <label class="form-check-label w-100" for="ship3">אספקה דרך איש קשר (פרסים בלבד)</label>
                                                     </div>
                                                 </div>
@@ -152,15 +152,19 @@
                                             
                                             <!-- City -->
                                             <div class="mb-3">
-                                                <input type="text" class="form-control form-control-lg" id="city" placeholder="עיר" required>
-                                                <div class="invalid-feedback">
-                                                    אנא הזן את עיר מגוריך.
-                                                </div>
+                                                <label for="city" class="form-label">עיר</label>
+                                                <select class="form-select form-select-lg" id="city" name="city" aria-label="city" required>
+                                                    <option selected disabled value="">לִבחוֹר</option>
+                                                    <?php foreach ($loadCities as $row) { ?>
+                                                        <option value="<?=$row->city_id?>"><?=$row->city_name?> [ <?=$row->city_name_hebrew?>  ]</option>
+                                                    <?php } ?>
+                                                </select>
+                                                <div class="invalid-feedback">אנא בחר עיר.</div>
                                             </div>
 
                                             <!-- Phone Number -->
                                             <div class="mb-3">
-                                                <input type="tel" class="form-control form-control-lg" id="phone" placeholder="טלפון" required>
+                                                <input type="tel" class="form-control form-control-lg" id="phone" placeholder="טלפון" >
                                                 <div class="invalid-feedback">
                                                     אנא הזן מספר טלפון.
                                                 </div>

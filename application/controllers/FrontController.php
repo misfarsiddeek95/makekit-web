@@ -900,12 +900,11 @@ class FrontController extends Base_Controller {
   }
 
   public function checkout() {
-    $this->check_login_redirect();
-
     $data['activePage'] = 'MY-ACCOUNT';
     $data['activeUserPage'] = 'CHECKOUT';
     $data['pageMain'] = $this->Front_model->fetchPage(24);
 
+    $data['loadCities'] = $this->Front_model->getAll('cities');
     $this->load->view('checkout', $data);
   }
 
