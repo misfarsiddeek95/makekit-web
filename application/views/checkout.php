@@ -31,7 +31,7 @@
             </section>
 
             <!-- Cart item section -->
-            <section class="my-5 p-5 cart has-cart-button">
+            <section class="my-account my-5 p-5 cart has-cart-button">
                 <!-- summary -->
                 <div class="row flex-column flex-column-reverse gap-2 gap-md-0 flex-md-row-reverse justify-content-between mt-4 py-4 py-md-0 cart-summary <?= empty($this->cart->contents()) ? 'd-none' : '' ?>">
                     <div class="col-12 col-md-6 text-md-end text-center">
@@ -88,7 +88,6 @@
                                                         <input class="form-check-input ms-2" type="radio" name="shipping" id="ship3" value="DEL_VIA_CONTACT">
                                                         <label class="form-check-label w-100" for="ship3">אספקה דרך איש קשר (פרסים בלבד)</label>
                                                     </div>
-                                                    <div class="text-muted mt-2">אפשרויות המשלוח יעודכנו במהלך התשלום בקופה.</div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -102,6 +101,95 @@
                             </div>
                             <div class="d-grid mt-3">
                                 <button class="btn curved-button btn-add-to-cart py-4">שליחת הזמנה</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 text-md-end">
+                        <div class="section-title-container px-2">
+                            <h1 class="underline-heading-1 fw-semibold">פרטי חיוב</h1>
+                        </div>
+                        <div class="container my-4">
+                            <div class="row justify-content-start">
+                                <!-- Set column width for different screen sizes -->
+                                <div class="col-lg-8 col-md-10">
+                                    <div class="form-container">
+                                        <!-- The 'needs-validation' class enables Bootstrap's built-in form validation -->
+                                        <form class="needs-validation" novalidate>
+                                            
+                                            <!-- First Name and Last Name in one row -->
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <input type="text" class="form-control form-control-lg" id="firstName" placeholder="שם פרטי" required>
+                                                    <div class="invalid-feedback">
+                                                        שם פרטי הוא שדה חובה.
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <input type="text" class="form-control form-control-lg" id="lastName" placeholder="שם משפחה" required>
+                                                    <div class="invalid-feedback">
+                                                        שם משפחה הוא שדה חובה.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Company Name -->
+                                            <div class="mb-3">
+                                                <input type="text" class="form-control form-control-lg" id="company" placeholder="שם החברה">
+                                            </div>
+
+                                            <!-- Street and House Number -->
+                                            <div class="mb-3">
+                                                <input type="text" class="form-control form-control-lg" id="address" placeholder="מספר בית ושם רחוב" required>
+                                                <div class="invalid-feedback">
+                                                    אנא הזן את כתובתך.
+                                                </div>
+                                            </div>
+
+                                            <!-- Postal Code -->
+                                            <div class="mb-3">
+                                                <input type="text" class="form-control form-control-lg" id="zip" placeholder="מיקוד / תא דואר">
+                                            </div>
+                                            
+                                            <!-- City -->
+                                            <div class="mb-3">
+                                                <input type="text" class="form-control form-control-lg" id="city" placeholder="עיר" required>
+                                                <div class="invalid-feedback">
+                                                    אנא הזן את עיר מגוריך.
+                                                </div>
+                                            </div>
+
+                                            <!-- Phone Number -->
+                                            <div class="mb-3">
+                                                <input type="tel" class="form-control form-control-lg" id="phone" placeholder="טלפון" required>
+                                                <div class="invalid-feedback">
+                                                    אנא הזן מספר טלפון.
+                                                </div>
+                                            </div>
+
+                                            <!-- Email Address -->
+                                            <div class="mb-3">
+                                                <input type="email" class="form-control form-control-lg" id="email" placeholder="כתובת אימייל" required>
+                                                <div class="invalid-feedback">
+                                                    אנא הזן כתובת אימייל חוקית.
+                                                </div>
+                                            </div>
+
+                                            <!-- Checkbox for different shipping address -->
+                                            <div class="form-check form-check-reverse text-end mb-3">
+                                                <input class="form-check-input" type="checkbox" value="" id="shippingAddressCheck">
+                                                <label class="form-check-label" for="shippingAddressCheck">
+                                                    משלוח לכתובת אחרת?
+                                                </label>
+                                            </div>
+
+                                            <!-- Order Notes -->
+                                            <div class="mb-3">
+                                                <textarea class="form-control form-control-lg" id="notes" rows="3" placeholder="הערות להזמנה"></textarea>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
                     </div>
