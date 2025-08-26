@@ -235,11 +235,18 @@ class FrontController extends Base_Controller {
     $data['activePage'] = 'CART';
     $data['pageMain'] = $this->Front_model->fetchPage(16);
 
-    /* foreach ($this->cart->contents() as $rowId => $item) {
-      $this->cart->remove($rowId);
-    } */
+    $data['delCharge'] = $this->getDelCharge();
 
     $this->load->view('cart', $data);
+  }
+
+  private function getDelCharge() {
+    $_fields = array('initial_charge');
+    $_order = array(
+      array('field' => 'charges_id', 'order_by_type' => 'DESC'),
+    );
+    $delCharge = $this->Front_model->get_data_with_conditions_and_joins('delivery_charges', $_fields, [], [], 1, $_order);
+    return !empty($delCharge) ? $delCharge->initial_charge : 50;
   }
 
   # sign in
@@ -1015,6 +1022,7 @@ class FrontController extends Base_Controller {
     $data['pageMain'] = $this->Front_model->fetchPage(24);
 
     $data['loadCities'] = $this->Front_model->getAll('cities');
+    $data['delCharge'] = $this->getDelCharge();
     $this->load->view('checkout', $data);
   }
 

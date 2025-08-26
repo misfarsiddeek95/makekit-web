@@ -128,8 +128,8 @@
                                                 <span class="d-block d-md-none fw-semibold mb-2">משלוח</span>
                                                 <div class="bg-white small lh-lg">
                                                     <div class="form-check form-check-reverse">
-                                                        <input class="form-check-input ms-2" type="radio" name="shipping" id="ship1" value="DEL" del-charge="50" checked>
-                                                        <label class="form-check-label w-100" for="ship1">משלוח מהיר: ₪50.00</label>
+                                                        <input class="form-check-input ms-2" type="radio" name="shipping" id="ship1" value="DEL" del-charge="<?=$delCharge?>" checked>
+                                                        <label class="form-check-label w-100" for="ship1">משלוח מהיר: <?=$cur.$delCharge?></label>
                                                     </div>
                                                     <div class="form-check form-check-reverse">
                                                         <input class="form-check-input ms-2" type="radio" name="shipping" id="ship2" value="LOCAL_PICK">
@@ -146,7 +146,7 @@
                                         <!-- Total -->
                                         <tr class="fw-bold fs-5">
                                             <th class="fw-semibold">סה"כ</th>
-                                            <td id="final_total_td"><?=$cur.number_format(($this->cart->total() +  50), 2)?></td>
+                                            <td id="final_total_td"><?=$cur.number_format(($this->cart->total() +  $delCharge), 2)?></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -288,7 +288,7 @@
                 const selectedShippingMethod = sessionStorage.getItem('shipping_method');
                 let delCharge = 0;
                 if (selectedShippingMethod == 'DEL') {
-                    delCharge = 50;
+                    delCharge = '<?=$delCharge?>';
                 }
 
                 const finalTotalCalc = parseFloat(cartTotalVal) + parseFloat(delCharge);
