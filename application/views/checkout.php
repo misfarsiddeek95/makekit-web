@@ -111,21 +111,20 @@
                         <div class="container my-4">
                             <div class="row justify-content-start">
                                 <!-- Set column width for different screen sizes -->
-                                <div class="col-lg-8 col-md-10">
+                                <div class="col-lg-12 col-md-12">
                                     <div class="form-container">
                                         <!-- The 'needs-validation' class enables Bootstrap's built-in form validation -->
                                         <form class="needs-validation" novalidate>
-                                            
                                             <!-- First Name and Last Name in one row -->
                                             <div class="row">
                                                 <div class="col-md-6 mb-3">
-                                                    <input type="text" class="form-control form-control-lg" id="firstName" placeholder="שם פרטי" required>
+                                                <input type="text" class="form-control form-control-lg" id="firstName" name="firstName" placeholder="שם פרטי" required>
                                                     <div class="invalid-feedback">
                                                         שם פרטי הוא שדה חובה.
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 mb-3">
-                                                    <input type="text" class="form-control form-control-lg" id="lastName" placeholder="שם משפחה" required>
+                                                <input type="text" class="form-control form-control-lg" id="lastName" name="lastName" placeholder="שם משפחה" required>
                                                     <div class="invalid-feedback">
                                                         שם משפחה הוא שדה חובה.
                                                     </div>
@@ -134,12 +133,12 @@
 
                                             <!-- Company Name -->
                                             <div class="mb-3">
-                                                <input type="text" class="form-control form-control-lg" id="company" placeholder="שם החברה">
+                                            <input type="text" class="form-control form-control-lg" id="company" name="company" placeholder="שם החברה">
                                             </div>
 
                                             <!-- Street and House Number -->
                                             <div class="mb-3">
-                                                <input type="text" class="form-control form-control-lg" id="address" placeholder="מספר בית ושם רחוב" required>
+                                            <input type="text" class="form-control form-control-lg" id="address" name="address" placeholder="מספר בית ושם רחוב" required>
                                                 <div class="invalid-feedback">
                                                     אנא הזן את כתובתך.
                                                 </div>
@@ -147,12 +146,12 @@
 
                                             <!-- Postal Code -->
                                             <div class="mb-3">
-                                                <input type="text" class="form-control form-control-lg" id="zip" placeholder="מיקוד / תא דואר">
+                                            <input type="text" class="form-control form-control-lg" id="zip" name="zip" placeholder="מיקוד / תא דואר">
                                             </div>
                                             
                                             <!-- City -->
                                             <div class="mb-3">
-                                                <select class="form-select form-select-lg" id="city" name="city" aria-label="city" required>
+                                            <select class="form-select form-select-lg" id="city" name="city" aria-label="city" required>
                                                     <option selected disabled value="">בחר עיר</option>
                                                     <?php foreach ($loadCities as $row) { ?>
                                                         <option value="<?=$row->city_id?>"><?=$row->city_name?> [ <?=$row->city_name_hebrew?>  ]</option>
@@ -163,7 +162,7 @@
 
                                             <!-- Phone Number -->
                                             <div class="mb-3">
-                                                <input type="tel" class="form-control form-control-lg" id="phone" placeholder="טלפון" >
+                                            <input type="tel" class="form-control form-control-lg" id="phone" name="phone" placeholder="טלפון" >
                                                 <div class="invalid-feedback">
                                                     אנא הזן מספר טלפון.
                                                 </div>
@@ -171,7 +170,7 @@
 
                                             <!-- Email Address -->
                                             <div class="mb-3">
-                                                <input type="email" class="form-control form-control-lg" id="email" placeholder="כתובת אימייל" required>
+                                            <input type="email" class="form-control form-control-lg" id="email" name="email" placeholder="כתובת אימייל" required>
                                                 <div class="invalid-feedback">
                                                     אנא הזן כתובת אימייל חוקית.
                                                 </div>
@@ -179,14 +178,14 @@
 
                                             <!-- Checkbox for different shipping address -->
                                             <div class="form-check form-check-reverse text-end mb-3">
-                                                <input class="form-check-input" type="checkbox" value="" id="shippingAddressCheck">
+                                            <input class="form-check-input" type="checkbox" value="" id="shippingAddressCheck" name="shippingAddressCheck">
                                                 <label class="form-check-label" for="shippingAddressCheck">
                                                     משלוח לכתובת אחרת?
                                                 </label>
                                             </div>
 
                                             <!-- SHIPPING ADDRESS FORM (Initially hidden) -->
-                                            <div id="shippingAddressForm" style="display: none;">
+                                        <div id="shippingAddressForm" style="display: none;">
                                                 <!-- Shipping First Name and Last Name -->
                                                 <div class="row">
                                                     <div class="col-md-6 mb-3">
@@ -227,7 +226,7 @@
 
                                             <!-- Order Notes -->
                                             <div class="mb-3">
-                                                <textarea class="form-control form-control-lg" id="notes" rows="3" placeholder="הערות להזמנה"></textarea>
+                                                <textarea class="form-control form-control-lg" id="notes" name="notes" rows="3" placeholder="הערות להזמנה"></textarea>
                                             </div>
                                         </form>
                                     </div>
@@ -263,101 +262,6 @@
                     }
                 });
             });
-
-            function decreaseQty(rowId) {
-                $('#update-btn').prop('disabled', false);
-                const input = document.getElementById('qtyInput' + rowId);
-
-                const orgQty = input.getAttribute('org-qty');
-                const minQty = orgQty > 5 ? 5 : orgQty;
-
-                let val = parseInt(input.value);
-                if (val > minQty) input.value = val - 1;
-            }
-
-            function increaseQty(rowId) {
-                $('#update-btn').prop('disabled', false);
-
-                const input = document.getElementById('qtyInput' + rowId);
-                let val = parseInt(input.value);
-                input.value = val + 1;
-            }
-
-            const updateCart = (elem) => {
-                $(elem).html('טְעִינָה...').prop('disabled', true);
-                
-                const items = {};
-                $('.qtyInput').each(function () {
-                    const qty = $(this).val();
-                    const proId = $(this).attr('product-id');
-
-                    if (proId) {
-                        items[proId] = qty;
-                    }
-                });
-
-                $.ajax({
-                    url: '<?=base_url()?>add-to-cart',
-                    type: 'POST',
-                    data: {items},
-                    success: function(result) {
-                        const resp = $.parseJSON(result);
-                        if (resp.status == 'success') {
-                            
-                            // updating the price of every product after updating the cart.
-                            Object.entries(resp.price_html).forEach(([rowId, htmlPrice]) => {
-                                $(`#price-td${rowId}`).html(htmlPrice);
-                            });
-
-                            // updating subtotal of every product after updating the cart
-                            Object.entries(resp.subtotal_html).forEach(([rowId, subTotal]) => {
-                                $(`#subtotal-td${rowId}`).html(subTotal);
-                            });
-
-                            $('#cart_total_td').html(resp.cart_total_html); // update cart total value after updating the cart.
-
-                            $('#cart_total_td').attr('cart-total', resp.cart_total); // update cart total value as attribute.
-
-                            // update final total
-                            updateFinalTotal(resp.cart_total);
-
-                            $(elem).html('לעדכן סל קניות').prop('disabled', true); // disable the button again.
-                            $('.cart-count').text(resp.total_item_count).removeClass('d-none'); // cart count updating.
-                        }
-                    },
-                    error: function(result) {
-                        console.log('Error', result);
-                    }
-                })
-            }
-
-            const removeCartItem = (rowId) => {
-                $.ajax({
-                    url: '<?=base_url()?>remove-cart-item',
-                    type: 'POST',
-                    data: {rowId},
-                    success: function(result) {
-                        const resp = $.parseJSON(result);
-                        if (resp.status == 'success') {
-                            $(`#rowId${rowId}`).remove();
-                            if (resp.total_item_count == 0) {
-                                $('.cart-count').addClass('d-none')
-                            } else {
-                                $('.cart-count').text(resp.total_item_count).removeClass('d-none');
-                            }
-
-                            $('#cart_total_td').html(resp.cart_total_html); // update cart total value after remove the item from the cart.
-                            $('#cart_total_td').attr('cart-total', resp.cart_total); // update cart total value as attribute.
-
-                            // update final total
-                            updateFinalTotal(resp.cart_total);
-                        }
-                    },
-                    error: function(result) {
-                        console.log('Error', result);
-                    }
-                })
-            }
 
             $('input[name="shipping"]').on('change', function() {
                 const rValue = this.value;
