@@ -797,9 +797,42 @@ class FrontController extends Base_Controller {
     echo json_encode($message);
   }
 
+  // not completed.
   public function saveCheckout() {
     try {
-      $shipping = $this->input->post('shipping');
+
+      $cartProducts = [];
+      if ($this->cart->contents()) {
+        $cartProducts = $this->cart->contents();
+      }
+
+      print '<pre>';
+      print_r($cartProducts);
+      exit;
+      
+
+      $shippingMethod = $this->input->post('shipping');
+      $paymentMethod = $this->input->post('paymentMethod');
+      $firstName = $this->input->post('firstName');
+      $lastName = $this->input->post('lastName');
+      $company = $this->input->post('company');
+      $address = $this->input->post('address');
+      $zip = $this->input->post('zip');
+      $city = $this->input->post('city');
+      $phone = $this->input->post('phone');
+      $email = $this->input->post('email');
+      $note = $this->input->post('note');
+
+      $shippingAddressCheck = isset($_POST['shippingAddressCheck']);
+
+      $shippingArr = [];
+      if ($shippingAddressCheck) {
+        $sFname = $this->input->post('shipping_first_name');
+        $sLname = $this->input->post('shipping_last_name');
+        $sCompany = $this->input->post('shipping_company');
+        $sAddress = $this->input->post('shipping_address');
+        $sZip = $this->input->post('shipping_zip');
+      }
       
     } catch (Exception $ex) {
       $message = array('status' => 'error', 'message' => $ex->getMessage());
