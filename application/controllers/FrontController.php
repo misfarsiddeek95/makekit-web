@@ -736,6 +736,16 @@ class FrontController extends Base_Controller {
     $this->load->view('my_address', $data);
   }
 
+  public function getSingleAddress() {
+    $addType = $this->input->post('addType');
+    $addId = $this->input->post('addId');
+    $userId = $this->session->userdata['user_logged_in']['user_id'];
+
+    $result = $this->Front_model->fetch_single_address($addType,$userId,$addId);
+
+    echo json_encode($result);
+  }
+
   public function saveAddress() {
     try {
       $this->check_login_redirect();
@@ -761,7 +771,7 @@ class FrontController extends Base_Controller {
         'city_id' => $city,
         'phone' => $phone ? $phone : null,
         'postal_code' => $zip,
-        'add_type' => $add_type == 'PRIRMARY' ? 0 : 1,
+        'add_type' => $add_type == 'PRIMARY' ? 0 : 1,
         'company' => $company ? $company : null,
         'user_id' => $userId,
         'status' => 1,

@@ -160,6 +160,34 @@
                     $('#form-title').text('כתובת משלוח');
                 }
 
+                const addressType = addType == 'PRIMARY' ? 0 : 1;
+
+                $.ajax({
+                    url: '<?=base_url()?>get-single-address',
+                    type: 'POST',
+                    data: {addType: addressType, addId},
+                    success: function(result) {
+                        const resp = $.parseJSON(result);
+
+                        // set values to the field if exists.
+                        if (resp) {
+                            $('#add_id').val(resp.add_id);
+                            $('#add_type').val(resp.add_type);
+                            $('#firstName').val(resp.fname);
+                            $('#lastName').val(resp.lname);
+                            $('#company').val(resp.company);
+                            $('#address').val(resp.address);
+                            $('#zip').val(resp.postal_code);
+                            $('#city').val(resp.city_id).trigger('change');
+                            $('#phone').val(resp.phone);
+                            $('#email').val(resp.email);
+                        }
+                    },
+                    error: function(result) {
+
+                    }
+                });
+
                 // This line is okay, but slideDown will work even without it if the element is already hidden.
                 $('#shippingAddressForm').hide(); 
                 $('#form-type-section').hide();

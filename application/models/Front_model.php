@@ -606,16 +606,21 @@ class Front_model extends CI_Model {
     }
 
     public function my_address($user_id) {
-        $primary_addr = $this->fetch_single_address($user_id, 0);
-        $secondary_addr = $this->fetch_single_address($user_id, 1);
+        $primary_addr = $this->fetch_single_address(0, $user_id);
+        $secondary_addr = $this->fetch_single_address(1, $user_id);
 
         return [$primary_addr, $secondary_addr];
     }
 
-    public function fetch_single_address($user_id, $addType) {
+    public function fetch_single_address($addType, $user_id=0, $addId=0) {
         $this->db->select('a.*, c.city_name, c.city_name_hebrew');
         $this->db->from('addresses a');
-        $this->db->where('a.user_id', $user_id);
+        if ($user_id != 0) {
+            $this->db->where('a.user_id', $user_id);
+        }
+        if ($addId != 0) {
+            $this->db->where('a.add_id', $addId);
+        }
         $this->db->where('a.user_type', 2);
         $this->db->where('a.add_type', $addType);
         $this->db->join('cities c', 'c.city_id=a.city_id');
