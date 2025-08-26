@@ -5,15 +5,114 @@
         <?php $this->load->view('includes/head'); ?>
         <style>
             /* Optional: ensure uniform button height and no rounding */
-            .qty-btn,
-            .qtyInput {
-                border-radius: 0 !important;
-                height: 42px;
-                border: 1px solid rgba(0,0,0,.1)
+            .payment-accordion .accordion-item {
+                border: 1px solid #dee2e6;
+                border-radius: 0.375rem; /* 6px */
+                margin-bottom: 0.75rem; /* 12px */
+                overflow: hidden; /* Ensures child elements conform to border-radius */
+                transition: box-shadow 0.2s ease-in-out;
             }
-            .qty-btn:hover {
-                border: 1px solid rgba(0,0,0,.1)
-            } 
+
+            .payment-accordion .accordion-item:has(.accordion-button:not(.collapsed)) {
+                border-color: #4318C3;
+                box-shadow: 0 0 0 2px rgba(67, 24, 195, 0.25);
+            }
+
+            .payment-accordion .accordion-header {
+                margin: 0;
+            }
+
+            .payment-accordion .accordion-button {
+                background-color: #ffffff;
+                color: #212529;
+                font-weight: 500;
+                font-size: 1rem;
+                display: flex;
+                justify-content: space-between; /* Pushes radio to the end */
+                align-items: center;
+                width: 100%;
+                padding: 1rem 1.25rem;
+                text-align: right;
+                border: none; /* Remove border from button itself */
+            }
+            
+            /* Style for the active/open accordion header */
+            .payment-accordion .accordion-button:not(.collapsed) {
+                background-color: #f7f5fc;
+                color: #4318C3;
+                box-shadow: none;
+            }
+
+            /* Remove the default focus shadow */
+            .payment-accordion .accordion-button:focus {
+                box-shadow: none;
+            }
+
+            /* Remove the default Bootstrap accordion icon (chevron) */
+            .payment-accordion .accordion-button::after {
+                display: none;
+            }
+
+            /* Custom Radio Button Visual */
+            .radio-visual {
+                width: 22px;
+                height: 22px;
+                border: 2px solid #adb5bd;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s ease-in-out;
+                flex-shrink: 0; /* Prevents the circle from shrinking on smaller screens */
+                margin-left: 1rem; /* Space between text and radio */
+            }
+
+            /* Inner dot for the "checked" state */
+            .radio-visual::before {
+                content: '';
+                width: 12px;
+                height: 12px;
+                background-color: #4318C3;
+                border-radius: 50%;
+                transform: scale(0);
+                transition: transform 0.2s ease-in-out;
+            }
+
+            /* Style for the "checked" state of our custom radio */
+            .payment-accordion .accordion-button:not(.collapsed) .radio-visual {
+                border-color: #4318C3;
+            }
+
+            .payment-accordion .accordion-button:not(.collapsed) .radio-visual::before {
+                transform: scale(1);
+            }
+
+            .payment-accordion .accordion-body {
+                background-color: #ffffff;
+                padding: 0 1.25rem 1.25rem 1.25rem;
+                font-size: 0.95rem;
+                color: #495057;
+            }
+
+            .payment-accordion .accordion-body ul {
+                padding-right: 1.5rem; /* Indent list items */
+                margin-bottom: 0;
+                list-style-type: none; /* Remove default bullets */
+            }
+            
+            .payment-accordion .accordion-body ul li {
+                position: relative;
+                margin-bottom: 0.5rem;
+            }
+
+            /* Custom bullet point */
+            .payment-accordion .accordion-body ul li::before {
+                content: '•';
+                position: absolute;
+                right: -1.2rem;
+                color: #4318C3;
+                font-weight: bold;
+            }
         </style>
     </head>
     <body>
@@ -99,6 +198,55 @@
                                             </tr>
                                         </tbody>
                                     </table>
+                                </div>
+                                <div class="row justify-content-center">
+                                    <div class="col-lg-12 col-md-12">
+                                        <div class="visually-hidden">
+                                            <input type="radio" name="paymentMethod" id="paymentMethod1" value="icredit">
+                                            <input type="radio" name="paymentMethod" id="paymentMethod2" value="purchase_order" checked>
+                                        </div>
+
+                                        <div class="accordion payment-accordion" id="paymentAccordion">
+                                            <!-- Option 1: iCredit -->
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header" id="headingOne">
+                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                                        תשלום באמצעות iCredit
+                                                        <span class="radio-visual"></span>
+                                                    </button>
+                                                </h2>
+                                                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#paymentAccordion">
+                                                    <div class="accordion-body">
+                                                        <!-- Content for iCredit payment can go here -->
+                                                        סעיף תשלום מקוון
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Option 2: Purchase Order (Active by default) -->
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header" id="headingTwo">
+                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                                        הזמנת רכש לחברות - מוסדות
+                                                        <span class="radio-visual"></span>
+                                                    </button>
+                                                </h2>
+                                                <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo" data-bs-parent="#paymentAccordion">
+                                                    <div class="accordion-body">
+                                                        <p class="mb-3">על מנת לבצע הזמנת רכש יש לבצע את השלבים הבאים:</p>
+                                                        <ul class="list-unstyled">
+                                                            <li>הדפסת ההזמנה שקיבלתם בדוא"ל.</li>
+                                                            <li>לאשר הזמנה + מספר הזמנת רכש.</li>
+                                                            <li>יש להעלות את הקובץ דרך לשונית "צרו קשר".</li>
+                                                            <li>אנו ניצור קשר מיד לאחר מכן.</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
                                 </div>
                                 <div class="d-grid mt-3">
                                     <button type="submit" class="btn curved-button btn-add-to-cart py-4" id="submitButton">שליחת הזמנה</button>
