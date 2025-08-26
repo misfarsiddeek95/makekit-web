@@ -147,7 +147,7 @@
 
                                                 <!-- Postal Code -->
                                                 <div class="mb-3">
-                                                <input type="text" class="form-control form-control-lg" id="zip" name="zip" placeholder="מיקוד / תא דואר">
+                                                    <input type="text" class="form-control form-control-lg" id="zip" name="zip" placeholder="מיקוד / תא דואר" required>
                                                 </div>
                                                 
                                                 <!-- City -->
@@ -245,7 +245,14 @@
         <?php $this->load->view('includes/js') ?>
         <script>
             $(document).ready(function() {
-                sessionStorage.setItem('shipping_method', 'DEL');
+                const selectedShippingMethod = sessionStorage.getItem('shipping_method');
+                if (selectedShippingMethod != null) {
+                const $radio = $(`input[name="shipping"][value="${selectedShippingMethod}"]`);
+                if ($radio.length) {
+                    $radio.prop('checked', true).trigger('change'); 
+                }
+                }
+
 
                 // Listen for changes on the checkbox
                 $('#shippingAddressCheck').on('change', function() {
@@ -313,8 +320,8 @@
                         if (form.checkValidity()) {
                             $('#submitButton').html('הַגָשָׁה...').attr('disabled','disabled')
                             const formData = new FormData(form);
-                            /* $.ajax({
-                                url: '<?=base_url()?>my-account/save-address',
+                            $.ajax({
+                                url: '<?=base_url()?>checkout/save',
                                 type: 'POST',
                                 data: formData,
                                 processData: false,
@@ -335,7 +342,7 @@
                                 error: function(xhr, status, error) {
                                     console.error("AJAX Error:", error);
                                 }
-                            }); */
+                            });
 
                         }
                     }, false);

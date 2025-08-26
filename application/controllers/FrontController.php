@@ -797,6 +797,16 @@ class FrontController extends Base_Controller {
     echo json_encode($message);
   }
 
+  public function saveCheckout() {
+    try {
+      $shipping = $this->input->post('shipping');
+      
+    } catch (Exception $ex) {
+      $message = array('status' => 'error', 'message' => $ex->getMessage());
+    }
+    echo json_encode($message);
+  }
+
   public function editAccount() {
     $this->check_login_redirect();
 
