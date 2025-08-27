@@ -89,3 +89,5 @@ $route['my-account/edit-account'] = 'FrontController/editAccount';
 $route['my-account/makekit-questionnaires'] = 'FrontController/makeKitQuestionairePage';
 $route['my-account/questionnaires'] = 'FrontController/makeKitQuestionaire';
 $route['save-answers'] = 'FrontController/saveAnswers';
+
+$route['my-account/medalian-questionnaires'] = 'FrontController/medalianQuestionairePage';

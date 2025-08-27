@@ -371,14 +371,13 @@ class Front_model extends CI_Model {
         // Filters
         $this->db->where('q.class_id', $class_id);
         $this->db->where('q.subject_id', $subject_id);
+        $this->db->where('q.term_id', 1);
         $this->db->where('q.status', 1);
 
         // No GROUP BY needed because each join is pre-aggregated to 1 row per paper
         $query = $this->db->get();
         return $query->result();
     }
-
-
 
     public function makekit_questions($paper_id) {
         $this->db->select('q.*');
@@ -573,6 +572,51 @@ class Front_model extends CI_Model {
             'total_completed'   => (int)$summary['total_completed'],
             'total_correct'     => (int)$summary['total_correct'],
             'remaining_points'  => (int)$points['remaining_points']
+        ];
+    }
+
+    public function get_student_summary_medalian($student_id) {
+        // 1️⃣ Get total completed papers and total correct answers (last attempt only)
+        $this->db->select("
+            COUNT(latest.paper_id) AS total_completed,
+            IFNULL(SUM(correct_answers.correct_count), 0) AS total_correct
+        ");
+        $this->db->from("
+            (
+                SELECT sa.paper_id, MAX(sa.attempt_id) AS latest_attempt_id
+                FROM student_attempts sa
+                WHERE sa.student_id = " . (int)$student_id . "
+                  AND sa.status = 'completed'
+                GROUP BY sa.paper_id
+            ) AS latest
+        ", NULL, FALSE);
+    
+        // Join to get correct answers from only the latest attempts
+        $this->db->join("
+            (
+                SELECT sa.attempt_id, COUNT(*) AS correct_count
+                FROM student_answers sa
+                WHERE sa.is_correct = 1
+                GROUP BY sa.attempt_id
+            ) AS correct_answers
+        ", 'correct_answers.attempt_id = latest.latest_attempt_id', 'left', FALSE);
+    
+        // ✅ Join with question_paper_main to filter only term_id = 2
+        $this->db->join('question_paper_main qpm', 'qpm.paper_id = latest.paper_id');
+        $this->db->where('qpm.term_id', 2);
+    
+        $summary = $this->db->get()->row_array();
+    
+        // 2️⃣ Remaining points from students table
+        $this->db->select("points_earned_medalian as total_medalian_points");
+        $this->db->from('external_users');
+        $this->db->where('id', $student_id);
+        $points = $this->db->get()->row_array();
+    
+        return [
+            'total_completed'   => (int)$summary['total_completed'],
+            'total_correct'     => (int)$summary['total_correct'],
+            'total_medalian_points'  => (int)$points['total_medalian_points']
         ];
     }    
 

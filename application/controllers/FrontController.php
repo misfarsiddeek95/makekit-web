@@ -1403,19 +1403,30 @@ class FrontController extends Base_Controller {
     return number_format($discount, 2); // 2 decimals
   }
 
-  function generateRandomString($length = 10,$table,$field) {
-    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $charactersLength = strlen($characters);
-    $mr_code = '';
-    for ($i = 0; $i < $length; $i++) {
-      $mr_code .= $characters[rand(0, $charactersLength - 1)];
+  public function medalianQuestionairePage() {
+    $this->check_login_redirect();
+
+    $data['activePage'] = 'MY-ACCOUNT';
+    $data['activeUserPage'] = 'MEDALIAN_QUESTIONAIRE';
+    $data['pageMain'] = $this->Front_model->fetchPage(25);
+
+    $userId = $this->session->userdata['user_logged_in']['user_id'];
+
+    $user_condition = array(
+      array('field' => 'id', 'value' => $userId),
+    );
+
+    $studentRecord = $this->Front_model->get_data_with_conditions_and_joins('external_users', ['class_id', 'subject_id'],[],$user_condition,1);
+
+    if (!$studentRecord) {
+      redirect(base_url('my-account'));
     }
-    $ext = $this->Front_model->checkField($table,$field,$mr_code);
-    if ($ext) {
-        $this->generateRandomString($length = 10,$table,$field);
-    }else{
-        return 'MR'.$mr_code;
-    }
+
+    $data['questionaires'] = [];  // $this->Front_model->questionaires($studentRecord->class_id,$studentRecord->subject_id,$userId);
+
+    $data['summary'] = $this->Front_model->get_student_summary_medalian($userId);
+
+    $this->load->view('medalian_questionaire_page', $data);
   }
 
 }
