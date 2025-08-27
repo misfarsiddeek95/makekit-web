@@ -1422,7 +1422,7 @@ class FrontController extends Base_Controller {
       redirect(base_url('my-account'));
     }
 
-    $data['questionaires'] = [];  // $this->Front_model->questionaires($studentRecord->class_id,$studentRecord->subject_id,$userId);
+    $data['questionaires'] = $this->Front_model->questionaires($studentRecord->class_id,$studentRecord->subject_id,$userId, 2, true);
 
     $data['summary'] = $this->Front_model->get_student_summary_medalian($userId);
 

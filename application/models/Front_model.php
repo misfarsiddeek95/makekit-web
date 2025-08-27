@@ -266,48 +266,7 @@ class Front_model extends CI_Model {
         return $main;
     }
 
-    /* public function questionaires($class_id, $subject_id, $student_id) {
-        $this->db->select("
-            q.paper_id,
-            q.class_id,
-            q.subject_id,
-            q.no_of_attempts,
-            q.paper_duration,
-            q.total_marks_count,
-            q.school_name as paper_title,
-            q.status,
-            q.created_at,
-            
-            -- Remaining attempts calculation
-            (q.no_of_attempts - IFNULL(COUNT(DISTINCT sa.attempt_id), 0)) AS remaining_attempts,
-            
-            -- Correct answers count
-            IFNULL(SUM(CASE WHEN san.is_correct = 1 THEN 1 ELSE 0 END), 0) AS correct_answers
-        ");
-
-        $this->db->from('question_paper_main q');
-
-        // Join attempts for this student
-        $this->db->join(
-            'student_attempts sa',
-            "sa.paper_id = q.paper_id AND sa.student_id = {$this->db->escape_str($student_id)}",
-            'left'
-        );
-
-        // Join answers
-        $this->db->join('student_answers san', 'san.attempt_id = sa.attempt_id', 'left');
-
-        $this->db->where('q.class_id', $class_id);
-        $this->db->where('q.subject_id', $subject_id);
-        $this->db->where('q.status', 1);
-
-        $this->db->group_by('q.paper_id');
-
-        $q = $this->db->get();
-        return $q->result();
-    } */
-
-    public function questionaires($class_id, $subject_id, $student_id) {
+    /* public function questionaires($class_id, $subject_id, $student_id, $term_id=1, $is_medalian=false) {
         $student_id = (int)$student_id; // safety
 
         // 1) Last completed attempt_id per paper for this student
@@ -371,13 +330,100 @@ class Front_model extends CI_Model {
         // Filters
         $this->db->where('q.class_id', $class_id);
         $this->db->where('q.subject_id', $subject_id);
-        $this->db->where('q.term_id', 1);
+        $this->db->where('q.term_id', $term_id);
         $this->db->where('q.status', 1);
 
         // No GROUP BY needed because each join is pre-aggregated to 1 row per paper
         $query = $this->db->get();
         return $query->result();
+    } */
+
+    public function questionaires($class_id, $subject_id, $student_id, $term_id=1, $is_medalian=false) {
+        $student_id = (int)$student_id; // safety
+    
+        // 1) Last completed attempt_id per paper for this student
+        $lastAttemptSub = "
+            SELECT paper_id, MAX(attempt_id) AS last_attempt_id
+            FROM student_attempts
+            WHERE student_id = {$student_id}
+            AND status = 'completed'
+            GROUP BY paper_id
+        ";
+    
+        // 2) Number of completed attempts per paper (for remaining attempts calc)
+        $completedAttemptsSub = "
+            SELECT paper_id, COUNT(*) AS completed_attempts
+            FROM student_attempts
+            WHERE student_id = {$student_id}
+            AND status = 'completed'
+            GROUP BY paper_id
+        ";
+    
+        // 3) Correct answers from ONLY the last completed attempt per paper
+        $correctOnLastAttemptSub = "
+            SELECT sa.paper_id, COUNT(*) AS correct_answers
+            FROM student_answers ans
+            JOIN student_attempts sa
+                ON sa.attempt_id = ans.attempt_id
+            JOIN ({$lastAttemptSub}) last
+                ON last.last_attempt_id = sa.attempt_id
+            WHERE sa.student_id = {$student_id}
+            AND ans.is_correct = 1
+            GROUP BY sa.paper_id
+        ";
+    
+        // 4) All attempts count (used ONLY for is_medalian=true)
+        $allAttemptsSub = "
+            SELECT paper_id, COUNT(*) AS attempts
+            FROM student_attempts
+            WHERE student_id = {$student_id}
+            GROUP BY paper_id
+        ";
+    
+        $this->db->select("
+            q.paper_id,
+            q.class_id,
+            q.subject_id,
+            q.no_of_attempts,
+            q.paper_duration,
+            q.total_marks_count,
+            q.school_name AS paper_title,
+            q.status,
+            q.created_at,
+    
+            -- Remaining attempts: paper limit minus COMPLETED attempts
+            GREATEST(q.no_of_attempts - IFNULL(comp.completed_attempts, 0), 0) AS remaining_attempts,
+    
+            -- Correct answers ONLY from the last completed attempt
+            IFNULL(correct.correct_answers, 0) AS correct_answers_last_attempt
+        ", false);
+    
+        $this->db->from('question_paper_main q');
+    
+        // Join completed attempts count (1 row per paper)
+        $this->db->join("({$completedAttemptsSub}) comp", 'comp.paper_id = q.paper_id', 'left', false);
+    
+        // Join correct answers from last attempt (1 row per paper)
+        $this->db->join("({$correctOnLastAttemptSub}) correct", 'correct.paper_id = q.paper_id', 'left', false);
+    
+        // ✅ Join all attempts (for is_medalian condition)
+        $this->db->join("({$allAttemptsSub}) has_attempts", 'has_attempts.paper_id = q.paper_id', 'left', false);
+    
+        // Filters
+        $this->db->where('q.class_id', $class_id);
+        $this->db->where('q.subject_id', $subject_id);
+        $this->db->where('q.term_id', $term_id);
+        $this->db->where('q.status', 1);
+    
+        // ✅ Extra condition if medalian
+        if ($is_medalian) {
+            $this->db->where('IFNULL(has_attempts.attempts, 0) >', 0);
+        }
+    
+        $query = $this->db->get();
+        return $query->result();
     }
+    
 
     public function makekit_questions($paper_id) {
         $this->db->select('q.*');
