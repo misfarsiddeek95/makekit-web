@@ -1179,7 +1179,8 @@ class FrontController extends Base_Controller {
         'del_charge' => !empty($delCharge) ? $delCharge->initial_charge : 0,
         'coupon_id' => $coup_id,
         'discount' => $coup_amount,
-        'cart_total' => $cartTotal,
+        'cart_total' => $this->cart->total(),
+        'payment_total' => $cartTotal,
         'paid_total' => 0,
         'balance' => $cartTotal,
         'payment_method' => $paymentMethod,
@@ -1192,8 +1193,17 @@ class FrontController extends Base_Controller {
 
       $ins_orider_id = $this->Front_model->place_order($orderId,$addr_arr,$order_arr);
 
+      if (!$ins_orider_id) {
+        throw new Exception("שגיאה בהוספת ההזמנה למסד הנתונים.");
+      }
+
+      // insert order_details and prepare items HTML for email
+      $itemsHtml = '';
+      $itemsSubtotal = 0.0;
+      $currency = isset($this->cur) ? $this->cur : '₪';
+
       foreach ($cartProducts as $item) {
-        $hasDiscount = $item['options']['has_discount'];
+        $hasDiscount = isset($item['options']['has_discount']) ? $item['options']['has_discount'] : false;
 
         $discountPerc = 0;
         if ($hasDiscount) {
@@ -1204,13 +1214,171 @@ class FrontController extends Base_Controller {
           'order_id' => $ins_orider_id, 
           'pro_id' => $item['id'], 
           'qty' => $item['qty'],
-          'act_unit_price' => $item['options']['original_price'],
+          'act_unit_price' => isset($item['options']['original_price']) ? $item['options']['original_price'] : $item['price'],
           'discount_percentage' => $discountPerc,
           'billed_unit_price' => $item['price'],
           'subtotal' => $item['subtotal'],
         );
         $ins = $this->Front_model->insert_me('order_details',$order_detail);
+
+        // item row for email (RTL)
+        $itemsHtml .= '<tr>';
+        $itemsHtml .= '<td style="padding:12px 8px;border:1px solid #e6e6e6; text-align:right;">' . htmlspecialchars($item['name']) . '</td>';
+        $itemsHtml .= '<td style="padding:12px 8px;border:1px solid #e6e6e6; text-align:center;">' . intval($item['qty']) . '</td>';
+        $itemsHtml .= '<td style="padding:12px 8px;border:1px solid #e6e6e6; text-align:center;">' . $currency . number_format($item['price'], 2) . '</td>';
+        $itemsHtml .= '</tr>';
+
+        $itemsSubtotal += floatval($item['subtotal']);
       }
+
+      // Build the email HTML (RTL / Hebrew)
+      // You can replace logo URLs with your real assets via base_url('path/to/image')
+      $logoUrl = base_url('assets/images/email-header.png'); // replace or remove if not needed
+      $adminEmail = 'sales@yourdomain.com'; // <--- replace with real admin email or config
+
+
+      $emailHtml = '
+      <div dir="rtl" lang="he" style="font-family: Arial, Helvetica, sans-serif; color:#444;">
+        <div style="background:#5a12d6; color:#fff; padding:40px 20px; border-radius:6px 6px 0 0; text-align:center;">
+          <h1 style="margin:0; font-size:36px; font-weight:700;">תודה על הזמנתך</h1>
+        </div>
+
+        <div style="background:#fff; padding:30px; border:1px solid #e6e6e6; border-top:none;">
+          <p style="margin:0 0 18px; font-size:16px; color:#666; text-align:right;">
+            שלום ' . htmlspecialchars($firstName) . ',
+          </p>
+
+          <p style="text-align:right; color:#666; font-size:14px;">
+            לידיעתך - קיבלנו את ההזמנה שביצעת מס\'' . htmlspecialchars($order_code) . '\', בתאריך ' . date('d M, Y', strtotime($date)) . '.
+          </p>
+
+          <p style="margin-top:18px; text-align:right; color:#666;">
+            תודה על ביצוע ההזמנה, על מנת שנוכל לספק את הסחורה יש לבצע את הדברים הבאים:
+          </p>
+
+          <ul style="text-align:right; color:#666; margin:8px 0 20px 0; padding-right:18px;">
+            <li>הדפסת ההזמנה שקיבלתם בדוא"ל.</li>
+            <li>לאשר את ההזמנה + מספר הזמנת רכישה.</li>
+            <li>להעלות את הקובץ דרך לשונית "צור קשר".</li>
+            <li>אנו ניצור קשר מיד לאחר מכן.</li>
+          </ul>
+
+          <h3 style="color:#7b24d6; text-align:center; margin:20px 0;">הזמנה ' . htmlspecialchars($order_code) . '</h3>
+
+          <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; margin-bottom:20px;">
+            <thead>
+              <tr>
+                <th style="background:#fafafa; text-align:right; padding:12px; border:1px solid #eee;">מוצר</th>
+                <th style="background:#fafafa; text-align:center; padding:12px; border:1px solid #eee;">כמות</th>
+                <th style="background:#fafafa; text-align:center; padding:12px; border:1px solid #eee;">מחיר</th>
+              </tr>
+            </thead>
+            <tbody>' . $itemsHtml . '</tbody>
+          </table>
+
+          <table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse; margin-bottom:18px;">
+            <tr>
+              <td style="border:1px solid #eee; text-align:right; width:70%;">סכום ביניים:</td>
+              <td style="border:1px solid #eee; text-align:center;">' . $currency . number_format($itemsSubtotal, 2) . '</td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #eee; text-align:right;">משלוח:</td>
+              <td style="border:1px solid #eee; text-align:center;">' . ($delChargeAmount ? $currency . number_format($delChargeAmount, 2) . ' (משלוח מהיר)' : 'ללא' ) . '</td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #eee; text-align:right;">אמצעי תשלום:</td>
+              <td style="border:1px solid #eee; text-align:center;">' . htmlspecialchars($paymentMethod) . '</td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #eee; text-align:right; font-weight:700;">סך הכל:</td>
+              <td style="border:1px solid #eee; text-align:center; font-weight:700;">' . $currency . number_format($cartTotal, 2) . '</td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #eee; text-align:right;">הערה:</td>
+              <td style="border:1px solid #eee; text-align:center;">' . nl2br(htmlspecialchars($note)) . '</td>
+            </tr>
+          </table>
+
+          <div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:space-between;">
+            <div style="flex:1; min-width:260px; border:1px solid #e6e6e6; padding:18px;">
+              <h4 style="margin-top:0; color:#7b24d6; text-align:center;">כתובת לחיוב</h4>
+              <div style="text-align:right; color:#666;">
+                <div>' . htmlspecialchars($firstName . ' ' . $lastName) . '</div>
+                <div>' . htmlspecialchars($company) . '</div>
+                <div>' . htmlspecialchars($address) . '</div>
+                <div>' . htmlspecialchars($city) . '</div>
+                <div>' . htmlspecialchars($zip) . '</div>
+                <div>' . htmlspecialchars($phone) . '</div>
+                <div>' . htmlspecialchars($email) . '</div>
+              </div>
+            </div>
+
+            <div style="flex:1; min-width:260px; border:1px solid #e6e6e6; padding:18px;">
+              <h4 style="margin-top:0; color:#7b24d6; text-align:center;">כתובת משלוח</h4>
+              <div style="text-align:right; color:#666;">
+                <div>' . htmlspecialchars(($shippingAddressCheck ? $sFname . ' ' . $sLname : $firstName . ' ' . $lastName)) . '</div>
+                <div>' . htmlspecialchars(($shippingAddressCheck ? $sCompany : $company)) . '</div>
+                <div>' . htmlspecialchars(($shippingAddressCheck ? $sAddress : $address)) . '</div>
+                <div>' . htmlspecialchars(($shippingAddressCheck ? $sCity : $city)) . '</div>
+                <div>' . htmlspecialchars(($shippingAddressCheck ? $sZip : $zip)) . '</div>
+                <div>' . htmlspecialchars(($shippingAddressCheck ? ($this->input->post('shipping_phone') ? $this->input->post('shipping_phone') : $phone) : $phone)) . '</div>
+                <div>' . htmlspecialchars(($shippingAddressCheck ? ($this->input->post('shipping_email') ? $this->input->post('shipping_email') : $email) : $email)) . '</div>
+              </div>
+            </div>
+          </div>
+
+          <p style="text-align:center; margin-top:30px; color:#999; font-size:13px;">
+            תודה שהשתמשת ב- <a href="' . base_url() . '" style="color:#7b24d6; text-decoration:none;">' . htmlspecialchars(parse_url(base_url(), PHP_URL_HOST)) . '</a>!
+          </p>
+        </div>
+      </div>';
+
+      // --- SEND EMAIL (CI Email) ---
+      // configure email (use SMTP or default mail)
+      $config = array();
+      $config['protocol'] = 'mail'; // or 'smtp'
+      $config['mailtype'] = 'html';
+      $config['charset']  = 'utf-8';
+      $config['newline']  = "\r\n";
+      $config['crlf']     = "\r\n";
+
+      /* // Example SMTP config (uncomment & fill to use SMTP)
+      $config['protocol'] = 'smtp';
+      $config['smtp_host'] = 'smtp.yourhost.com';
+      $config['smtp_user'] = 'user@yourhost.com';
+      $config['smtp_pass'] = 'yourpass';
+      $config['smtp_port'] = 587;
+      $config['smtp_crypto'] = 'tls';
+      */
+
+      $this->load->library('email');
+      $this->email->initialize($config);
+      $this->email->clear(TRUE);
+
+      // from address
+      $fromEmail = 'no-reply@yourdomain.com'; // replace with your from
+      $fromName  = parse_url(base_url(), PHP_URL_HOST);
+
+      $this->email->from($fromEmail, $fromName);
+      $this->email->to($email);
+      // optionally BCC / admin
+      $this->email->bcc($adminEmail);
+
+      $this->email->subject("אישור הזמנה " . $order_code);
+      $this->email->message($emailHtml);
+
+      // send but don't break order if fails
+      try {
+        $sent = $this->email->send();
+        if (!$sent) {
+          // log the detailed debug (but do not throw)
+          log_message('error', 'Order email failed for order_id: ' . $ins_orider_id . ' debug: ' . $this->email->print_debugger(['headers']));
+        }
+      } catch (Exception $e) {
+        // log but continue
+        log_message('error', 'Email exception for order_id ' . $ins_orider_id . ': ' . $e->getMessage());
+      }
+
 
       $message = array('status'=>'success','message' => 'ההזמנה בוצעה בהצלחה.');
       if ($this->session->userdata('coupons') != null) {
