@@ -650,6 +650,30 @@ class Front_model extends CI_Model {
 		}
 	}
 
+    public function get_last_order() {
+		$this->db->select('order_id');
+		$this->db->from('orders');
+		$this->db->limit(1);
+		$this->db->order_by('order_id','DESC');
+		$q = $this->db->get();
+		if ($q->num_rows() == 1) {
+			return $q->row();
+		}else{
+            return false;
+		}
+	}
+
+    public function place_order($o_id,$addr_arr,$order_arr) {
+		$this->db->trans_start();
+		if ($o_id == 0) {
+			$this->db->insert('addresses',$addr_arr);
+			$order_arr['add_id'] =  $this->db->insert_id();
+			$this->db->insert('orders',$order_arr);
+			$order_id = $this->db->insert_id();
+		}
+		$this->db->trans_complete();
+		return $order_id;
+	}
         
     // =========================================================================
 }

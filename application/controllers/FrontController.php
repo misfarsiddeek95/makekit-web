@@ -804,49 +804,6 @@ class FrontController extends Base_Controller {
     echo json_encode($message);
   }
 
-  // not completed.
-  public function saveCheckout() {
-    try {
-
-      $cartProducts = [];
-      if ($this->cart->contents()) {
-        $cartProducts = $this->cart->contents();
-      }
-
-      print '<pre>';
-      print_r($cartProducts);
-      exit;
-      
-
-      $shippingMethod = $this->input->post('shipping');
-      $paymentMethod = $this->input->post('paymentMethod');
-      $firstName = $this->input->post('firstName');
-      $lastName = $this->input->post('lastName');
-      $company = $this->input->post('company');
-      $address = $this->input->post('address');
-      $zip = $this->input->post('zip');
-      $city = $this->input->post('city');
-      $phone = $this->input->post('phone');
-      $email = $this->input->post('email');
-      $note = $this->input->post('note');
-
-      $shippingAddressCheck = isset($_POST['shippingAddressCheck']);
-
-      $shippingArr = [];
-      if ($shippingAddressCheck) {
-        $sFname = $this->input->post('shipping_first_name');
-        $sLname = $this->input->post('shipping_last_name');
-        $sCompany = $this->input->post('shipping_company');
-        $sAddress = $this->input->post('shipping_address');
-        $sZip = $this->input->post('shipping_zip');
-      }
-      
-    } catch (Exception $ex) {
-      $message = array('status' => 'error', 'message' => $ex->getMessage());
-    }
-    echo json_encode($message);
-  }
-
   public function editAccount() {
     $this->check_login_redirect();
 
@@ -1057,10 +1014,11 @@ class FrontController extends Base_Controller {
                 );        
                 $this->session->set_userdata('coupons', $coupon_arr);      
                 if ($result->coupon_type == 0) {
-                  $message = 'You have earned '.$this->cur.''.($result->coupon_amount+0).' discount from your total amount.';
-                }else{
-                  $message = 'You have earned '.($result->coupon_amount+0).'% discount from your total amount.';
+                  $message = 'הרווחת הנחה של '.$this->cur.''.($result->coupon_amount+0).' מהסכום הכולל שלך.';
+                } else {
+                  $message = 'הרווחת הנחה של '.($result->coupon_amount+0).'% מהסכום הכולל שלך.';
                 }
+              
                 $msg = array('status' => 'success', 'message' => $message);                          
             }else{
                 throw new Exception("Coupon code is not valid.");
@@ -1072,6 +1030,224 @@ class FrontController extends Base_Controller {
         $msg = array('status' => 'error', 'message' => $ex->getMessage());       
     }
     echo json_encode($msg);
+  }
+
+  // not completed.
+  public function placeOrder() {
+    try {
+      $orderId = 0;
+      if ($this->session->userdata('user_logged_in') != null) {
+        $cust_id = $this->session->userdata['user_logged_in']['user_id'];
+      }else{
+        $cust_id = 0;
+      }
+      
+      $lasTOredered = $this->Front_model->get_last_order();
+
+      $cartProducts = [];
+      if ($this->cart->contents()) {
+        $cartProducts = $this->cart->contents();
+      }
+
+      if (empty($cartProducts)) {
+        throw new Exception("אין מוצרים זמינים בעגלה לקופה.");
+      }
+
+      $shippingMethod = $this->input->post('shipping');
+      $paymentMethod = $this->input->post('paymentMethod');
+
+      $firstName = $this->input->post('firstName');
+      $lastName = $this->input->post('lastName');
+      $company = $this->input->post('company');
+      $address = $this->input->post('address');
+      $zip = $this->input->post('zip');
+      $city = $this->input->post('city');
+      $phone = $this->input->post('phone');
+      $email = $this->input->post('email');
+      $note = $this->input->post('note');
+
+      $ip = $this->input->ip_address();
+
+      $shippingAddressCheck = isset($_POST['shippingAddressCheck']);
+
+      $shippingArr = [];
+      if ($shippingAddressCheck) {
+        $sFname = $this->input->post('shipping_first_name');
+        $sLname = $this->input->post('shipping_last_name');
+        $sCompany = $this->input->post('shipping_company');
+        $sAddress = $this->input->post('shipping_address');
+        $sZip = $this->input->post('shipping_zip');
+        $sCity = $this->input->post('shipping_city');
+      }
+
+      if ($lasTOredered) {
+        $order_code = '#'.str_pad($lasTOredered->order_id + 1, 8, "0", STR_PAD_LEFT);
+      } else {
+        $order_code = '#00000001';
+      }
+       
+      $date = date('Y-m-d H:i:s');
+
+      // delivery charge
+      $delCharge = [];
+      if($shippingMethod == 'DEL') {
+        $_fields = array('initial_charge','charges_id');
+        $_order = array(
+          array('field' => 'charges_id', 'order_by_type' => 'DESC'),
+        );
+        $delCharge = $this->Front_model->get_data_with_conditions_and_joins('delivery_charges', $_fields, [], [], 1, $_order);
+      }
+
+      $totalwithcoupon = 0;
+      if($this->session->userdata('coupons') != null){ 
+        $coup_id = $this->session->userdata['coupons']['co_id'];
+        if ($this->session->userdata['coupons']['coupon_type'] == 0) {
+          $coup_amount = floatval($this->session->userdata['coupons']['coupon_amount']+0);
+          $totalwithcoupon = $this->cart->total() - $coup_amount;
+        }else{
+          $coup_amount = floatval((($this->session->userdata['coupons']['coupon_amount']+0) / 100) * $this->cart->total());
+          $totalwithcoupon = floatval($this->cart->total() - $coup_amount);
+        }
+      }else{
+        $coup_id = 0;
+        $coup_amount = 0;
+        $totalwithcoupon = floatval($this->cart->total());
+      }
+
+      if ($delCharge) {
+        $cartTotal = round($totalwithcoupon + $delCharge->initial_charge, 2);
+      } else {
+        $cartTotal = round($totalwithcoupon, 2);
+      }
+
+      // city related
+      $selectedCity = $shippingAddressCheck ? $sCity : $city;
+
+      $city_condition = array(
+        array('field' => 'city_id', 'value' => $selectedCity),
+      );
+      $cityRelated = $this->Front_model->get_data_with_conditions_and_joins(
+        'cities',
+        ['reg_id', 'country_id'],
+        [],
+        $city_condition, // was $_condition by mistake
+        1
+      );
+
+      if ($shippingAddressCheck) {
+        $addr_arr = array(
+          'fname'       => $sFname, 
+          'lname'       => $sLname, 
+          'address'     => $sAddress, 
+          'city_id'     => $sCity, 
+          'reg_id'      => $cityRelated->reg_id,
+          'country_id'  => $cityRelated->country_id, 
+          'phone'       => $phone,       // usually stays billing phone
+          'email'       => $email,       // usually stays billing email
+          'postal_code' => $sZip,
+          'add_type'    => 3, 
+          'company'     => $sCompany,
+          'user_id'     => $cust_id,
+          'status'      => 1, 
+          'user_type'   => 2
+        );
+      } else {
+        $addr_arr = array(
+          'fname'       => $firstName, 
+          'lname'       => $lastName, 
+          'address'     => $address, 
+          'city_id'     => $city, 
+          'reg_id'      => $cityRelated->reg_id,
+          'country_id'  => $cityRelated->country_id, 
+          'phone'       => $phone, 
+          'email'       => $email,
+          'postal_code' => $zip,
+          'add_type'    => 3, 
+          'company'     => $company,
+          'user_id'     => $cust_id,
+          'status'      => 1, 
+          'user_type'   => 2
+        );
+      }
+
+      $order_arr = array(
+        'order_code' => $order_code, 
+        'cust_id' => $cust_id, 
+        'order_email' => $email,
+        'delc_id' => !empty($delCharge) ? $delCharge->charges_id : NULL,
+        // 'cart_subtotal' => $this->cart->total(),
+        'del_charge' => !empty($delCharge) ? $delCharge->initial_charge : 0,
+        'coupon_id' => $coup_id,
+        'discount' => $coup_amount,
+        'cart_total' => $cartTotal,
+        'paid_total' => 0,
+        'balance' => $cartTotal,
+        'payment_method' => $paymentMethod,
+        'payment_status' => 0,
+        'note' => $note,
+        'order_status' => 1,
+        'order_date' => $date,
+        'ordered_ip' => $ip
+      );
+
+      $ins_orider_id = $this->Front_model->place_order($orderId,$addr_arr,$order_arr);
+
+      foreach ($cartProducts as $item) {
+        $hasDiscount = $item['options']['has_discount'];
+
+        $discountPerc = 0;
+        if ($hasDiscount) {
+          $discountPerc = $this->getDiscountPercentage($item['options']['original_price'], $item['price']);
+        }
+
+        $order_detail = array(
+          'order_id' => $ins_orider_id, 
+          'pro_id' => $item['id'], 
+          'qty' => $item['qty'],
+          'act_unit_price' => $item['options']['original_price'],
+          'discount_percentage' => $discountPerc,
+          'billed_unit_price' => $item['price'],
+          'subtotal' => $item['subtotal'],
+        );
+        $ins = $this->Front_model->insert_me('order_details',$order_detail);
+      }
+
+      $message = array('status'=>'success','message' => 'ההזמנה בוצעה בהצלחה.');
+      if ($this->session->userdata('coupons') != null) {
+        $coupon_arr = array(
+          'co_id' => '', 
+          'coupon_type' => '', 
+          'coupon_amount' => '', 
+        ); 
+        $this->session->unset_userdata('coupons',$coupon_arr);
+      }
+      $this->cart->destroy();
+      
+    } catch (Exception $ex) {
+      $message = array('status' => 'error', 'message' => $ex->getMessage());
+    }
+    echo json_encode($message);
+  }
+
+  private function getDiscountPercentage($actualPrice, $givenPrice) {
+    if ($actualPrice <= 0) return 0; // prevent division by zero
+    $discount = (($actualPrice - $givenPrice) / $actualPrice) * 100;
+    return number_format($discount, 2); // 2 decimals
+  }
+
+  function generateRandomString($length = 10,$table,$field) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $mr_code = '';
+    for ($i = 0; $i < $length; $i++) {
+      $mr_code .= $characters[rand(0, $charactersLength - 1)];
+    }
+    $ext = $this->Front_model->checkField($table,$field,$mr_code);
+    if ($ext) {
+        $this->generateRandomString($length = 10,$table,$field);
+    }else{
+        return 'MR'.$mr_code;
+    }
   }
 
 }

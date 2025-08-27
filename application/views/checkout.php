@@ -221,8 +221,8 @@
                                 <div class="row justify-content-center">
                                     <div class="col-lg-12 col-md-12">
                                         <div class="visually-hidden">
-                                            <input type="radio" name="paymentMethod" id="paymentMethod1" value="icredit">
-                                            <input type="radio" name="paymentMethod" id="paymentMethod2" value="purchase_order" checked>
+                                            <input type="radio" name="paymentMethod" id="paymentMethod1" value="1">
+                                            <input type="radio" name="paymentMethod" id="paymentMethod2" value="2" checked>
                                         </div>
 
                                         <div class="accordion payment-accordion" id="paymentAccordion">
