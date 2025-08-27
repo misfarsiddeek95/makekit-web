@@ -131,6 +131,25 @@
 
             <!-- Cart item section -->
             <section class="my-account my-5 p-5 cart has-cart-button">
+                <div class="alert alert-primary" role="alert">
+                    יש לך קופון?
+                    <a href="javascript:void(0);" class="alert-link" id="toggle-coupon">לחצו כאן כדי להזין את קוד הקופון</a>
+                </div>
+
+                <div id="apply-coupon-block" class="mt-3 mb-5" style="display:none;">
+                    <div id="coupon-alert" class="w-50"></div>
+                    <div class="container-fluid">
+                        <div class="row justify-content-start">
+                            <div class="col-md-6"> <!-- 👈 half width on medium+ screens -->
+                                <div class="d-flex flex-row gap-2">
+                                    <input type="text" class="form-control" id="couponcode" placeholder="הזן קופון">
+                                    <button class="btn curved-button btn-add-to-cart w-100" onclick="applyCoupon();">החלת קופון</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- summary -->
                 <form class="needs-validation" novalidate>
                     <div class="row flex-column flex-column-reverse gap-2 gap-md-0 flex-md-row-reverse justify-content-between mt-4 py-4 py-md-0 cart-summary <?= empty($this->cart->contents()) ? 'd-none' : '' ?>">
@@ -417,6 +436,11 @@
                         $('#shippingAddressForm').find('input, select').prop('required', false);
                     }
                 });
+
+                $("#toggle-coupon").click(function (e) {
+                    e.preventDefault(); // prevent default link behavior
+                    $("#apply-coupon-block").slideToggle("slow");
+                });
             });
 
             $('input[name="shipping"]').on('change', function() {
@@ -496,6 +520,53 @@
                     }, false);
                 });
             })();
+
+            const applyCoupon = () => {
+                const coupon = $('#couponcode').val();
+                const alertBox = $('#coupon-alert'); // Your alert container
+
+                if (coupon === '') {
+                    alertBox.html(`
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            אנא הזן קוד קופון.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    `);
+                    return;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "<?= base_url(); ?>apply-coupon",
+                    data: { coupon: coupon },
+                    success: function(result) {
+                        const resp = $.parseJSON(result);
+                        if (resp.status === 'success') {
+                            alertBox.html(`
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    ${resp.message}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            `);
+                        } else {
+                            alertBox.html(`
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    ${resp.message}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            `);
+                        }
+                    },
+                    error: function() {
+                        alertBox.html(`
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                אירעה שגיאה בעת החלת הקופון. אנא נסה שוב.
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        `);
+                    }
+                });
+            }
         </script>
     </body>
 </html>

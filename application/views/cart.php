@@ -95,10 +95,13 @@
                     </div>
 
                     <!-- Right: Coupon Input + Button (Right-Aligned) -->
-                    <div class="col-12 col-md-6 d-flex justify-content-start">
-                        <div class="d-flex flex-row gap-2">
-                            <input type="text" class="form-control" style="width: 150px;" placeholder="הזן קופון">
-                            <button class="btn curved-button btn-add-to-cart">החלת קופון</button>
+                    <div class="col-12 col-md-6">
+                        <div id="coupon-alert" class="w-50"></div>
+                        <div class="d-flex justify-content-start">
+                            <div class="d-flex flex-row gap-2">
+                                <input type="text" class="form-control" style="width: 150px;" id="couponcode" placeholder="הזן קופון">
+                                <button class="btn curved-button btn-add-to-cart" onclick="applyCoupon();">החלת קופון</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -310,6 +313,53 @@
 
                 document.body.appendChild(form);
                 form.submit();
+            }
+
+            const applyCoupon = () => {
+                const coupon = $('#couponcode').val();
+                const alertBox = $('#coupon-alert'); // Your alert container
+
+                if (coupon === '') {
+                    alertBox.html(`
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            אנא הזן קוד קופון.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    `);
+                    return;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "<?= base_url(); ?>apply-coupon",
+                    data: { coupon: coupon },
+                    success: function(result) {
+                        const resp = $.parseJSON(result);
+                        if (resp.status === 'success') {
+                            alertBox.html(`
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    ${resp.message}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            `);
+                        } else {
+                            alertBox.html(`
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    ${resp.message}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            `);
+                        }
+                    },
+                    error: function() {
+                        alertBox.html(`
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                אירעה שגיאה בעת החלת הקופון. אנא נסה שוב.
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        `);
+                    }
+                });
             }
         </script>
     </body>

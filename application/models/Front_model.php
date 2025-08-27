@@ -634,6 +634,22 @@ class Front_model extends CI_Model {
         }
     }
 
+    public function checkCouponCode($coupon) {
+		$today = date('Y-m-d');
+		$this->db->select('*');
+		$this->db->from('coupons');
+		$this->db->where('coupon_code',$coupon);
+		$this->db->where('valid_from <=',$today);
+		$this->db->where('valid_to >=',$today);
+		$this->db->limit(1);
+		$q = $this->db->get();
+		if ($q->num_rows() == 1) {
+			return $q->row();
+		}else{
+			return false;
+		}
+	}
+
         
     // =========================================================================
 }

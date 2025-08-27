@@ -68,6 +68,7 @@ $route['student-registration'] = 'FrontController/makekitStudentRegistraion';
 $route['load-intitute-circles'] = 'FrontController/loadInstituteCircles';
 $route['load-subject-instructor'] = 'FrontController/loadSubjectInstructor';
 $route['register-student'] = 'FrontController/registerStudent';
+$route['apply-coupon'] = 'FrontController/applyCoupon';
 
 $route['add-to-cart'] = 'FrontController/addToCart';
 $route['remove-cart-item'] = 'FrontController/removeCartItem';

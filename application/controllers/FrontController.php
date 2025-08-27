@@ -1026,4 +1026,42 @@ class FrontController extends Base_Controller {
     $this->load->view('checkout', $data);
   }
 
+  public function applyCoupon() {
+    try {
+        $coupon = $this->input->post('coupon');
+        if ($coupon != '') {
+            $result = $this->Front_model->checkCouponCode($coupon);
+            if ($result) {
+                if ($this->session->userdata('coupons') != null) {
+                    $coupon_arr = array(
+                        'co_id' => '', 
+                        'coupon_type' => '', 
+                        'coupon_amount' => '', 
+                    ); 
+                    $this->session->unset_userdata('coupons',$coupon_arr);
+                }
+                $coupon_arr = array(
+                    'co_id' => $result->cp_id, 
+                    'coupon_type' => $result->coupon_type, 
+                    'coupon_amount' => $result->coupon_amount, 
+                );        
+                $this->session->set_userdata('coupons', $coupon_arr);      
+                if ($result->coupon_type == 0) {
+                  $message = 'You have earned '.$this->cur.''.($result->coupon_amount+0).' discount from your total amount.';
+                }else{
+                  $message = 'You have earned '.($result->coupon_amount+0).'% discount from your total amount.';
+                }
+                $msg = array('status' => 'success', 'message' => $message);                          
+            }else{
+                throw new Exception("Coupon code is not valid.");
+            }
+        }else{
+            throw new Exception("Coupon code should not be empty.");
+        }
+    } catch (Exception $ex) {
+        $msg = array('status' => 'error', 'message' => $ex->getMessage());       
+    }
+    echo json_encode($msg);
+  }
+
 }
