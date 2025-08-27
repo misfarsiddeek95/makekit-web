@@ -1023,6 +1023,16 @@ class FrontController extends Base_Controller {
 
     $data['loadCities'] = $this->Front_model->getAll('cities');
     $data['delCharge'] = $this->getDelCharge();
+
+    $isLoggedIn = $this->session->userdata('user_logged_in') != null;
+    if ($isLoggedIn) {
+      $userId = $this->session->userdata['user_logged_in']['user_id'];
+      list($data['primaryAddress'], $data['secondaryAddress']) = $this->Front_model->my_address($userId);
+    } else {
+      $data['primaryAddress'] = [];
+      $data['secondaryAddress'] = [];
+    }
+    
     $this->load->view('checkout', $data);
   }
 

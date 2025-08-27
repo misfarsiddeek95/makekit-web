@@ -282,17 +282,18 @@
                                     <div class="col-lg-12 col-md-12">
                                         <div class="form-container">
                                             <!-- The 'needs-validation' class enables Bootstrap's built-in form validation -->
-                                            
+                                                <input type="hidden" id="p_add_id" name="p_add_id" value="<?php if(!empty($primaryAddress)) { echo $primaryAddress->add_id; } else { echo(0); } ?>" />
+                                                <input type="hidden" id="s_add_id" name="s_add_id" value="<?php if(!empty($secondaryAddress)) { echo $secondaryAddress->add_id; } else { echo(0); } ?>" />
                                                 <!-- First Name and Last Name in one row -->
                                                 <div class="row">
                                                     <div class="col-md-6 mb-3">
-                                                    <input type="text" class="form-control form-control-lg" id="firstName" name="firstName" placeholder="שם פרטי" required>
+                                                    <input type="text" class="form-control form-control-lg" id="firstName" name="firstName" placeholder="שם פרטי" value="<?php if(!empty($primaryAddress)) { echo $primaryAddress->fname; } ?>" required>
                                                         <div class="invalid-feedback">
                                                             שם פרטי הוא שדה חובה.
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6 mb-3">
-                                                    <input type="text" class="form-control form-control-lg" id="lastName" name="lastName" placeholder="שם משפחה" required>
+                                                    <input type="text" class="form-control form-control-lg" id="lastName" name="lastName" placeholder="שם משפחה" value="<?php if(!empty($primaryAddress)) { echo $primaryAddress->lname; } ?>" required>
                                                         <div class="invalid-feedback">
                                                             שם משפחה הוא שדה חובה.
                                                         </div>
@@ -301,12 +302,12 @@
 
                                                 <!-- Company Name -->
                                                 <div class="mb-3">
-                                                <input type="text" class="form-control form-control-lg" id="company" name="company" placeholder="שם החברה">
+                                                <input type="text" class="form-control form-control-lg" id="company" name="company" placeholder="שם החברה" value="<?php if(!empty($primaryAddress)) { echo $primaryAddress->company; } ?>">
                                                 </div>
 
                                                 <!-- Street and House Number -->
                                                 <div class="mb-3">
-                                                <input type="text" class="form-control form-control-lg" id="address" name="address" placeholder="מספר בית ושם רחוב" required>
+                                                <input type="text" class="form-control form-control-lg" id="address" name="address" placeholder="מספר בית ושם רחוב" value="<?php if(!empty($primaryAddress)) { echo $primaryAddress->address; } ?>" required>
                                                     <div class="invalid-feedback">
                                                         אנא הזן את כתובתך.
                                                     </div>
@@ -314,15 +315,23 @@
 
                                                 <!-- Postal Code -->
                                                 <div class="mb-3">
-                                                    <input type="text" class="form-control form-control-lg" id="zip" name="zip" placeholder="מיקוד / תא דואר" required>
+                                                    <input type="text" class="form-control form-control-lg" id="zip" name="zip" placeholder="מיקוד / תא דואר" value="<?php if(!empty($primaryAddress)) { echo $primaryAddress->postal_code; } ?>" required>
                                                 </div>
                                                 
                                                 <!-- City -->
                                                 <div class="mb-3">
                                                 <select class="form-select form-select-lg" id="city" name="city" aria-label="city" required>
                                                         <option selected disabled value="">בחר עיר</option>
-                                                        <?php foreach ($loadCities as $row) { ?>
-                                                            <option value="<?=$row->city_id?>"><?=$row->city_name?> [ <?=$row->city_name_hebrew?>  ]</option>
+                                                        <?php 
+                                                            foreach ($loadCities as $row) { 
+                                                                $sel = "";
+                                                                if(!empty($primaryAddress)) {
+                                                                    if($row->city_id == $primaryAddress->city_id) {
+                                                                        $sel = 'selected="selected"';
+                                                                    }
+                                                                }
+                                                        ?>
+                                                            <option value="<?=$row->city_id?>" <?=$sel?>><?=$row->city_name?> [ <?=$row->city_name_hebrew?>  ]</option>
                                                         <?php } ?>
                                                     </select>
                                                     <div class="invalid-feedback">אנא בחר עיר.</div>
@@ -330,7 +339,7 @@
 
                                                 <!-- Phone Number -->
                                                 <div class="mb-3">
-                                                <input type="tel" class="form-control form-control-lg" id="phone" name="phone" placeholder="טלפון" >
+                                                <input type="tel" class="form-control form-control-lg" id="phone" name="phone" placeholder="טלפון" value="<?php if(!empty($primaryAddress)) { echo $primaryAddress->phone; } ?>">
                                                     <div class="invalid-feedback">
                                                         אנא הזן מספר טלפון.
                                                     </div>
@@ -338,7 +347,7 @@
 
                                                 <!-- Email Address -->
                                                 <div class="mb-3">
-                                                <input type="email" class="form-control form-control-lg" id="email" name="email" placeholder="כתובת אימייל" required>
+                                                <input type="email" class="form-control form-control-lg" id="email" name="email" placeholder="כתובת אימייל" value="<?php if(!empty($primaryAddress)) { echo $primaryAddress->email; } ?>" required>
                                                     <div class="invalid-feedback">
                                                         אנא הזן כתובת אימייל חוקית.
                                                     </div>
@@ -357,35 +366,43 @@
                                                     <!-- Shipping First Name and Last Name -->
                                                     <div class="row">
                                                         <div class="col-md-6 mb-3">
-                                                            <input type="text" class="form-control form-control-lg" id="shippingFirstName" name="shipping_first_name" placeholder="שם פרטי">
+                                                            <input type="text" class="form-control form-control-lg" id="shippingFirstName" name="shipping_first_name" placeholder="שם פרטי" value="<?php if(!empty($secondaryAddress)) { echo $secondaryAddress->fname; } ?>">
                                                         </div>
                                                         <div class="col-md-6 mb-3">
-                                                            <input type="text" class="form-control form-control-lg" id="shippingLastName" name="shipping_last_name" placeholder="שם משפחה">
+                                                            <input type="text" class="form-control form-control-lg" id="shippingLastName" name="shipping_last_name" placeholder="שם משפחה" value="<?php if(!empty($secondaryAddress)) { echo $secondaryAddress->lname; } ?>">
                                                         </div>
                                                     </div>
 
                                                     <!-- Shipping Company Name -->
                                                     <div class="mb-3">
-                                                        <input type="text" class="form-control form-control-lg" id="shippingCompany" name="shipping_company" placeholder="שם החברה">
+                                                        <input type="text" class="form-control form-control-lg" id="shippingCompany" name="shipping_company" placeholder="שם החברה" value="<?php if(!empty($secondaryAddress)) { echo $secondaryAddress->company; } ?>">
                                                     </div>
 
                                                     <!-- Shipping Street and House Number -->
                                                     <div class="mb-3">
                                                         <label for="shippingAddress" class="form-label fw-bold">ישראל</label>
-                                                        <input type="text" class="form-control form-control-lg" id="shippingAddress" name="shipping_address" placeholder="מספר בית ושם רחוב">
+                                                        <input type="text" class="form-control form-control-lg" id="shippingAddress" name="shipping_address" placeholder="מספר בית ושם רחוב" value="<?php if(!empty($secondaryAddress)) { echo $secondaryAddress->address; } ?>">
                                                     </div>
 
                                                     <!-- Shipping Postal Code -->
                                                     <div class="mb-3">
-                                                        <input type="text" class="form-control form-control-lg" id="shippingZip" name="shipping_zip" placeholder="מיקוד / תא דואר">
+                                                        <input type="text" class="form-control form-control-lg" id="shippingZip" name="shipping_zip" placeholder="מיקוד / תא דואר" value="<?php if(!empty($secondaryAddress)) { echo $secondaryAddress->postal_code; } ?>">
                                                     </div>
                                                     
                                                     <!-- Shipping City -->
                                                     <div class="mb-3">
                                                         <select class="form-select form-select-lg" id="shipping_city" name="shipping_city" aria-label="shipping_city">
                                                             <option selected disabled value="">בחר עיר</option>
-                                                            <?php foreach ($loadCities as $row) { ?>
-                                                                <option value="<?=$row->city_id?>"><?=$row->city_name?> [ <?=$row->city_name_hebrew?>  ]</option>
+                                                            <?php 
+                                                                foreach ($loadCities as $row) {
+                                                                    $sel = "";
+                                                                    if(!empty($secondaryAddress)) {
+                                                                        if($row->city_id == $secondaryAddress->city_id) {
+                                                                            $sel = 'selected="selected"';
+                                                                        }
+                                                                    }
+                                                            ?>
+                                                                <option value="<?=$row->city_id?>" <?=$sel?>><?=$row->city_name?> [ <?=$row->city_name_hebrew?>  ]</option>
                                                             <?php } ?>
                                                         </select>
                                                     </div>
