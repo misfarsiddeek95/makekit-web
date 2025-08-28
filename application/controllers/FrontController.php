@@ -848,13 +848,14 @@ class FrontController extends Base_Controller {
     $this->check_login_redirect();
 
     $paperId = $this->input->get('formId');
+    $qType = $this->input->get('qtype');
 
     if (!$paperId) {
       redirect(base_url('my-account'));
     }
 
     $data['activePage'] = 'MY-ACCOUNT';
-    $data['activeUserPage'] = 'MAKEKIT_QUESTIONAIRE';
+    $data['activeUserPage'] = $qType == 'makekit' ? 'MAKEKIT_QUESTIONAIRE' : 'MEDALIAN_QUESTIONAIRE';
     $data['pageMain'] = $this->Front_model->fetchPage(23);
 
     $userId = $this->session->userdata['user_logged_in']['user_id'];
@@ -877,7 +878,7 @@ class FrontController extends Base_Controller {
 
     $data['attempt_id'] = $attempt_id;
     $data['paper_detail'] = $paper_detail;
-
+    $data['qtype'] = $qType == 'makekit' ? 'MAKEKIT' : 'MEDALIAN';
 
     if (!$attempt_id) {
       $data['paper_detail'] = [];
@@ -1032,7 +1033,7 @@ class FrontController extends Base_Controller {
     echo json_encode($msg);
   }
 
-  // not completed.
+  // order place
   public function placeOrder() {
     try {
       $orderId = 0;
@@ -1427,6 +1428,29 @@ class FrontController extends Base_Controller {
     $data['summary'] = $this->Front_model->get_student_summary_medalian($userId);
 
     $this->load->view('medalian_questionaire_page', $data);
+  }
+
+  public function startMedalianExam() {
+    try {
+      $code = $this->input->post('code');
+      $code_in_number = base64_decode($code);
+      
+      $_condition = array(
+        array('field' => 'paper_id', 'value' => $code_in_number),
+        array('field' => 'term_id', 'value' => 2),
+      );
+  
+      $isPaperExists = $this->Front_model->get_data_with_conditions_and_joins('question_paper_main', ['paper_id'],[],$_condition,1);
+
+      if (!$isPaperExists) {
+        throw new Exception("נייר אינו קיים עבור קוד נייר נתון.");
+      }
+      
+      $message = array('status' => 'success', 'redirect_url' => base_url().'my-account/questionnaires?formId='.$code.'&qtype=medalian');
+    } catch (Exception $ex) {
+      $message = array('status' => 'error', 'message' => $ex->getMessage());
+    }
+    echo json_encode($message);
   }
 
 }

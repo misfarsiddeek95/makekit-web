@@ -32,6 +32,7 @@
                             <form id="question_form" method="POST">
                                 <input type="hidden" name="attempt_id" value="<?=$attempt_id;?>">
                                 <input type="hidden" name="paper_id" value="<?=$paper_detail['paper_id'];?>">
+                                <input type="hidden" name="paper_type" value="<?=$qtype?>">
                                 
                                 <div class="row m-x-30 m-b-20 text-center">
                                     <div class="col-md-12">
