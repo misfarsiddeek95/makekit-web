@@ -604,6 +604,10 @@ class Front_model extends CI_Model {
                 GROUP BY sa.attempt_id
             ) AS correct_answers
         ", 'correct_answers.attempt_id = latest.latest_attempt_id', 'left', FALSE);
+
+        // ✅ Join with question_paper_main to filter only term_id = 1
+        $this->db->join('question_paper_main qpm', 'qpm.paper_id = latest.paper_id');
+        $this->db->where('qpm.term_id', 1);
     
         $summary = $this->db->get()->row_array();
     
