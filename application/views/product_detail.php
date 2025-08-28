@@ -168,10 +168,17 @@
                             <?php } ?>
 
                             <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <?php 
+                                    $cartQty = $productDetail->qty > 5 ? 5 : $productDetail->qty;
+
+                                    if ($selectedCate == 'awards') {
+                                        $cartQty = $productDetail->qty > 1 ? 1 : $productDetail->qty;
+                                    }
+                                ?>
                                 <!-- Quantity Input with +/- -->
                                 <div class="input-group" style="width: 130px;">
                                     <button class="btn btn-outline-secondary btn-no-hover qty-btn" type="button" onclick="decreaseQty()">−</button>
-                                    <input type="number" id="qtyInput" class="form-control text-center" value="<?=$productDetail->qty > 5 ? 5 : $productDetail->qty ?>" min="1" max="99">
+                                    <input type="number" id="qtyInput" class="form-control text-center" value="<?=$cartQty?>" min="1" max="99">
                                     <button class="btn btn-outline-secondary btn-no-hover qty-btn" type="button" onclick="increaseQty()">+</button>
                                 </div>
 
@@ -325,7 +332,13 @@
 
             function decreaseQty() {
                 const orgAvailableQty = '<?=$productDetail->qty?>';
-                const minQty = orgAvailableQty > 5 ? 5 : orgAvailableQty;
+                const selectedCate = '<?=$selectedCate?>';
+
+                let minQty = orgAvailableQty > 5 ? 5 : orgAvailableQty;
+
+                if (selectedCate == 'awards') {
+                    minQty = orgAvailableQty > 1 ? 1 : orgAvailableQty;
+                }
 
                 const input = document.getElementById('qtyInput');
                 let value = parseInt(input.value);

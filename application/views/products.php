@@ -87,6 +87,7 @@
                                     if (($is_logged_id && $available_points < $p->minimum_eligiblity_value) || $available_points == 'NOT_LOGGED_IN') {
                                         $isDisabled = true;
                                     }
+                                    $cartQty = $p->qty > 1 ? 1 : $p->qty;
                                 }
                         ?>
                             <div class="col-6 col-lg-3 mb-4 text-center products <?= $isDisabled ? 'disabled' : '' ?>">

@@ -74,7 +74,8 @@
                                 <!-- Quantity -->
                                 <td data-label="כמות" class="d-block d-md-table-cell text-md-center">
                                     <div class="input-group justify-content-center" style="width: 110px;">
-                                        <button class="btn btn-outline-secondary px-2 qty-btn" type="button" onclick="decreaseQty('<?=$item['rowid']?>')">-</button>
+                                        <?php $itemCate = $item['options']['category_url']?>
+                                        <button class="btn btn-outline-secondary px-2 qty-btn" type="button" onclick="decreaseQty('<?=$item['rowid']?>', '<?=$itemCate?>')">-</button>
                                         <input type="text" id="qtyInput<?=$item['rowid']?>" product-id="<?=$item['id']?>" org-qty="<?=$item['options']['org_available_qty']?>" class="form-control text-center border-start-0 border-end-0 qtyInput" value="<?= $item['qty'] ?>" readonly>
                                         <button class="btn btn-outline-secondary px-2 qty-btn" type="button" onclick="increaseQty('<?=$item['rowid']?>')">+</button>
                                     </div>
@@ -171,12 +172,16 @@
                 sessionStorage.setItem('shipping_method', 'DEL');
             });
 
-            function decreaseQty(rowId) {
+            function decreaseQty(rowId,proCate) {
                 $('#update-btn').prop('disabled', false);
                 const input = document.getElementById('qtyInput' + rowId);
 
                 const orgQty = input.getAttribute('org-qty');
-                const minQty = orgQty > 5 ? 5 : orgQty;
+                let minQty = orgQty > 5 ? 5 : orgQty;
+                
+                if (proCate == 'awards') {
+                    minQty = orgQty > 1 ? 1 : orgQty;
+                }
 
                 let val = parseInt(input.value);
                 if (val > minQty) input.value = val - 1;
