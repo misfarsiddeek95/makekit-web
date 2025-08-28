@@ -39,23 +39,47 @@
                             <table class="table table-bordered table-responsive text-center">
                                 <thead>
                                     <tr class="table-warning">
-                                        <th>Order No</th>
-                                        <th>Payment Status</th>
-                                        <th>Payment Method</th>
-                                        <th>Order Status</th>
-                                        <th>Total</th>
-                                        <th>Order Date</th>
+                                        <th>מספר הזמנה</th>
+                                        <th>מצב תשלום</th>
+                                        <th>שיטת תשלום</th>
+                                        <th>סטטוס הזמנה</th>
+                                        <th>סַך הַכֹּל</th>
+                                        <th>תאריך הזמנה</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($orders as $row) { ?>
+                                    <?php 
+                                        foreach ($orders as $row) {
+                                            $payMethod = $row->payment_method == 1 ? 'סך התשלום' : 'מזומן במשלוח';
+
+                                            switch ($row->payment_status) {
+                                                case 2:
+                                                    $payStatus = 'הַצלָחָה';
+                                                    break;
+                                                case 0:
+                                                    $payStatus = 'תָלוּי וְעוֹמֵד';
+                                                    break;
+                                                case -1:
+                                                    $payStatus = 'בּוּטלָה';
+                                                    break;
+                                                case -2:
+                                                    $payStatus = 'נִכשָׁל';
+                                                    break;
+                                                case -3:
+                                                    $payStatus = 'נטען בחזרה';
+                                                    break;
+                                                default:
+                                                    $payStatus = 'תָלוּי וְעוֹמֵד';
+                                                    break;
+                                            }
+                                    ?>
                                     <tr>
                                         <td><?=$row->order_code?></td>
-                                        <td><?=$row->payment_status?></td>
-                                        <td><?=$row->payment_method?></td>
+                                        <td><?=$payStatus?></td>
+                                        <td><?=$payMethod?></td>
                                         <td><?=$row->order_status?></td>
                                         <td><?=$row->cart_total?></td>
-                                        <td><?=date('d/m/Y', $row->order_date)?></td>
+                                        <td><?=date('d/m/Y', strtotime($row->order_date))?></td>
                                     </tr>
                                     <?php } ?>
                                 </tbody>

@@ -86,6 +86,7 @@ $route['my-account/edit-address'] = 'FrontController/myAddress';
 $route['get-single-address'] = 'FrontController/getSingleAddress';
 $route['my-account/save-address'] = 'FrontController/saveAddress';
 $route['my-account/edit-account'] = 'FrontController/editAccount';
+$route['update-account'] = 'FrontController/updateAccount';
 $route['my-account/makekit-questionnaires'] = 'FrontController/makeKitQuestionairePage';
 $route['my-account/questionnaires'] = 'FrontController/makeKitQuestionaire';
 $route['save-answers'] = 'FrontController/saveAnswers';

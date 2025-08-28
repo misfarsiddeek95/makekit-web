@@ -709,13 +709,17 @@ class FrontController extends Base_Controller {
 
     $userId = $this->session->userdata['user_logged_in']['user_id'];
 
-    $_fields = array('o.order_code','o.payment_status', 'o.payment_method', 'o.cart_total', 'o.order_status', 'o.order_date');
+    $_fields = array('o.order_code','o.payment_status', 'o.payment_method', 'o.cart_total', 'o.order_date', 'os.status as order_status');
    
+    $_joins = array(
+      array('table' => 'order_statuses os', 'on' => 'os.os_id=o.order_status', 'type' => 'left outer'),
+    );
+
     $_conditions = array(
       array('field' => 'o.cust_id', 'value' => $userId),
     );
     
-    $data['orders'] = $this->Front_model->get_data_with_conditions_and_joins('orders o',$_fields,[],$_conditions);
+    $data['orders'] = $this->Front_model->get_data_with_conditions_and_joins('orders o',$_fields,$_joins,$_conditions);
 
     $this->load->view('my_orders', $data);
   }
@@ -814,7 +818,83 @@ class FrontController extends Base_Controller {
     $data['activeUserPage'] = 'EDIT_ACCOUNT';
     $data['pageMain'] = $this->Front_model->fetchPage(22);
 
+    $userId = $this->session->userdata['user_logged_in']['user_id'];
+
+    $user_condition = array(
+      array('field' => 'id', 'value' => $userId),
+    );
+    $data['accountDetail'] = $this->Front_model->get_data_with_conditions_and_joins('external_users', ['id as user_id', 'name as full_name', 'parent_email as email'],[],$user_condition,1);
+
     $this->load->view('edit_account', $data);
+  }
+
+  public function updateAccount() {
+    $this->check_login_redirect();
+    
+    try {
+      $userId = $this->input->post('user_id');
+      $fullName = $this->input->post('full_name');
+      $email = $this->input->post('email');
+
+      $currentPwd = $this->input->post('current_password');
+      $newPwd = $this->input->post('new_password');
+      $confirmPwd = $this->input->post('confirm_password');
+
+      $user_condition = array(
+        array('field' => 'id', 'value' => $userId),
+      );
+
+      $_joins = array(
+        array('table' => 'addresses a', 'on' => 'a.user_id=eu.id AND a.user_type=2 AND a.add_type=1', 'type' => 'left outer'),
+      );
+
+      $result = $this->Front_model->get_data_with_conditions_and_joins('external_users eu', ['eu.id as user_id', 'eu.name as full_name', 'eu.parent_email as email', 'eu.password', 'a.add_id'],$_joins,$user_condition,1);
+
+      $u_arr = array(
+        'name' => $fullName,
+      );
+
+      if ($email != '') {
+
+        $check_condition = array(
+          array('field' => 'parent_email', 'value' => $email),
+        );
+        $checkuser = $this->Front_model->get_data_with_conditions_and_joins('external_users eu', ['eu.id', 'eu.parent_email'],[],$check_condition,1);
+
+        if ($checkuser && $userId != $checkuser->id) {
+          throw new Exception("שם משתמש כבר קיים. אנא נסה אחר.");
+        }else{
+          $u_arr['parent_email'] = $email;
+        }
+      }
+
+      if ($currentPwd != '') { 
+        if(!password_verify($currentPwd, $result->password)) {
+          throw new Exception("הסיסמה הנוכחית שלך שגויה. אנא נסה להשתמש בסיסמה הנכונה.");
+        }
+
+        if ($newPwd !== $confirmPwd) {
+          throw new Exception("הסיסמה החדשה ואישור הסיסמה אינן תואמות.");
+        }
+
+        $u_arr['password'] = $this->get_encrypted_password($confirmPwd);
+      }
+
+      $add_id = $result->add_id ? $result->add_id : 0;
+
+      $a_arr = array(
+        'fname' => $fullName,
+        'email' => $email
+      );
+      
+      $returnedUserId = $this->Front_model->register_external_user($userId,$add_id,$u_arr,$a_arr);
+
+      $message = array("status" => "success","message" => 'החשבון שלך עודכן בהצלחה.');
+      
+    } catch (Exception $ex) {
+      $message = array("status" => "error","message" => $ex->getMessage());
+    }
+    echo json_encode($message);
   }
 
   public function makeKitQuestionairePage() {
