@@ -29,7 +29,7 @@
                         </div>
                         <div class="col-12 col-md-9 p-4 has-cart-button">
                         
-                            <button class="btn curved-button btn-add-to-cart mb-3 w-50" id="toggle-code">התחל נייר</button>
+                            <button class="btn curved-button btn-add-to-cart mb-3 w-25" id="toggle-code">התחל נייר</button>
                             
                             <div id="question-block" class="mt-3 mb-5" style="display:none;">
                                 <div id="exam-alert" class="w-50"></div>

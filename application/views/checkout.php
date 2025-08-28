@@ -522,7 +522,7 @@
                                         $('.alert').addClass('alert-success').text(resp.message);
 
                                         setTimeout(() => {
-                                            location.reload();
+                                            location.href="<?=base_url()?>";
                                         }, 3000);
                                     } else {
                                         $('.alert').addClass('alert-danger').text(resp.message);
