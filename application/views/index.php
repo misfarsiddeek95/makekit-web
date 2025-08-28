@@ -122,8 +122,18 @@
                     <?php 
                         foreach ($latestProducts as $p) {
                             $cartQty = $p->qty > 5 ? 5 : $p->qty;
+
+                            // Default disabled check
+                            $isDisabled = ($p->qty <= 0);
+
+                            if ($p->cate_id == 5) {
+                                if (($is_logged_id && $available_points < $p->minimum_eligiblity_value) || $available_points == 'NOT_LOGGED_IN') {
+                                    $isDisabled = true;
+                                }
+                                $cartQty = $p->qty > 1 ? 1 : $p->qty;
+                            }
                     ?>
-                        <div class="col-6 col-lg-3 mb-4 text-center products <?= $p->qty < 1 ? 'disabled' : '' ?>">
+                        <div class="col-6 col-lg-3 mb-4 text-center products <?= $isDisabled ? 'disabled' : '' ?>">
                             <a href="<?=base_url()?>product/<?=$p->product_url?>/">
                                 <div class="card product-card">
                                     <?php 
@@ -148,7 +158,20 @@
                                 <h2><?= $p->name ?></h2>
                                 <span class="price">החל מ: <?=$cur?><?= number_format($p->price, 2) ?></span>
                             </a>
+                            <?php if ($is_logged_id && $p->cate_id == 5) { ?>
+                                <div class="mt-2">
+                                    <small>מייקיטים <?= $p->minimum_eligiblity_value ?></small><br>
+                                    <small>נקודות זמינות: <?= $available_points ?></small><br>
+                                    <?php if ($available_points >= $p->minimum_eligiblity_value) { ?>
+                                        <span class="text-success">יש לך מספיק נקודות.</span>
+                                    <?php } else { ?>
+                                        <span class="text-danger">אין לך מספיק נקודות.</span>
+                                    <?php } ?>
+                                </div>
+                            <?php } ?>
+                            <?php if(!$isDisabled) { ?>
                             <button class="btn d-block curved-button btn-add-to-cart" onclick="addToCart(this,<?=$p->id?>,<?=$cartQty?>);">הוספה לסל</button>
+                            <?php } ?>
                         </div>
                     <?php } ?>
                 </div>

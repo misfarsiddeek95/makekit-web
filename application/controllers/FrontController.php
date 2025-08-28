@@ -33,6 +33,24 @@ class FrontController extends Base_Controller {
 
     $data['latestProducts'] = $this->Front_model->get_filtered_products(null,'date',8,0);
 
+    // student available points.
+    $isLoggedIn = $this->session->userdata('user_logged_in') != null;
+
+    if ($isLoggedIn) {
+      $userId = $this->session->userdata['user_logged_in']['user_id'];
+    
+      $_conditions = array(
+        array('field' => 'eu.id', 'value' => $userId),
+      );
+  
+      $loggedUser = $this->Front_model->get_data_with_conditions_and_joins('external_users eu', ['points_earned', 'points_spent'], [], $_conditions, 1);
+      
+      $availablePoints = (int)$loggedUser->points_earned - (int)$loggedUser->points_spent;
+    }
+
+    $data['is_logged_id'] = $isLoggedIn;
+    $data['available_points'] = $isLoggedIn ? $availablePoints : 'NOT_LOGGED_IN';
+
     $this->load->view('index', $data);
   }
 
