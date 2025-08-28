@@ -231,10 +231,11 @@ class Front_model extends CI_Model {
     }
 
     public function get_product_for_cart($productId,$qty) {
-        $this->db->select('p.pro_id AS id, p.name, p.price, p.slug_url as product_url, p.quantity as qty, q.photo_path, q.extension');
+        $this->db->select('p.pro_id AS id, p.name, p.price, p.slug_url as product_url, p.quantity as qty, q.photo_path, q.extension, c.seo_url as category_url');
         $this->db->from('products p');
         $this->db->where('p.pro_id', $productId);
         $this->db->join('photo q', 'q.table="products" AND q.field_id = p.pro_id', 'left outer');
+        $this->db->join('categories c', 'c.cate_id=p.cate_id');
         $this->db->limit(1);
         $q = $this->db->get();
 

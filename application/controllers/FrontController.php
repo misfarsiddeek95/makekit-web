@@ -545,6 +545,7 @@ class FrontController extends Base_Controller {
                   'has_discount' => $hasDiscount ? 1 : 0,
                   'photo' => $productDetail->photo_path ? PHOTO_DOMAIN.'products/'.$productDetail->photo_path.'-std.'.$productDetail->extension : null,
                   'org_available_qty' => $productDetail->qty,
+                  'category_url' => $productDetail->category_url
                 ]
               ]);
               break;
@@ -617,6 +618,7 @@ class FrontController extends Base_Controller {
               'has_discount' => $hasDiscount ? 1 : 0,
               'photo' => $productDetail->photo_path ? PHOTO_DOMAIN.'products/'.$productDetail->photo_path.'-std.'.$productDetail->extension : null,
               'org_available_qty' => $productDetail->qty,
+              'category_url' => $productDetail->category_url
             ]
           ]);
         } else {
@@ -630,6 +632,7 @@ class FrontController extends Base_Controller {
               'has_discount' => $hasDiscount ? 1 : 0,
               'photo' => $productDetail->photo_path ? PHOTO_DOMAIN.'products/'.$productDetail->photo_path.'-std.'.$productDetail->extension : null,
               'org_available_qty' => $productDetail->qty,
+              'category_url' => $productDetail->category_url
             ]
           ]);
         }
@@ -1231,6 +1234,28 @@ class FrontController extends Base_Controller {
         );
         $ins = $this->Front_model->insert_me('order_details',$order_detail);
 
+        // If category is awards, then update the external_users table's points_spent field.
+        $isAward = $item['options']['category_url'] == 'awards'; // check is this AWARDS
+        if ($isAward) {
+          // get the product
+          $pro_condition = array(
+            array('field' => 'pro_id', 'value' => $item['id']),
+          );
+          $getProduct = $this->Front_model->get_data_with_conditions_and_joins('products', ['minimum_eligiblity_value'],[],$pro_condition,1);
+
+          $userId = $this->session->userdata['user_logged_in']['user_id']; // logged in user
+          $user_condition = array(
+            array('field' => 'id', 'value' => $userId),
+          );
+          $userDetail = $this->Front_model->get_data_with_conditions_and_joins('external_users', ['points_spent'],[],$user_condition,1);
+
+          $u_data = array(
+            'points_spent' => $userDetail->points_spent + $getProduct->minimum_eligiblity_value
+          );
+          
+          $this->Front_model->update('id', $userId, 'external_users', $u_data);
+        }
+
         // item row for email (RTL)
         $itemsHtml .= '<tr>';
         $itemsHtml .= '<td style="padding:12px 8px;border:1px solid #e6e6e6; text-align:right;">' . htmlspecialchars($item['name']) . '</td>';
@@ -1293,7 +1318,7 @@ class FrontController extends Base_Controller {
             </tr>
             <tr>
               <td style="border:1px solid #eee; text-align:right;">משלוח:</td>
-              <td style="border:1px solid #eee; text-align:center;">' . ($delChargeAmount ? $currency . number_format($delChargeAmount, 2) . ' (משלוח מהיר)' : 'ללא' ) . '</td>
+              <td style="border:1px solid #eee; text-align:center;">' . ($delCharge->initial_charge ? $currency . number_format($delCharge->initial_charge, 2) . ' (משלוח מהיר)' : 'ללא' ) . '</td>
             </tr>
             <tr>
               <td style="border:1px solid #eee; text-align:right;">אמצעי תשלום:</td>
