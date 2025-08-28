@@ -61,7 +61,7 @@
                                         <?php foreach ($questionaires as $que) { ?>
                                         <tr>
                                             <td><?=date('d/m/Y', strtotime($que->created_at))?></td>
-                                            <td><?=$que->paper_id?></td>
+                                            <td><?=base64_encode($que->paper_id)?></td>
                                             <td><?=$que->no_of_attempts?> / <?=$que->remaining_attempts?></td>
                                             <td><?=$que->correct_answers_last_attempt?></td>
                                             <td><a href="<?=base_url()?>my-account/questionnaires?formId=<?=base64_encode($que->paper_id)?>&qtype=medalian"><?=$que->paper_title?></a></td>
