@@ -1315,12 +1315,14 @@ class FrontController extends Base_Controller {
             <tr>
               <td style="border:1px solid #eee; text-align:right; width:70%;">סכום ביניים:</td>
               <td style="border:1px solid #eee; text-align:center;">' . $currency . number_format($itemsSubtotal, 2) . '</td>
-            </tr>
-            <tr>
+            </tr>';
+            if (!empty($delCharge)) {
+            $emailHtml .'<tr>
               <td style="border:1px solid #eee; text-align:right;">משלוח:</td>
               <td style="border:1px solid #eee; text-align:center;">' . ($delCharge->initial_charge ? $currency . number_format($delCharge->initial_charge, 2) . ' (משלוח מהיר)' : 'ללא' ) . '</td>
-            </tr>
-            <tr>
+            </tr>';
+            }
+            $emailHtml. '<tr>
               <td style="border:1px solid #eee; text-align:right;">אמצעי תשלום:</td>
               <td style="border:1px solid #eee; text-align:center;">' . htmlspecialchars($paymentMethod) . '</td>
             </tr>
