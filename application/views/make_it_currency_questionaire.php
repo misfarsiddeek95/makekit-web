@@ -122,9 +122,12 @@
                     data: $('#question_form').serialize(),
                     success: function(result) {
                         const resp = $.parseJSON(result);
+                        const paperType = '<?=$qtype?>';
+
+                        const urlSegment = paperType == 'MAKEKIT' ? 'makekit-questionnaires' : 'medalian-questionnaires';
 
                         if (resp.status == 'success') {
-                            location.href="<?=base_url('my-account/makekit-questionnaires')?>";
+                            location.href = "<?=base_url('my-account/')?>"+urlSegment;
                         }
                     },
                     error: function(result) {

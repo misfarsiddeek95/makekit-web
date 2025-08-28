@@ -906,7 +906,7 @@ class FrontController extends Base_Controller {
         array('field' => 'paper_id', 'value' => $paper_id),
       );
   
-      $score_value = $this->Front_model->get_data_with_conditions_and_joins('question_paper_main', ['score_per_mcq', 'score_per_structure', 'score_per_essay'],[],$_condition,1);
+      $score_value = $this->Front_model->get_data_with_conditions_and_joins('question_paper_main', ['score_per_mcq', 'score_per_structure', 'score_per_essay', 'term_id as paper_type'],[],$_condition,1);
 
       $student_answers = [];
 
@@ -952,16 +952,25 @@ class FrontController extends Base_Controller {
           'paper_id' => $paper_id,
           'attempt_id' => $attempt_id,
           'points' => $total_awarded_marks,
+          'paper_type' => $score_value->paper_type,
           'earned_date' => date('Y-m-d H:i:s')
         ];
 
         $this->Front_model->insert_me('student_points', $score_data);
 
         // update the score in the students table.
-        $actualTotalScore = $this->Front_model->get_total_score($userId);
-        $u_data = [
-          'points_earned' => $actualTotalScore
-        ];
+        $actualTotalScore = $this->Front_model->get_total_score($userId,$score_value->paper_type);
+        switch ($score_value->paper_type) {
+          case 1:
+            $u_data = ['points_earned' => $actualTotalScore];
+            break;
+          case 2:
+            $u_data = ['points_earned_medalian' => $actualTotalScore];
+            break;
+          default:
+            $u_data = ['points_earned' => 0]; // fallback
+        }
+        
         $this->Front_model->update('id', $userId, 'external_users', $u_data);
 
         $message = array('status' => 'success', 'message' => 'Successfully submitted the answers.');

@@ -680,10 +680,11 @@ class Front_model extends CI_Model {
         return $q->result();
     }
 
-    public function get_total_score($studentId) {
+    public function get_total_score($studentId, $paperType) {
         $this->db->select('SUM(points) as total_points');
         $this->db->from('student_points sp');
         $this->db->where('sp.student_id', $studentId);
+        $this->db->where('sp.paper_type', $paperType);
         $this->db->where('sp.attempt_id = (
             SELECT MAX(attempt_id)
             FROM student_points
