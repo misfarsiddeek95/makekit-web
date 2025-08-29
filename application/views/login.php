@@ -55,7 +55,7 @@
                         <div class="mt-2 d-flex flex-row align-items-center gap-2">
                             <button type="submit" class="btn curved-button btn-add-to-cart" id="submitButton">התחברות</button>
                             <div class="form-check form-check-reverse">
-                                <input class="form-check-input" type="checkbox" id="flexCheckDefault">
+                                <input class="form-check-input" type="checkbox" id="flexCheckDefault" name="remember_me" value="1">
                                 <label class="form-check-label" for="flexCheckDefault">זכור אותי</label>
                             </div>
                         </div>

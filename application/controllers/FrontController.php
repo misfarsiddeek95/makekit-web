@@ -9,6 +9,43 @@ class FrontController extends Base_Controller {
 
     $this->load->library('cart'); // load cart
 
+    // Auto-login using remember-me cookie if no active session
+    if ($this->session->userdata('user_logged_in') == null) {
+      $rememberCookie = $this->input->cookie('mk_remember', TRUE);
+      if ($rememberCookie) {
+        $payload = json_decode($rememberCookie, true);
+        if (is_array($payload) && isset($payload['uid'], $payload['sig'], $payload['exp'])) {
+          if ((int)$payload['exp'] > time()) {
+            $secret = config_item('encryption_key');
+            $expectedSig = hash_hmac('sha256', $payload['uid'].'|'.$payload['exp'], $secret ?: 'mk_fallback_key');
+            if (hash_equals($expectedSig, $payload['sig'])) {
+              $_conditions = array(
+                array('field' => 'eu.id', 'value' => (int)$payload['uid']),
+              );
+              $_fields = array('eu.id as user_id','eu.user_type', 'eu.name as person_name', 'eu.status');
+              $user = $this->Front_model->get_data_with_conditions_and_joins('external_users eu', $_fields, [], $_conditions, 1);
+              if ($user && $user->status == 1) {
+                $log_array = array(
+                  'user_id' => $user->user_id,
+                  'name' => $user->person_name,
+                  'user_type' => $user->user_type
+                );
+                $this->session->set_userdata('user_logged_in', $log_array);
+              } else {
+                $this->_clearRememberCookie();
+              }
+            } else {
+              $this->_clearRememberCookie();
+            }
+          } else {
+            $this->_clearRememberCookie();
+          }
+        } else {
+          $this->_clearRememberCookie();
+        }
+      }
+    }
+
     $cate_cond = array(
       array('field' => 'show_in_site', 'value' => 1),
     );
@@ -294,6 +331,26 @@ class FrontController extends Base_Controller {
           );
 
           $this->session->set_userdata('user_logged_in', $log_array);
+          // Remember me cookie
+          $remember = $this->input->post('remember_me');
+          if (!empty($remember)) {
+            $expires = time() + (86400 * 30); // 30 days
+            $secret = config_item('encryption_key');
+            $sig = hash_hmac('sha256', $result->user_id.'|'.$expires, $secret ?: 'mk_fallback_key');
+            $cookiePayload = json_encode(array('uid' => (int)$result->user_id, 'exp' => $expires, 'sig' => $sig));
+            $this->input->set_cookie(array(
+              'name'   => 'mk_remember',
+              'value'  => $cookiePayload,
+              'expire' => $expires - time(),
+              'path'   => config_item('cookie_path'),
+              'domain' => config_item('cookie_domain'),
+              'secure' => (bool) config_item('cookie_secure'),
+              'httponly' => TRUE,
+              'samesite' => config_item('cookie_samesite')
+            ));
+          } else {
+            $this->_clearRememberCookie();
+          }
           $message = array("status" => "success","message" => "logged in successfully", 'redirect_url' => 'my-account');
 
         } else if(!password_verify($password, $result->password)){
@@ -688,9 +745,23 @@ class FrontController extends Base_Controller {
       );
       $this->session->unset_userdata($sess_array);
       $this->session->sess_destroy();
+      $this->_clearRememberCookie();
       $this->clear_cache();
       redirect(base_url());
     }
+  }
+
+  private function _clearRememberCookie() {
+    $this->input->set_cookie(array(
+      'name'   => 'mk_remember',
+      'value'  => '',
+      'expire' => -3600,
+      'path'   => config_item('cookie_path'),
+      'domain' => config_item('cookie_domain'),
+      'secure' => (bool) config_item('cookie_secure'),
+      'httponly' => TRUE,
+      'samesite' => config_item('cookie_samesite')
+    ));
   }
 
   // USER ACCOUNT - SECTION
