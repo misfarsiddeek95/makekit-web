@@ -28,6 +28,21 @@
 <meta name="description" content="<?=($pageMain && $pageMain->seo_description) ? $pageMain->seo_description : '' ?>">
 <meta name="keywords" content="<?=($pageMain && $pageMain->seo_keywords) ? $pageMain->seo_keywords : '' ?>">
 
+<!-- Standard Favicon -->
+<link rel="icon" type="image/x-icon" href="<?=base_url()?>assets/images/favicon.ico">
+
+<!-- PNG Favicons -->
+<link rel="icon" type="image/png" sizes="32x32" href="<?=base_url()?>assets/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="<?=base_url()?>assets/images/favicon-16x16.png">
+
+<!-- Apple Touch Icon (for iOS devices) -->
+<link rel="apple-touch-icon" sizes="180x180" href="<?=base_url()?>assets/images/apple-touch-icon.png">
+
+<!-- Android / PWA Icons -->
+<link rel="icon" type="image/png" sizes="192x192" href="<?=base_url()?>assets/images/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="<?=base_url()?>assets/images/android-chrome-512x512.png">
+
+
 <!-- Bootstrap 5.3 CSS for layout and toggler functionality -->
 <link href="<?=base_url()?>assets/css/bootstrap.min.css" rel="stylesheet">
 
