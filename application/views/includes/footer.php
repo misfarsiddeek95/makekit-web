@@ -17,7 +17,7 @@
                 </div>
                 <div class="mb-2 mb-md-0">
                     <div class="footer-center-link">
-                        <p><a href="#">הצהרת נגישות</a></p>
+                        <p><a href="<?=base_url('accessibility/');?>">הצהרת נגישות</a></p>
                     </div>
                 </div>
                 <div class="text-center">

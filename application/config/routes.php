@@ -57,6 +57,7 @@ $route['classes'] = 'FrontController/makeitClasses';
 $route['wholesale'] = 'FrontController/makeitWholesale';
 $route['drawings'] = 'FrontController/makeitDrawings';
 $route['contact-us'] = 'FrontController/makeitContactUs';
+$route['accessibility'] = 'FrontController/makeitAccessibility';
 
 $route['product-category/(:any)'] = 'FrontController/makekitProducts/$1';
 $route['product-category/(:any)/page'] = 'FrontController/makekitProducts/$1/1';

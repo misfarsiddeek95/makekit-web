@@ -277,6 +277,14 @@ class FrontController extends Base_Controller {
     $this->load->view('contact', $data);
   }
 
+  # Accessibility
+  public function makeitAccessibility() {
+    $data['activePage'] = 'ACCESSIBILITY';
+    $data['pageMain'] = $this->Front_model->fetchPage(27);
+
+    $this->load->view('accessibility', $data);
+  }
+
   # Cart
   public function makekitCart() {
     $data['activePage'] = 'CART';
