@@ -242,10 +242,6 @@ class FrontController extends Base_Controller {
       'available_points'  => $isLoggedIn ? $availablePoints : 'NOT_LOGGED_IN'
     ];
 
-    /* print '<pre>';
-    print_r($data);
-    exit; */
-
     $this->load->view('products', $data);
   }
   
@@ -264,10 +260,6 @@ class FrontController extends Base_Controller {
     $data['productDetail'] = $productDetail;
     $data['selectedCate'] = $productDetail->cate_url;
     $data['relatedProducts'] = $this->Front_model->get_filtered_products($productDetail->cate_id, 'related_products', 4, 0, $productDetail->id);
-
-    /* print '<pre>';
-    print_r($productDetail);
-    exit; */
 
     $this->load->view('product_detail', $data);
   }
@@ -1009,10 +1001,6 @@ class FrontController extends Base_Controller {
 
     $data['summary'] = $this->Front_model->get_student_summary($userId);
 
-    /* print '<pre>';
-    print_r($data);
-    exit; */
-
     $this->load->view('questionaire_page', $data);
   }
 
@@ -1056,10 +1044,6 @@ class FrontController extends Base_Controller {
       $data['paper_detail'] = [];
       $data['attempt_id'] = 0;
     }
-    
-    /* print '<pre>';
-    print_r($data);
-    exit; */
 
     $this->load->view('make_it_currency_questionaire', $data);
   }
