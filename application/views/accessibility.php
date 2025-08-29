@@ -4,7 +4,7 @@
     <head>
         <?php $this->load->view('includes/head'); ?>
         <style>
-            ul {
+            .accessiblity ul {
                 list-style: disc;
                 padding-right: 40px;
             }
@@ -27,7 +27,7 @@
             </section>
 
             <!-- Wholesale item section -->
-            <section class="p-5">
+            <section class="accessiblity p-5">
                 <?=$pageMain->page_text?>
             </section>
         </main>
