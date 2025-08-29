@@ -25,8 +25,9 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-12 col-md-12 p-4">
+                            <div class="alert d-none" role="alert"></div>
                             <p>שכחת את הסיסמה? יש להזין את שם המשתמש או כתובת האימייל. הוראות איפוס הסיסמה ישלחו באימייל.</p>
-                            <form method="POST" class="needs-validation has-cart-button w-75" novalidate>
+                            <form method="POST" class="needs-validation has-cart-button w-75" novalidate id="requestResetForm">
                                 <div class="mb-3">
                                     <label for="username" class="form-label">שם משתמש או כתובת אימייל</label>
                                     <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="שם משתמש או כתובת אימייל " required>
@@ -36,6 +37,26 @@
                                     <button type="submit" id="submitButton" class="btn curved-button btn-add-to-cart">איפוס סיסמה</button>
                                 </div>
                             </form>
+                            <hr class="my-4">
+                            <div id="setNewPasswordWrapper" class="d-none">
+                                <h5 class="mb-3">הגדרת סיסמה חדשה</h5>
+                                <form method="POST" class="needs-validation has-cart-button w-75" novalidate id="setNewPasswordForm">
+                                    <input type="hidden" id="token" name="token" value="<?=htmlspecialchars($this->input->get('token'))?>">
+                                    <div class="mb-3">
+                                        <label for="new_password" class="form-label">סיסמה חדשה</label>
+                                        <input type="password" class="form-control form-control-lg" id="new_password" name="new_password" required>
+                                        <div class="invalid-feedback">נדרשת סיסמה חדשה</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="confirm_password" class="form-label">אישור סיסמה חדשה</label>
+                                        <input type="password" class="form-control form-control-lg" id="confirm_password" name="confirm_password" required>
+                                        <div class="invalid-feedback">יש לאשר את הסיסמה החדשה</div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <button type="submit" id="updatePwdButton" class="btn curved-button btn-add-to-cart">עדכן סיסמה</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -50,47 +71,88 @@
             (function () {
                 'use strict';
 
-                const forms = document.querySelectorAll('.needs-validation');
+                const requestForm = document.getElementById('requestResetForm');
+                const newPwdForm = document.getElementById('setNewPasswordForm');
 
-                Array.prototype.slice.call(forms).forEach(function (form) {
-                    form.addEventListener('submit', function (event) {
+                // Toggle new password form if token present
+                const tokenInput = document.getElementById('token');
+                if (tokenInput && tokenInput.value) {
+                    document.getElementById('setNewPasswordWrapper').classList.remove('d-none');
+                }
+
+                if (requestForm) {
+                    requestForm.addEventListener('submit', function (event) {
                         event.preventDefault();
                         event.stopPropagation();
 
-                        // Add Bootstrap validation styles
-                        form.classList.add('was-validated');
+                        requestForm.classList.add('was-validated');
 
-                        // Submit with AJAX if valid
-                        if (form.checkValidity()) {
+                        if (requestForm.checkValidity()) {
                             $('#submitButton').html('הַגָשָׁה...').attr('disabled','disabled')
-                            const formData = new FormData(form);
+                            const formData = new FormData(requestForm);
                             $.ajax({
-                                url: '<?=base_url()?>my-account/save-address',
+                                url: '<?=base_url()?>reset-password',
                                 type: 'POST',
                                 data: formData,
                                 processData: false,
                                 contentType: false,
                                 success: function(result) {
                                     const resp = $.parseJSON(result);
-
                                     if (resp.status == 'success') {
-                                        $('.alert').addClass('alert-success').text(resp.message);
-
-                                        setTimeout(() => {
-                                            location.reload();
-                                        }, 3000);
+                                        $('.alert').removeClass('d-none').removeClass('alert-danger').addClass('alert-success').text(resp.message);
                                     } else {
-                                        $('.alert').addClass('alert-danger').text(resp.message);
+                                        $('.alert').removeClass('d-none').removeClass('alert-success').addClass('alert-danger').text(resp.message);
                                     }
                                 },
                                 error: function(xhr, status, error) {
                                     console.error("AJAX Error:", error);
                                 }
                             });
-
                         }
                     }, false);
-                });
+                }
+
+                if (newPwdForm) {
+                    newPwdForm.addEventListener('submit', function (event) {
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        newPwdForm.classList.add('was-validated');
+                        const pwd = document.getElementById('new_password');
+                        const cpwd = document.getElementById('confirm_password');
+                        if (pwd.value !== cpwd.value) {
+                            cpwd.setCustomValidity('הסיסמאות אינן תואמות.');
+                        } else {
+                            cpwd.setCustomValidity('');
+                        }
+
+                        if (newPwdForm.checkValidity()) {
+                            $('#updatePwdButton').html('מעדכן...').attr('disabled','disabled')
+                            const formData = new FormData(newPwdForm);
+                            $.ajax({
+                                url: '<?=base_url()?>update-password',
+                                type: 'POST',
+                                data: formData,
+                                processData: false,
+                                contentType: false,
+                                success: function(result) {
+                                    const resp = $.parseJSON(result);
+                                    if (resp.status == 'success') {
+                                        $('.alert').removeClass('d-none').removeClass('alert-danger').addClass('alert-success').text(resp.message);
+                                        setTimeout(() => {
+                                            location.href = '<?=base_url('my-account/');?>';
+                                        }, 2000);
+                                    } else {
+                                        $('.alert').removeClass('d-none').removeClass('alert-success').addClass('alert-danger').text(resp.message);
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error("AJAX Error:", error);
+                                }
+                            });
+                        }
+                    }, false);
+                }
             })();
         </script>
     </body>

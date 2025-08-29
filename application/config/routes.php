@@ -96,3 +96,8 @@ $route['start-medalian-exam'] = 'FrontController/startMedalianExam';
 
 
 $route['my-account/lost-password'] = 'FrontController/lostPassword';
+// Update password page (with token)
+$route['my-account/reset'] = 'FrontController/updatePasswordPage';
+// Password reset endpoints
+$route['reset-password']['post'] = 'FrontController/resetPassword';
+$route['update-password']['post'] = 'FrontController/updatePassword';

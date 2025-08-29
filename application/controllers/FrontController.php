@@ -1667,4 +1667,103 @@ class FrontController extends Base_Controller {
     $this->load->view('reset_password', $data);
   }
 
+  public function updatePasswordPage() {
+    $data['activePage'] = 'MY-ACCOUNT';
+    $data['activeUserPage'] = 'RESET_PWD';
+    $data['pageMain'] = $this->Front_model->fetchPage(26);
+    $this->load->view('update_password', $data);
+  }
+
+  // Request password reset: create token, email link
+  public function resetPassword() {
+    try {
+      $username = trim($this->input->post('username'));
+      if ($username === '') {
+        throw new Exception('אנא הזן שם משתמש או אימייל.');
+      }
+
+      // Find user by email (parent_email)
+      $_fields = array('eu.id as user_id','eu.parent_email as email','eu.name as name','eu.status');
+      $_conditions = array(
+        array('field' => 'eu.parent_email', 'value' => $username),
+      );
+      $user = $this->Front_model->get_data_with_conditions_and_joins('external_users eu', $_fields, [], $_conditions, 1);
+
+      if (!$user || $user->status != 1) {
+        // Avoid user enumeration: respond success anyway
+        echo json_encode(array('status' => 'success', 'message' => 'אם חשבון קיים, נשלחה הודעת איפוס.'));
+        return;
+      }
+
+      // Generate token
+      $token = bin2hex(random_bytes(32));
+      $expires_at = date('Y-m-d H:i:s', time() + 3600); // 1 hour
+
+      // Store token (upsert into password_resets)
+      $this->db->trans_start();
+      $exists = $this->db->where('user_id', $user->user_id)->limit(1)->get('password_resets')->row();
+      $data = array(
+        'user_id' => $user->user_id,
+        'token' => $token,
+        'expires_at' => $expires_at,
+        'created_at' => date('Y-m-d H:i:s'),
+      );
+      if ($exists) {
+        $this->db->where('user_id', $user->user_id)->update('password_resets', $data);
+      } else {
+        $this->db->insert('password_resets', $data);
+      }
+      $this->db->trans_complete();
+
+      // Send email with link
+      $resetUrl = base_url('my-account/reset?token=' . urlencode($token));
+
+      $this->load->library('email');
+      $config = array('mailtype' => 'html', 'charset' => 'utf-8');
+      $this->email->initialize($config);
+      $this->email->clear(TRUE);
+      $fromEmail = 'no-reply@yourdomain.com';
+      $fromName  = parse_url(base_url(), PHP_URL_HOST);
+      $this->email->from($fromEmail, $fromName);
+      $this->email->to($user->email);
+      $this->email->subject('איפוס סיסמה');
+      $body = '<div dir="rtl">שלום ' . htmlspecialchars($user->name) . ',<br>להגדרת סיסמה חדשה יש ללחוץ על הקישור:<br><a href="' . $resetUrl . '">' . $resetUrl . '</a><br>הקישור תקף לשעה אחת בלבד.</div>';
+      $this->email->message($body);
+      $this->email->send();
+
+      echo json_encode(array('status' => 'success', 'message' => 'אם חשבון קיים, נשלחה הודעת איפוס.'));
+    } catch (Exception $ex) {
+      echo json_encode(array('status' => 'error', 'message' => 'שגיאה בבקשת איפוס.'));
+    }
+  }
+
+  // Update password using token
+  public function updatePassword() {
+    try {
+      $token = trim($this->input->post('token'));
+      $newPwd = trim($this->input->post('new_password'));
+      $confirmPwd = trim($this->input->post('confirm_password'));
+
+      if ($token === '' || $newPwd === '' || $confirmPwd === '') {
+        throw new Exception('שדות נדרשים חסרים.');
+      }
+      if ($newPwd !== $confirmPwd) {
+        throw new Exception('הסיסמאות אינן תואמות.');
+      }
+
+      $row = $this->db->where('token', $token)->limit(1)->get('password_resets')->row();
+      if (!$row) throw new Exception('אסימון לא תקף.');
+      if (strtotime($row->expires_at) < time()) throw new Exception('האסימון פג תוקף.');
+
+      // Update user password
+      $this->db->where('id', $row->user_id)->update('external_users', array('password' => $this->get_encrypted_password($newPwd)));
+      // Invalidate token
+      $this->db->where('user_id', $row->user_id)->delete('password_resets');
+
+      echo json_encode(array('status' => 'success', 'message' => 'הסיסמה עודכנה בהצלחה.')); 
+    } catch (Exception $ex) {
+      echo json_encode(array('status' => 'error', 'message' => $ex->getMessage()));
+    }
+  }
+  
 }
