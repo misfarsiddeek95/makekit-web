@@ -60,7 +60,7 @@
                             </div>
                         </div>
                         <div class="mt-2 d-flex flex-column gap-4">
-                            <a href="#">איפוס סיסמה</a>
+                            <a href="<?=base_url('my-account/lost-password/');?>">איפוס סיסמה</a>
                             <a href="<?=base_url('student-registration/');?>">הרשמה</a>
                         </div>
                     </form>

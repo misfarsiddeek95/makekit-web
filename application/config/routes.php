@@ -93,3 +93,6 @@ $route['save-answers'] = 'FrontController/saveAnswers';
 
 $route['my-account/medalian-questionnaires'] = 'FrontController/medalianQuestionairePage';
 $route['start-medalian-exam'] = 'FrontController/startMedalianExam';
+
+
+$route['my-account/lost-password'] = 'FrontController/lostPassword';

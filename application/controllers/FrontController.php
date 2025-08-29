@@ -1658,4 +1658,13 @@ class FrontController extends Base_Controller {
     echo json_encode($message);
   }
 
+  public function lostPassword() {
+
+    $data['activePage'] = 'MY-ACCOUNT';
+    $data['activeUserPage'] = 'RESET_PWD';
+    $data['pageMain'] = $this->Front_model->fetchPage(26);
+
+    $this->load->view('reset_password', $data);
+  }
+
 }
