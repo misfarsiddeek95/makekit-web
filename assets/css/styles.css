@@ -1,6 +1,25 @@
 /* =================================== */
 /* =========== GLOBAL STYLES ========= */
 /* =================================== */
+
+/* GreycliffHebrewCF Light */
+@font-face {
+  font-family: "GreycliffHebrewCF-Light";
+  src: url("../fonts/GreycliffHebrewCF-Light.woff2") format("woff2"),
+    url("../fonts/GreycliffHebrewCF-Light.woff") format("woff");
+  font-style: normal;
+  font-display: swap;
+}
+
+/* GreycliffHebrewCF Bold */
+@font-face {
+  font-family: "GreycliffHebrewCF-Bold";
+  src: url("../fonts/GreycliffHebrewCF-Bold.woff2") format("woff2"),
+    url("../fonts/GreycliffHebrewCF-Bold.woff") format("woff");
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --brand-grey-light: #f7f7f7;
   --brand-grey-medium: #eeeeee;
@@ -19,14 +38,33 @@
   --american-purple: #3f1f56;
 }
 body {
-  font-family: "Assistant", sans-serif;
   background-color: #fff;
   color: var(--american-purple);
   font-size: 20px;
-  font-weight: 400;
   text-transform: none;
   line-height: 1.5;
 }
+
+/* Headings use Bold */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "GreycliffHebrewCF-Bold", sans-serif;
+  font-weight: 400;
+}
+
+/* Body + form elements use Light */
+body,
+button,
+input,
+select,
+textarea {
+  font-family: "GreycliffHebrewCF-Light", sans-serif;
+}
+
 a {
   text-decoration: none;
   color: var(--lapis-lazuli);
