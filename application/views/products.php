@@ -101,7 +101,7 @@
                                             <img src="<?= $imgSrc ?>" alt="<?= $p->name ?>" class="product-img img-main">
                                             <img src="<?= $imgSrc ?>" alt="<?= $p->name ?>" class="product-img img-hover">
                                         <?php 
-                                            } else {
+                                            } elseif(count($p->images) > 1) {
                                                 foreach ($p->images as $key => $img) {
                                                     $hovCls = ($key % 2 == 0) ? 'img-main' : 'img-hover';
                                                     $imgSrc = PHOTO_DOMAIN.'products/'.$img->photo_path.'-std.'.$img->extension;
@@ -109,10 +109,14 @@
                                             <img src="<?= $imgSrc ?>" alt="<?= $p->name ?>" class="product-img <?= $hovCls ?>">
                                         <?php 
                                                 } 
-                                            }
+                                            } else {
+                                                $imgSrc = base_url('assets/images/product_placeholder.png');
                                         ?>
+                                            <img src="<?= $imgSrc ?>" alt="<?= $p->name ?>" class="product-img img-main">
+                                            <img src="<?= $imgSrc ?>" alt="<?= $p->name ?>" class="product-img img-hover">
+                                        <?php } ?>
                                     </div>
-                                    <h2><?= $p->name ?></h2>
+                                    <h2 class="mt-3"><?= $p->name ?></h2>
                                     <span class="price">החל מ: <?=$cur?><?= number_format($p->price, 2) ?></span>
                                 </a>
 

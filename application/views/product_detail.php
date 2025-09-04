@@ -193,58 +193,66 @@
                             </div>
                         </div>
                         <?php if($productDetail->images) { ?>
-                        <div class="col-12 col-md-6 d-flex justify-content-md-start">
-                            <div class="product-image-wrapper text-center">
+                            <div class="col-12 col-md-6 d-flex justify-content-md-start">
+                                <div class="product-image-wrapper text-center">
 
-                                <!-- Main Image with Zoom Icon -->
-                                <div class="position-relative d-inline-block">
-                                    <img id="mainImage" src="<?=PHOTO_DOMAIN.'products/'.$productDetail->images[0]->photo_path.'-org.'.$productDetail->images[0]->extension ?>" class="img-fluid border rounded" alt="Product" />
-                                
-                                    <button class="btn btn-light rounded-pill position-absolute top-0 start-0 m-2 bg-white" style="transform: scaleX(-1);" data-bs-toggle="modal" data-bs-target="#zoomModal" title="Zoom">
-                                    🔍
-                                    </button>
+                                    <!-- Main Image with Zoom Icon -->
+                                    <div class="position-relative d-inline-block">
+                                        <img id="mainImage" src="<?=PHOTO_DOMAIN.'products/'.$productDetail->images[0]->photo_path.'-org.'.$productDetail->images[0]->extension ?>" class="img-fluid border rounded" alt="Product" />
+                                    
+                                        <button class="btn btn-light rounded-pill position-absolute top-0 start-0 m-2 bg-white" style="transform: scaleX(-1);" data-bs-toggle="modal" data-bs-target="#zoomModal" title="Zoom">
+                                        🔍
+                                        </button>
+                                    </div>
+
+                                    <!-- Thumbnails -->
+                                    <div class="mt-3 d-flex flex-wrap justify-content-start gap-2">
+                                        <?php foreach ($productDetail->images as $key => $img) { ?>
+                                        <img src="<?=PHOTO_DOMAIN.'products/'.$img->photo_path.'-org.'.$img->extension ?>" class="thumb-img img-thumbnail" style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;" onclick="setMainImage(this, <?=$key?>)">
+                                        <?php } ?>
+                                    </div>
                                 </div>
 
-                                <!-- Thumbnails -->
-                                <div class="mt-3 d-flex flex-wrap justify-content-start gap-2">
-                                    <?php foreach ($productDetail->images as $key => $img) { ?>
-                                    <img src="<?=PHOTO_DOMAIN.'products/'.$img->photo_path.'-org.'.$img->extension ?>" class="thumb-img img-thumbnail" style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;" onclick="setMainImage(this, <?=$key?>)">
-                                    <?php } ?>
-                                </div>
-                            </div>
-
-                            <div class="modal fade" id="zoomModal" tabindex="-1" aria-labelledby="zoomModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered modal-fullscreen modal-lg">
-                                    <div class="modal-content bg-dark border-0">
-                                        <div class="modal-header justify-content-end">
-                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body p-0">
-                                            <div id="carouselZoom" class="carousel slide" data-bs-ride="carousel">
-                                                <div class="carousel-inner">
-                                                    <?php 
-                                                        foreach ($productDetail->images as $key => $img) {
-                                                            $act = $key == 0 ? 'active' : '';
-                                                    ?>
-                                                    <div class="carousel-item <?=$act?>">
-                                                        <img src="<?=PHOTO_DOMAIN.'products/'.$img->photo_path.'-org.'.$img->extension ?>" class="d-block w-100 img-fluid" style="max-height: 90vh; object-fit: contain;" alt="Zoom Image <?=$key + 1?>">
+                                <div class="modal fade" id="zoomModal" tabindex="-1" aria-labelledby="zoomModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-fullscreen modal-lg">
+                                        <div class="modal-content bg-dark border-0">
+                                            <div class="modal-header justify-content-end">
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body p-0">
+                                                <div id="carouselZoom" class="carousel slide" data-bs-ride="carousel">
+                                                    <div class="carousel-inner">
+                                                        <?php 
+                                                            foreach ($productDetail->images as $key => $img) {
+                                                                $act = $key == 0 ? 'active' : '';
+                                                        ?>
+                                                        <div class="carousel-item <?=$act?>">
+                                                            <img src="<?=PHOTO_DOMAIN.'products/'.$img->photo_path.'-org.'.$img->extension ?>" class="d-block w-100 img-fluid" style="max-height: 90vh; object-fit: contain;" alt="Zoom Image <?=$key + 1?>">
+                                                        </div>
+                                                        <?php } ?>
                                                     </div>
-                                                    <?php } ?>
+                                                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselZoom" data-bs-slide="prev">
+                                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                        <span class="visually-hidden">Previous</span>
+                                                    </button>
+                                                    <button class="carousel-control-next" type="button" data-bs-target="#carouselZoom" data-bs-slide="next">
+                                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                        <span class="visually-hidden">Next</span>
+                                                    </button>
                                                 </div>
-                                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselZoom" data-bs-slide="prev">
-                                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                    <span class="visually-hidden">Previous</span>
-                                                </button>
-                                                <button class="carousel-control-next" type="button" data-bs-target="#carouselZoom" data-bs-slide="next">
-                                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                                    <span class="visually-hidden">Next</span>
-                                                </button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        <?php } else { ?>
+                            <div class="col-12 col-md-6 d-flex justify-content-md-start">
+                                <div class="product-image-wrapper text-center">
+                                    <div class="position-relative d-inline-block">
+                                        <img id="mainImage" src="<?=base_url('assets/images/product_placeholder.png')?>" class="img-fluid border rounded" alt="Product" />
+                                    </div>
+                                </div>
+                            </div>
                         <?php } ?>
                     </div>
                 </div>
@@ -271,7 +279,7 @@
                                             <img src="<?= $imgSrc ?>" alt="<?= $p->name ?>" class="product-img img-main">
                                             <img src="<?= $imgSrc ?>" alt="<?= $p->name ?>" class="product-img img-hover">
                                         <?php 
-                                            } else {
+                                            } elseif(count($p->images) > 1) {
                                                 foreach ($p->images as $key => $img) {
                                                     $hovCls = ($key % 2 == 0) ? 'img-main' : 'img-hover';
                                                     $imgSrc = PHOTO_DOMAIN.'products/'.$img->photo_path.'-std.'.$img->extension;
@@ -279,10 +287,14 @@
                                             <img src="<?= $imgSrc ?>" alt="<?= $p->name ?>" class="product-img <?= $hovCls ?>">
                                         <?php 
                                                 } 
-                                            }
+                                            } else {
+                                                $imgSrc = base_url('assets/images/product_placeholder.png');
                                         ?>
+                                            <img src="<?= $imgSrc ?>" alt="<?= $p->name ?>" class="product-img img-main">
+                                            <img src="<?= $imgSrc ?>" alt="<?= $p->name ?>" class="product-img img-hover">
+                                        <?php } ?>
                                     </div>
-                                    <h2><?= $p->name ?></h2>
+                                    <h2 class="mt-3"><?= $p->name ?></h2>
                                     <span class="price">החל מ: <?=$cur?><?= number_format($p->price, 2) ?></span>
                                 </a>
                                 <button class="btn d-block curved-button btn-add-to-cart">הוספה לסל</button>
