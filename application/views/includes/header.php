@@ -18,7 +18,7 @@
                     <!-- Left Side: Logo -->
                     <div>
                         <a class="navbar-brand" href="<?=base_url()?>">
-                            <img src="https://makesmart.co.il/wp-content/uploads/2023/08/logo.png" alt="MakeKit Logo" class="desktop-logo">
+                            <img src="<?=base_url()?>assets/images/makekitlogo.png" alt="MakeKit Logo" class="desktop-logo">
                         </a>
                     </div>
                     
@@ -62,7 +62,7 @@
         <!-- Mobile Main Header (Logo and top icons) -->
         <div class="mobile-header-top">
             <a class="navbar-brand mobile-logo-link" href="<?=base_url()?>">
-                    <img src="https://makesmart.co.il/wp-content/uploads/2023/08/logo.png" alt="MakeKit Logo" class="mobile-logo">
+                    <img src="<?=base_url()?>assets/images/makekitlogo.png" alt="MakeKit Logo" class="mobile-logo">
             </a>
             <div class="mobile-icons-top">
                 <!-- Non-scrolled order (Toggler on right in RTL) -->

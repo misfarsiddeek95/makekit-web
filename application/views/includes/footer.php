@@ -22,7 +22,7 @@
                 </div>
                 <div class="text-center">
                     <div class="payment-icons">
-                        <img src="https://makesmart.co.il/wp-content/uploads/2023/08/Visa.png" alt="Visa">
+                        <img src="<?=base_url()?>assets/images/visa.png" alt="Visa">
                     </div>
                 </div>
             </div>
