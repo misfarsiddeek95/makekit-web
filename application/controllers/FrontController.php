@@ -9,6 +9,9 @@ class FrontController extends Base_Controller {
 
     $this->load->library('cart'); // load cart
 
+
+    $this->load->helper('password'); // load the password verify helper
+
     // Auto-login using remember-me cookie if no active session
     if ($this->session->userdata('user_logged_in') == null) {
       $rememberCookie = $this->input->cookie('mk_remember', TRUE);
@@ -323,7 +326,18 @@ class FrontController extends Base_Controller {
           throw new Exception("Invalid user.");
         }
 
-        if($result->status==1 && password_verify($password, $result->password)) {
+        if($result->status==1 && verify_password_universal($password, $result->password)) {
+
+          // --- SECURITY UPGRADE: AUTOMATIC RE-HASHING ---
+          // If the user logged in with an old hash, upgrade it to the new standard.
+          /* if (password_needs_rehash($result->password, PASSWORD_DEFAULT)) {
+            $new_hash = hash_password($password);
+            // You'll need a model function to update the user's password
+            $this->Front_model->update_user_password($result->user_id, $new_hash);
+          } */
+          // --- END SECURITY UPGRADE ---
+
+
           $log_array = array(
             'user_id' => $result->user_id,
             'name' => $result->person_name,
@@ -353,7 +367,7 @@ class FrontController extends Base_Controller {
           }
           $message = array("status" => "success","message" => "logged in successfully", 'redirect_url' => 'my-account');
 
-        } else if(!password_verify($password, $result->password)){
+        } else if(!verify_password_universal($password, $result->password)){
           $message = array("status" => "error","message" => "סיסמה לא חוקית. נסה שוב.");
         }else{
           $message = array("status" => "error","message" => "משתמש חסום. אנא צור קשר עם מנהל המערכת.");
@@ -474,7 +488,7 @@ class FrontController extends Base_Controller {
       );
 
       if ($password!='') {
-        $user_array['password'] = $this->get_encrypted_password($password);
+        $user_array['password'] = create_wp_style_hash($password);
       }
 
       if (isset($_POST['parent_email'])) {
@@ -958,7 +972,7 @@ class FrontController extends Base_Controller {
       }
 
       if ($currentPwd != '') { 
-        if(!password_verify($currentPwd, $result->password)) {
+        if(!verify_password_universal($currentPwd, $result->password)) {
           throw new Exception("הסיסמה הנוכחית שלך שגויה. אנא נסה להשתמש בסיסמה הנכונה.");
         }
 
@@ -966,7 +980,7 @@ class FrontController extends Base_Controller {
           throw new Exception("הסיסמה החדשה ואישור הסיסמה אינן תואמות.");
         }
 
-        $u_arr['password'] = $this->get_encrypted_password($confirmPwd);
+        $u_arr['password'] = create_wp_style_hash($confirmPwd);
       }
 
       $add_id = $result->add_id ? $result->add_id : 0;
@@ -1748,7 +1762,7 @@ class FrontController extends Base_Controller {
       if (strtotime($row->expires_at) < time()) throw new Exception('האסימון פג תוקף.');
 
       // Update user password
-      $this->db->where('id', $row->user_id)->update('external_users', array('password' => $this->get_encrypted_password($newPwd)));
+      $this->db->where('id', $row->user_id)->update('external_users', array('password' => create_wp_style_hash($newPwd)));
       // Invalidate token
       $this->db->where('user_id', $row->user_id)->delete('password_resets');
 
