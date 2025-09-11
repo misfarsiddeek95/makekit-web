@@ -253,8 +253,9 @@ class FrontController extends Base_Controller {
     $data['activePage'] = 'PRODUCT';
     $data['pageMain'] = [];
 
+    $decodedSlugUrl = urldecode($slugUrl);
 
-    $productDetail = $this->Front_model->product_detail($slugUrl);
+    $productDetail = $this->Front_model->product_detail($decodedSlugUrl);
 
     if (!$productDetail) {
       redirect(base_url());
