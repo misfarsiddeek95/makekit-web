@@ -631,6 +631,7 @@ class FrontController extends Base_Controller {
                 'qty' => $newQty,
                 'price' => $productPrice,
                 'options' => [
+                  'real_name' => $productDetail->name,
                   'original_price' => $originalPrice,
                   'has_discount' => $hasDiscount ? 1 : 0,
                   'photo' => $productDetail->photo_path ? PHOTO_DOMAIN.'products/'.$productDetail->photo_path.'-std.'.$productDetail->extension : null,
@@ -704,6 +705,7 @@ class FrontController extends Base_Controller {
             'qty' => $finalQty,
             'price' => $productPrice,
             'options' => [
+              'real_name' => $productDetail->name,
               'original_price' => $originalPrice,
               'has_discount' => $hasDiscount ? 1 : 0,
               'photo' => $productDetail->photo_path ? PHOTO_DOMAIN.'products/'.$productDetail->photo_path.'-std.'.$productDetail->extension : null,
@@ -716,8 +718,9 @@ class FrontController extends Base_Controller {
             'id' => $productDetail->id,
             'qty' => $qty,
             'price' => $productPrice,
-            'name' => $productDetail->name,
+            'name' => 'product-'.$productDetail->id,
             'options' => [
+              'real_name' => $productDetail->name,
               'original_price' => $originalPrice,
               'has_discount' => $hasDiscount ? 1 : 0,
               'photo' => $productDetail->photo_path ? PHOTO_DOMAIN.'products/'.$productDetail->photo_path.'-std.'.$productDetail->extension : null,
@@ -1434,7 +1437,7 @@ class FrontController extends Base_Controller {
 
         // item row for email (RTL)
         $itemsHtml .= '<tr>';
-        $itemsHtml .= '<td style="padding:12px 8px;border:1px solid #e6e6e6; text-align:right;">' . htmlspecialchars($item['name']) . '</td>';
+        $itemsHtml .= '<td style="padding:12px 8px;border:1px solid #e6e6e6; text-align:right;">' . htmlspecialchars($item['options']['real_name']) . '</td>';
         $itemsHtml .= '<td style="padding:12px 8px;border:1px solid #e6e6e6; text-align:center;">' . intval($item['qty']) . '</td>';
         $itemsHtml .= '<td style="padding:12px 8px;border:1px solid #e6e6e6; text-align:center;">' . $currency . number_format($item['price'], 2) . '</td>';
         $itemsHtml .= '</tr>';

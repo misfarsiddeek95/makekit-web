@@ -172,7 +172,7 @@
                                             <?php foreach ($this->cart->contents() as $item) { ?>
                                                 <tr id="rowId<?=$item['rowid']?>">
                                                     <td>
-                                                        <strong><?=$item['qty']?> ×</strong> <?=$item['name']?>
+                                                        <strong><?=$item['qty']?> ×</strong> <?=$item['options']['real_name']?>
                                                     </td>
                                                     <td><?=$cur.number_format($item['subtotal'], 2)?></td>
                                                 </tr>

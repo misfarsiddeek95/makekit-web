@@ -62,7 +62,7 @@
                                 </td>
                                 <!-- Product Name -->
                                 <td data-label="מוצר" class="d-block d-md-table-cell text-md-center">
-                                    <a href="#" class="text-decoration-none"><?= $item['name'] ?></a>
+                                    <a href="#" class="text-decoration-none"><?= $item['options']['real_name'] ?></a>
                                 </td>
                                 <!-- Price -->
                                 <td data-label="מחיר" class="d-block d-md-table-cell text-md-center" id="price-td<?=$item['rowid']?>">
