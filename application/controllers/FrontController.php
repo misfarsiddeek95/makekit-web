@@ -1256,7 +1256,7 @@ class FrontController extends Base_Controller {
       $city = $this->input->post('city');
       $phone = $this->input->post('phone');
       $email = $this->input->post('email');
-      $note = $this->input->post('note');
+      $note = $this->input->post('notes');
 
       $ip = $this->input->ip_address();
 
@@ -1448,8 +1448,8 @@ class FrontController extends Base_Controller {
       // Build the email HTML (RTL / Hebrew)
       // You can replace logo URLs with your real assets via base_url('path/to/image')
       $logoUrl = base_url('assets/images/email-header.png'); // replace or remove if not needed
-      $adminEmail = 'sales@yourdomain.com'; // <--- replace with real admin email or config
 
+      $emailPaymentMethod = $paymentMethod == 1 ? 'סך הכל בתשלום באינטרנט' : 'מזומן במשלוח';
 
       $emailHtml = '
       <div dir="rtl" lang="he" style="font-family: Arial, Helvetica, sans-serif; color:#444;">
@@ -1496,14 +1496,14 @@ class FrontController extends Base_Controller {
               <td style="border:1px solid #eee; text-align:center;">' . $currency . number_format($itemsSubtotal, 2) . '</td>
             </tr>';
             if (!empty($delCharge)) {
-            $emailHtml .'<tr>
+            $emailHtml .='<tr>
               <td style="border:1px solid #eee; text-align:right;">משלוח:</td>
               <td style="border:1px solid #eee; text-align:center;">' . ($delCharge->initial_charge ? $currency . number_format($delCharge->initial_charge, 2) . ' (משלוח מהיר)' : 'ללא' ) . '</td>
             </tr>';
             }
-            $emailHtml. '<tr>
+            $emailHtml .= '<tr>
               <td style="border:1px solid #eee; text-align:right;">אמצעי תשלום:</td>
-              <td style="border:1px solid #eee; text-align:center;">' . htmlspecialchars($paymentMethod) . '</td>
+              <td style="border:1px solid #eee; text-align:center;">' . htmlspecialchars($emailPaymentMethod) . '</td>
             </tr>
             <tr>
               <td style="border:1px solid #eee; text-align:right; font-weight:700;">סך הכל:</td>
@@ -1550,37 +1550,29 @@ class FrontController extends Base_Controller {
       </div>';
 
       // --- SEND EMAIL (CI Email) ---
-      // configure email (use SMTP or default mail)
-      $config = array();
-      $config['protocol'] = 'mail'; // or 'smtp'
-      $config['mailtype'] = 'html';
-      $config['charset']  = 'utf-8';
-      $config['newline']  = "\r\n";
-      $config['crlf']     = "\r\n";
+      $config = array(
+        'protocol'    => 'smtp',
+        'smtp_host'   => 'smtp.hostinger.com',   // Hostinger SMTP
+        'smtp_user'   => 'no-reply@makesmart.co.il', // your email
+        'smtp_pass'   => 'm3/bQ8WFPS',        // email password
+        'smtp_port'   => 587,                   // 587 for TLS, 465 for SSL
+        'smtp_crypto' => 'tls',                 // or 'ssl' if port 465
+        'mailtype'    => 'html',
+        'charset'     => 'utf-8',
+        'newline'     => "\r\n",
+        'crlf'        => "\r\n",
+        'validate'    => true,
+    );
 
-      /* // Example SMTP config (uncomment & fill to use SMTP)
-      $config['protocol'] = 'smtp';
-      $config['smtp_host'] = 'smtp.yourhost.com';
-      $config['smtp_user'] = 'user@yourhost.com';
-      $config['smtp_pass'] = 'yourpass';
-      $config['smtp_port'] = 587;
-      $config['smtp_crypto'] = 'tls';
-      */
+      $this->load->library('email', $config);
+      $this->email->clear(TRUE); // clear previous email
 
-      $this->load->library('email');
-      $this->email->initialize($config);
-      $this->email->clear(TRUE);
-
-      // from address
-      $fromEmail = 'no-reply@yourdomain.com'; // replace with your from
-      $fromName  = parse_url(base_url(), PHP_URL_HOST);
-
-      $this->email->from($fromEmail, $fromName);
-      $this->email->to($email);
-      // optionally BCC / admin
-      $this->email->bcc($adminEmail);
-
+      $this->email->from('no-reply@makesmart.co.il', 'MakeKit'); // from
+      $this->email->to($email);      // customer email
       $this->email->subject("אישור הזמנה " . $order_code);
+
+
+      $this->email->set_mailtype('html');
       $this->email->message($emailHtml);
 
       // send but don't break order if fails
