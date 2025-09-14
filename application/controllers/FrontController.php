@@ -1413,15 +1413,18 @@ class FrontController extends Base_Controller {
         );
         $ins = $this->Front_model->insert_me('order_details',$order_detail);
 
+        // get the product
+        $pro_condition = array(
+          array('field' => 'pro_id', 'value' => $item['id']),
+        );
+        $getProduct = $this->Front_model->get_data_with_conditions_and_joins('products', ['minimum_eligiblity_value', 'quantity'],[],$pro_condition,1);
+
+        // update the product quantity after placing the order successfully.
+        $this->Front_model->upsert($item['id'],['quantity' => ($getProduct->quantity - $item['qty'])], 'products', 'pro_id');
+
         // If category is awards, then update the external_users table's points_spent field.
         $isAward = $item['options']['category_url'] == 'awards'; // check is this AWARDS
         if ($isAward) {
-          // get the product
-          $pro_condition = array(
-            array('field' => 'pro_id', 'value' => $item['id']),
-          );
-          $getProduct = $this->Front_model->get_data_with_conditions_and_joins('products', ['minimum_eligiblity_value'],[],$pro_condition,1);
-
           $userId = $this->session->userdata['user_logged_in']['user_id']; // logged in user
           $user_condition = array(
             array('field' => 'id', 'value' => $userId),
