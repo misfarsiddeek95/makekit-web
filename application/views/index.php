@@ -63,7 +63,7 @@
                 <!-- flex-column for mobile (default), flex-md-row for medium screens and up -->
                 <div class="d-flex flex-column flex-md-row flex-md-row-reverse justify-content-evenly text-center">
                     <!-- CHANGED: HTML order is reversed to achieve correct visual order in RTL -->
-                    <?php foreach ($categoryList as $category) {
+                    <?php foreach ($categoryListForWidget as $category) {
                         $seo = $category->seo_url;
                         if (!isset($categoryIcons[$seo])) continue; // skip if not mapped
                         $iconData = $categoryIcons[$seo];

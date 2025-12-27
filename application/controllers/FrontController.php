@@ -49,11 +49,34 @@ class FrontController extends Base_Controller {
       }
     }
 
-    $cate_cond = array(
-      array('field' => 'status', 'value' => 0),
-      array('field' => 'show_as_widget', 'value' => 1),
+    $all_cats_cond = array(
+      array('field' => 'status', 'value' => 0)
     );
-    $commonData['categoryList'] = $this->Front_model->get_data_with_conditions_and_joins('categories',['*'],[],$cate_cond);
+
+    // Run only ONE database query
+    $all_categories = $this->Front_model->get_data_with_conditions_and_joins('categories', ['*'], [], $all_cats_cond);
+
+    // Initialize arrays
+    $commonData['categoryList'] = array();
+    $commonData['categoryListForWidget'] = array();
+
+    // Filter using PHP (Much faster than a second database query)
+    if (!empty($all_categories)) {
+        foreach ($all_categories as $cat) {
+            // Note: Assuming your model returns Objects ($cat->field). 
+            // If it returns Arrays, change to $cat['show_in_site']
+            
+            // 1. Check if it belongs in the main site list
+            if ($cat->show_in_site == 1) {
+                $commonData['categoryList'][] = $cat;
+            }
+
+            // 2. Check if it belongs in the widget list
+            if ($cat->show_as_widget == 1) {
+                $commonData['categoryListForWidget'][] = $cat;
+            }
+        }
+    }
     $this->load->vars($commonData);
   }
 
