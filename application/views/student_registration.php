@@ -27,7 +27,7 @@
                         <input type="hidden" name="user_id" id="user_id" value="0" />
                         <input type="hidden" name="add_id" id="add_id" value="0" />
                         <div class="mb-3">
-                            <label for="institute_id" class="form-label">מָכוֹן</label>
+                            <label for="institute_id" class="form-label">מוסד לימודים</label>
                             <select class="form-select form-select-lg" id="institute_id" name="institute_id" aria-label="institute_id" required>
                                 <option selected disabled value="">לִבחוֹר</option>
                                 <?php foreach ($loadInstitutes as $row) { ?>
@@ -66,14 +66,41 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="city" class="form-label">עיר</label>
-                            <select class="form-select form-select-lg" id="city" name="city" aria-label="city" required>
-                                <option selected disabled value="">לִבחוֹר</option>
-                                <?php foreach ($loadCities as $row) { ?>
-                                    <option value="<?=$row->city_id?>"><?=$row->city_name?> [ <?=$row->city_name_hebrew?>  ]</option>
-                                <?php } ?>
-                            </select>
-                            <div class="invalid-feedback">אנא בחר עיר.</div>
+                            <label for="city_dropdown_btn" class="form-label">עיר</label>
+                            
+                            <div class="dropdown" id="city_dropdown_container">
+                                <!-- Hidden Input for Form Submission -->
+                                <input type="hidden" name="city" id="city_id" required>
+                                
+                                <!-- Trigger Button (styled exactly like .my-account select) -->
+                                <button class="form-select form-select-lg text-start d-flex justify-content-between align-items-center" 
+                                        type="button" 
+                                        data-bs-toggle="dropdown" 
+                                        aria-expanded="false" 
+                                        id="city_dropdown_btn"
+                                        style="background-color: #fff; border: 1px solid rgba(32, 7, 7, 0.8); border-radius: 4px; padding: 0.5em; padding-left: 2.5rem; line-height: 2; height: auto; background-position: left 0.75rem center;">
+                                    <span id="city_btn_text">לִבחוֹר</span>
+                                </button>
+                                
+                                <!-- Dropdown Menu -->
+                                <div class="dropdown-menu w-100 p-0" aria-labelledby="city_dropdown_btn">
+                                    <div class="p-2 border-bottom">
+                                        <input type="text" class="form-control" id="city_search_input" placeholder="חיפוש..." autocomplete="off">
+                                    </div>
+                                    <ul class="list-unstyled mb-0" id="city_list" style="max-height: 250px; overflow-y: auto;">
+                                        <?php foreach ($loadCities as $row) { ?>
+                                            <li>
+                                                <button class="dropdown-item text-end" type="button" 
+                                                        data-id="<?=$row->city_id?>" 
+                                                        data-name="<?=$row->city_name_hebrew?>">
+                                                    <?=$row->city_name_hebrew?>
+                                                </button>
+                                            </li>
+                                        <?php } ?>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="invalid-feedback" id="city_error">אנא בחר עיר.</div>
                         </div>
 
                         <div class="mb-3">
@@ -112,6 +139,46 @@
 
         <?php $this->load->view('includes/js') ?>
         <script>
+            // Custom Dropdown Logic
+            // 1. Search Filtering
+            $('#city_search_input').on('keyup', function() {
+                var value = $(this).val().toLowerCase();
+                $('#city_list li').filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+            // 2. Selection Handling
+            $('#city_list .dropdown-item').on('click', function() {
+                var id = $(this).data('id');
+                var name = $(this).data('name');
+
+                // Update UI and Hidden Value
+                $('#city_btn_text').text(name);
+                $('#city_id').val(id);
+                
+                // Clear validation error if any
+                $('#city_id')[0].setCustomValidity('');
+                $('#city_dropdown_container').removeClass('is-invalid'); // Optional visual cue
+                $('#city_error').hide();
+            });
+
+            // 3. Validation Logic Override
+            // We need to ensure the hidden input is checked on form submit
+            $('.needs-validation').on('submit', function(event) {
+                if ($('#city_id').val() === '') {
+                     $('#city_id')[0].setCustomValidity('Please select a city');
+                     $('#city_error').show(); // Show custom error div
+                     event.preventDefault();
+                     event.stopPropagation();
+                }
+            });
+
+            // Focus search input when dropdown opens
+            $('#city_dropdown_container').on('shown.bs.dropdown', function () {
+                $('#city_search_input').trigger('focus');
+            });
+            
             
             $('#institute_id').on('change', function() {
                 $('#subject_id').html(`<option>טְעִינָה...</option>`);
