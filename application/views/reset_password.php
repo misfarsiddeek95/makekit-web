@@ -29,8 +29,8 @@
                             <p>שכחת את הסיסמה? יש להזין את שם המשתמש או כתובת האימייל. הוראות איפוס הסיסמה ישלחו באימייל.</p>
                             <form method="POST" class="needs-validation has-cart-button w-75" novalidate id="requestResetForm">
                                 <div class="mb-3">
-                                    <label for="username" class="form-label">שם משתמש או כתובת אימייל</label>
-                                    <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="שם משתמש או כתובת אימייל " required>
+                                    <label for="username" class="form-label">הזן את המייל שלך</label>
+                                    <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="הזן את המייל שלך " required>
                                     <div class="invalid-feedback">נדרש שם משתמש או דוא"ל</div>
                                 </div>
                                 <div class="mt-2">

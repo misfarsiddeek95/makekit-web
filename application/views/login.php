@@ -33,7 +33,7 @@
                     <div class="alert alert-danger d-none" id="error-alert" role="alert"></div>
                     <form class="needs-validation has-cart-button" novalidate>
                         <div class="mb-3">
-                            <label for="username" class="form-label">שם משתמש או כתובת אימייל </label>
+                            <label for="username" class="form-label">הזן את המייל שלך </label>
                             <input class="form-control form-control-lg" id="username" name="username" type="email" aria-label="username" required>
                             <div class="invalid-feedback">נדרש שם משתמש או דוא"ל</div>
                         </div>
