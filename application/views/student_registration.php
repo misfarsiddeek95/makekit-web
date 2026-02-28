@@ -27,7 +27,7 @@
                         <input type="hidden" name="user_id" id="user_id" value="0" />
                         <input type="hidden" name="add_id" id="add_id" value="0" />
                         <div class="mb-3">
-                            <label for="institute_id" class="form-label">מוסד לימודים</label>
+                            <label for="institute_id" class="form-label">מכון</label>
                             <select class="form-select form-select-lg" id="institute_id" name="institute_id" aria-label="institute_id" required>
                                 <option selected disabled value="">לִבחוֹר</option>
                                 <?php foreach ($loadInstitutes as $row) { ?>
@@ -88,12 +88,12 @@
                                         <input type="text" class="form-control" id="city_search_input" placeholder="חיפוש..." autocomplete="off">
                                     </div>
                                     <ul class="list-unstyled mb-0" id="city_list" style="max-height: 250px; overflow-y: auto;">
-                                        <?php foreach ($loadCities as $row) { ?>
+                                        <?php foreach ($loadCities as $city) { ?>
                                             <li>
                                                 <button class="dropdown-item text-end" type="button" 
-                                                        data-id="<?=$row->city_id?>" 
-                                                        data-name="<?=$row->city_name_hebrew?>">
-                                                    <?=$row->city_name_hebrew?>
+                                                        data-id="<?=$city->city_id?>" 
+                                                        data-name="<?=$city->city_name_hebrew?>">
+                                                    <?=$city->city_name_hebrew?>
                                                 </button>
                                             </li>
                                         <?php } ?>
