@@ -441,9 +441,9 @@ class Front_model extends CI_Model {
             $question_types = $this->getAll('question_type');
             foreach ($question_types as $qt) {
                 if (!empty($queIds)) {
-                    $ret[strtolower($qt->question_type) . '_ques_ans'] = $this->get_questions_and_answers($queIds, $qt->qt_id);
+                    $ret[strtolower($qt->question_type_english) . '_ques_ans'] = $this->get_questions_and_answers($queIds, $qt->qt_id);
                 } else {
-                    $ret[strtolower($qt->question_type) . '_ques_ans'] = [];
+                    $ret[strtolower($qt->question_type_english) . '_ques_ans'] = [];
                 }
             }
         }
@@ -581,35 +581,27 @@ class Front_model extends CI_Model {
 
     public function get_student_summary($student_id) {
         // 1️⃣ Get total completed papers and total correct answers (last attempt only)
-        $this->db->select("
-            COUNT(latest.paper_id) AS total_completed,
-            IFNULL(SUM(correct_answers.correct_count), 0) AS total_correct
-        ");
-        $this->db->from("
-            (
+        $sql = "
+            SELECT COUNT(latest.paper_id) AS total_completed,
+                   IFNULL(SUM(correct_answers.correct_count), 0) AS total_correct
+            FROM (
                 SELECT sa.paper_id, MAX(sa.attempt_id) AS latest_attempt_id
                 FROM student_attempts sa
-                WHERE sa.student_id = " . (int)$student_id . "
+                WHERE sa.student_id = ?
                   AND sa.status = 'completed'
                 GROUP BY sa.paper_id
             ) AS latest
-        ", NULL, FALSE);
-    
-        // Join to get correct answers from only the latest attempts
-        $this->db->join("
-            (
+            LEFT JOIN (
                 SELECT sa.attempt_id, COUNT(*) AS correct_count
                 FROM student_answers sa
                 WHERE sa.is_correct = 1
                 GROUP BY sa.attempt_id
-            ) AS correct_answers
-        ", 'correct_answers.attempt_id = latest.latest_attempt_id', 'left', FALSE);
-
-        // ✅ Join with question_paper_main to filter only term_id = 1
-        $this->db->join('question_paper_main qpm', 'qpm.paper_id = latest.paper_id');
-        $this->db->where('qpm.term_id', 1);
-    
-        $summary = $this->db->get()->row_array();
+            ) AS correct_answers ON correct_answers.attempt_id = latest.latest_attempt_id
+            JOIN question_paper_main qpm ON qpm.paper_id = latest.paper_id
+            WHERE qpm.term_id = 1
+        ";
+        
+        $summary = $this->db->query($sql, [(int)$student_id])->row_array();
     
         // 2️⃣ Remaining points from students table
         $this->db->select("
@@ -628,35 +620,27 @@ class Front_model extends CI_Model {
 
     public function get_student_summary_medalian($student_id) {
         // 1️⃣ Get total completed papers and total correct answers (last attempt only)
-        $this->db->select("
-            COUNT(latest.paper_id) AS total_completed,
-            IFNULL(SUM(correct_answers.correct_count), 0) AS total_correct
-        ");
-        $this->db->from("
-            (
+        $sql = "
+            SELECT COUNT(latest.paper_id) AS total_completed,
+                   IFNULL(SUM(correct_answers.correct_count), 0) AS total_correct
+            FROM (
                 SELECT sa.paper_id, MAX(sa.attempt_id) AS latest_attempt_id
                 FROM student_attempts sa
-                WHERE sa.student_id = " . (int)$student_id . "
+                WHERE sa.student_id = ?
                   AND sa.status = 'completed'
                 GROUP BY sa.paper_id
             ) AS latest
-        ", NULL, FALSE);
-    
-        // Join to get correct answers from only the latest attempts
-        $this->db->join("
-            (
+            LEFT JOIN (
                 SELECT sa.attempt_id, COUNT(*) AS correct_count
                 FROM student_answers sa
                 WHERE sa.is_correct = 1
                 GROUP BY sa.attempt_id
-            ) AS correct_answers
-        ", 'correct_answers.attempt_id = latest.latest_attempt_id', 'left', FALSE);
-    
-        // ✅ Join with question_paper_main to filter only term_id = 2
-        $this->db->join('question_paper_main qpm', 'qpm.paper_id = latest.paper_id');
-        $this->db->where('qpm.term_id', 2);
-    
-        $summary = $this->db->get()->row_array();
+            ) AS correct_answers ON correct_answers.attempt_id = latest.latest_attempt_id
+            JOIN question_paper_main qpm ON qpm.paper_id = latest.paper_id
+            WHERE qpm.term_id = 2
+        ";
+        
+        $summary = $this->db->query($sql, [(int)$student_id])->row_array();
     
         // 2️⃣ Remaining points from students table
         $this->db->select("points_earned_medalian as total_medalian_points");

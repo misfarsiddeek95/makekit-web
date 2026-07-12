@@ -76,7 +76,7 @@
                                 <p>מספר נקודות שנשארו: <?=$summary['total_medalian_points']?></p>
                             </div>
                             <?php } else { ?>
-                                <div class="alert alert-warning" role="alert">לא נותרו לך ניסיונות למשימה זו.</div>
+                                <div class="alert alert-info" role="alert">לא נמצאו שאלונים.</div>
                             <?php } ?>
                         </div>
                     </div>

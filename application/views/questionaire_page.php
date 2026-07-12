@@ -60,7 +60,7 @@
                                 <a href="<?=base_url()?>product-category/awards/">לרכישת פרסים</a>
                             </div>
                             <?php } else { ?>
-                                <div class="alert alert-warning" role="alert">לא נותרו לך ניסיונות למשימה זו.</div>
+                                <div class="alert alert-info" role="alert">לא נמצאו שאלונים.</div>
                             <?php } ?>
                         </div>
                     </div>

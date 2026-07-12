@@ -99,8 +99,10 @@
                                 </div>
 
                             </form>
-                            <?php } else { ?>
+                            <?php } else if (!$attempt_id) { ?>
                                 <div class="alert alert-warning" role="alert">לא נותרו לך ניסיונות למשימה זו.</div>
+                            <?php } else { ?>
+                                <div class="alert alert-info" role="alert">לא נמצאו שאלות בשאלון זה.</div>
                             <?php } ?>
                         </div>
                     </div>
