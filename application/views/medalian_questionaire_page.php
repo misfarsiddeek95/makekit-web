@@ -37,7 +37,7 @@
                                     <div class="row justify-content-start">
                                         <div class="col-md-6"> <!-- 👈 half width on medium+ screens -->
                                             <div class="d-flex flex-row gap-2">
-                                                <input type="text" class="form-control" id="papercode" placeholder="קוד נייר">
+                                                <input type="text" class="form-control" id="papercode" placeholder="קוד נייר (לדוגמא: M-00274)">
                                                 <button class="btn curved-button btn-add-to-cart w-100" onclick="startExam();">הַתחָלָה</button>
                                             </div>
                                         </div>
@@ -61,7 +61,7 @@
                                         <?php foreach ($questionaires as $que) { ?>
                                         <tr>
                                             <td><?=date('d/m/Y', strtotime($que->created_at))?></td>
-                                            <td><?=base64_encode($que->paper_id)?></td>
+                                            <td>M-<?=str_pad($que->paper_id, 5, '0', STR_PAD_LEFT)?></td>
                                             <td><?=$que->no_of_attempts?> / <?=$que->remaining_attempts?></td>
                                             <td><?=$que->correct_answers_last_attempt?></td>
                                             <td><a href="<?=base_url()?>my-account/questionnaires?formId=<?=base64_encode($que->paper_id)?>&qtype=medalian"><?=$que->paper_title?></a></td>

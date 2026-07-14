@@ -1667,7 +1667,17 @@ class FrontController extends Base_Controller {
   public function startMedalianExam() {
     try {
       $code = $this->input->post('code');
-      $code_in_number = base64_decode($code);
+      $code = strtoupper(trim($code));
+      
+      if (strpos($code, 'M-') !== 0 || !preg_match('/^M-\d+$/', $code)) {
+        throw new Exception("קוד נייר לא תקין. הפורמט הנדרש: M-XXXXX");
+      }
+      
+      $code_in_number = intval(substr($code, 2));
+      
+      if ($code_in_number <= 0) {
+        throw new Exception("קוד נייר לא תקין.");
+      }
       
       $_condition = array(
         array('field' => 'paper_id', 'value' => $code_in_number),
@@ -1680,7 +1690,8 @@ class FrontController extends Base_Controller {
         throw new Exception("נייר אינו קיים עבור קוד נייר נתון.");
       }
       
-      $message = array('status' => 'success', 'redirect_url' => base_url().'my-account/questionnaires?formId='.$code.'&qtype=medalian');
+      $encodedId = base64_encode($code_in_number);
+      $message = array('status' => 'success', 'redirect_url' => base_url().'my-account/questionnaires?formId='.$encodedId.'&qtype=medalian');
     } catch (Exception $ex) {
       $message = array('status' => 'error', 'message' => $ex->getMessage());
     }
