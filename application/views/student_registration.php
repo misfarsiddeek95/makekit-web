@@ -24,6 +24,7 @@
             <section class="my-account my-2 p-5">
                 <div class="container d-flex justify-content-center">
                     <form method="POST" class="needs-validation has-cart-button w-75" novalidate>
+                        <div id="registerAlert" class="mb-3"></div>
                         <input type="hidden" name="user_id" id="user_id" value="0" />
                         <input type="hidden" name="add_id" id="add_id" value="0" />
                         <div class="mb-3">
@@ -260,7 +261,7 @@
 
                         // Submit with AJAX if valid
                         if (form.checkValidity()) {
-                            $('#submitButton').html('הַגָשָׁה...').attr('disabled','disabled')
+                            $('#submitButton').html('הַגָשָׁה...').prop('disabled', true)
                             const formData = new FormData(form);
                             $.ajax({
                                 url: '<?=base_url()?>register-student',
@@ -270,13 +271,25 @@
                                 contentType: false,
                                 success: function(result) {
                                     const resp = $.parseJSON(result);
-                                    console.log(resp);
-                                    setTimeout(() => {
-                                        location.reload();
-                                    }, 1000);
+
+                                    if (resp.status == 'success' && resp.redirect_url) {
+                                        // Registration succeeded: hand the user over to
+                                        // the login page instead of re-rendering this
+                                        // empty form, which reads as a failure.
+                                        showRegisterAlert('ההרשמה בוצעה בהצלחה. מועברים להתחברות...', 'success');
+                                        $('#submitButton').html('בוצעה הרשמה...');
+                                        setTimeout(() => {
+                                            window.location.href = '<?=base_url()?>' + resp.redirect_url;
+                                        }, 1500);
+                                    } else {
+                                        showRegisterAlert(resp.message, 'danger');
+                                        $('#submitButton').html('התחברות').prop('disabled', false);
+                                    }
                                 },
                                 error: function(xhr, status, error) {
                                     console.error("AJAX Error:", error);
+                                    showRegisterAlert('משהו השתבש. אנא נסה שוב.', 'danger');
+                                    $('#submitButton').html('התחברות').prop('disabled', false);
                                 }
                             });
 
@@ -284,6 +297,12 @@
                     }, false);
                 });
             })();
+
+            function showRegisterAlert(message, type) {
+                $('#registerAlert').html(
+                    '<div class="alert alert-' + type + '">' + message + '</div>'
+                );
+            }
         </script>
 
     </body>

@@ -540,7 +540,13 @@ class FrontController extends Base_Controller {
       $returnedUserId = $this->Front_model->register_external_user($user_id,$add_id,$user_array,$addr_array);
 
       $message = array("status" => "success","message" => $msg);
-        
+
+      // New self-registrations must land on the login page. The login view is
+      // rendered by makekitMyAccount() when there is no session.
+      if ($type == 'save') {
+        $message['redirect_url'] = 'my-account';
+      }
+
     } catch (Exception $ex) {
       $message = array("status" => "error","message" => $ex->getMessage());
     }
