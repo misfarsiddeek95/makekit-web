@@ -95,7 +95,7 @@
 
                                 <!-- Submit -->
                                 <div class="text-end mb-5">
-                                    <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                                    <button type="submit" class="btn btn-primary btn-lg">שליחה</button>
                                 </div>
 
                             </form>
