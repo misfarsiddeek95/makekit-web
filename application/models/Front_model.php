@@ -60,6 +60,50 @@ class Front_model extends CI_Model {
         return $id ; 
     }
 
+    // Award-category products are paid for with makekit coins instead of
+    // shekels, so the storefront needs to know which cart lines are coin
+    // purchases. Returns one row per matching product id.
+    public function get_coin_products($productIds) {
+        $ids = array_map('intval', $productIds);
+
+        if (empty($ids)) {
+            return array();
+        }
+
+        $this->db->select('p.pro_id, p.price');
+        $this->db->from('products p');
+        $this->db->join('categories c', 'c.cate_id = p.cate_id', 'inner');
+        $this->db->where_in('p.pro_id', $ids);
+        $this->db->where('c.seo_url', 'awards');
+
+        return $this->db->get()->result();
+    }
+
+    // Adds to a student's spent-points counter. The increment is done in SQL so
+    // two orders placed at the same time cannot overwrite each other, which a
+    // read-then-write of points_spent would allow.
+    public function deduct_points($userId, $amount) {
+        $userId = (int)$userId;
+        $amount = (float)$amount;
+
+        if ($userId <= 0 || $amount <= 0) {
+            return false;
+        }
+
+        $this->db->where('id', $userId);
+        $this->db->set('points_spent', 'points_spent + ' . $amount, false);
+        $this->db->update('external_users');
+
+        if ($this->db->affected_rows() < 1) {
+            return false;
+        }
+
+        return $this->get_data_with_conditions_and_joins(
+            'external_users', ['points_earned', 'points_spent'], [],
+            array(array('field' => 'id', 'value' => $userId)), 1
+        );
+    }
+
     // This function is a common function to fetch data from the table. Can join the tables, can check the conditions as well.
     public function get_data_with_conditions_and_joins($main_table, $fields, $joins = array(), $conditions = array(), $limit = null, $orderBy = array()) {
         $this->db->select($fields)->from($main_table);

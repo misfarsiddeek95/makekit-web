@@ -383,12 +383,29 @@ Students earn points by answering exam papers correctly and spend them on
   `points_earned_medalian` (term 2).
 - Available balance = `points_earned − points_spent` (computed in
   `index()`, `makekitProducts()`, and `get_student_summary()`).
-- Spend: at order time, if the cart item's `category_url == 'awards'`, add
-  `products.minimum_eligiblity_value` to `points_spent` — **once per order line,
-  not multiplied by quantity**. Awards are also UI-capped to qty 1.
-- **The check is only cosmetic.** The catalog and product-card views *disable* the
-  add-to-cart button when balance is insufficient, but `addToCart` / `placeOrder`
-  **never re-verify** it. A crafted POST buys awards for free.
+- **Which products are coin purchases:** those in the **`awards` category
+  (`categories.seo_url = 'awards'`)**. `products.credit_type_id` (→ `credity_type`,
+  where `2` = מטבע מייקקיט) is the admin's own "coin product" flag but is **never
+  read by this app** — the awards category is the operative marker.
+- **Cost of a line = effective unit price × quantity.** `products.price` *is* the
+  coin amount for a coin purchase, so a 3-coin award bought ×3 costs 9. The cart
+  already holds the discounted unit price, so the coin cost always equals the
+  order line's own `subtotal`.
+- Spend happens in `placeOrder()`: the total coin cost of the cart is computed and
+  balance-checked **before any row is written**, then each coin line commits via
+  `Front_model::deduct_points()`, which increments `points_spent` in SQL
+  (`points_spent = points_spent + ?`) so concurrent orders cannot clobber each other.
+- Buying a coin product requires a logged-in student with sufficient balance; both
+  are enforced server-side and return a Hebrew error. Awards are additionally
+  UI-capped to qty 1 (`index.php`, `products.php`) but that cap is **not**
+  server-enforced — only the balance is.
+
+> ⚠ Known gaps in this area, not yet decided: a coin product's `price` is still
+> added to `orders.cart_total` / `payment_total` in **shekels** as well, so a coin
+> purchase currently also bills real money; and the product cards display
+> `מייקיטים {minimum_eligiblity_value}` (`index.php`, `products.php`) rather than
+> the `price` actually charged — `minimum_eligiblity_value` is NULL for every
+> product in the local DB. Both need a product-owner decision.
 
 ---
 
@@ -541,7 +558,9 @@ commented out). New writes always use `create_wp_style_hash`.
 - `updateAccount()` trusts a **client-supplied `user_id`** instead of the session —
   IDOR: a logged-in user can edit any account. Same in `updateAccount` for the
   address lookup.
-- `addToCart` / `placeOrder` do not re-verify stock or points (see §10).
+- `addToCart` does not re-verify stock. `placeOrder` now **does** enforce the
+  makekit-coin balance server-side (see §10), but neither re-checks stock at
+  checkout time.
 - `.htaccess` has no `Options -Indexes` and no deny rules for `application/`,
   `system/`, `composer.*` — in a document-root deployment those are web-readable.
 - No tests, no linter, no static analysis configured.
@@ -557,25 +576,40 @@ Ordered roughly by how likely you are to trip over them.
    an unconditional fall-through, so the "updated" message always overwrites the
    "saved" one. Inserting a new address reports "updated".
 2. `placeOrder()` — order codes are `MAX(order_id)+1`, not atomic; concurrent checkouts collide.
-3. `placeOrder()` — `$item['options']['category_url']` is read without `isset()`
-   (unlike `has_discount` a few lines up); a legacy cart row without that option
-   raises a notice.
-4. `placeOrder()` — points spent adds `minimum_eligiblity_value` **per line, not per unit**.
-5. `addToCart()` bulk mode — `$htmlPrice[$rowId]` uses `$rowId` from a `foreach` that
+3. `placeOrder()` — the stock decrement is also a read-modify-write
+   (`upsert(..., ['quantity' => $getProduct->quantity - $item['qty']])`). Two
+   concurrent orders both read the same quantity and both write the same result,
+   so the second is silently lost. Verified: stock 10, two parallel orders of 2
+   each → stock 8 instead of 6. The coin increment is atomic by contrast (see §10).
+4. `placeOrder()` — **stock is never re-checked at order time**, only in
+   `addToCart`. If stock drops to 0 after the item is in the cart the order still
+   succeeds and `products.quantity` goes **negative**. Coins are still deducted for
+   the undeliverable units. Fix by validating the whole cart's stock in the same
+   pre-order pass as the coin balance.
+5. ~~`placeOrder()` — `$item['options']['category_url']` is read without `isset()`~~
+   **Fixed.** The awards branch now reads the category from the database
+   (`get_coin_products()`) instead of the client-populated cart option.
+6. ~~`placeOrder()` — points spent adds `minimum_eligiblity_value` per line, not
+   per unit, and only after the order rows are written, with no balance check and
+   no guest guard.~~ **Fixed** — see §10.
+7. `get_product_for_cart()` — `if ($q->num_rows() === 1)` after a `LEFT JOIN photo`
+   means a product with **two or more photos returns `false`** and cannot be added
+   to the cart at all. Pre-existing, unrelated to coins.
+8. `addToCart()` bulk mode — `$htmlPrice[$rowId]` uses `$rowId` from a `foreach` that
    may not have run (product not found / over stock), producing an undefined-index notice.
-6. `coupons.count_type` / `coupon_count` are never checked — unlimited reuse.
-7. `get_filtered_products()` and `product_detail()` — N+1 photo queries (1 query per product).
-8. `count_products_by_category()` over-counts with the `popularity` join.
-9. `myDownloads` is a hard-coded empty placeholder; the controller passes no data.
-10. `makeKitQuestionaire()` — `$data['attempt_id']` is set **before** the
+9. `coupons.count_type` / `coupon_count` are never checked — unlimited reuse.
+10. `get_filtered_products()` and `product_detail()` — N+1 photo queries (1 query per product).
+11. `count_products_by_category()` over-counts with the `popularity` join.
+12. `myDownloads` is a hard-coded empty placeholder; the controller passes no data.
+13. `makeKitQuestionaire()` — `$data['attempt_id']` is set **before** the
     `if (!$attempt_id)` fallback, and the view checks emptiness in the wrong order.
-11. `student_answers.answered_at` has `ON UPDATE CURRENT_TIMESTAMP` and
+14. `student_answers.answered_at` has `ON UPDATE CURRENT_TIMESTAMP` and
     `save_answer()` writes it explicitly on every update.
-12. `get_student_summary()` / `get_score_list()` — the "latest attempt per paper"
+15. `get_student_summary()` / `get_score_list()` — the "latest attempt per paper"
     correlated sub-query is re-evaluated per row; slow as data grows.
 
 **Correctness / security** — see §13 (IDOR in `updateAccount`, unescaped output,
-no CSRF, no server-side stock/points enforcement).
+no CSRF).
 
 **Dead code**
 - `FrontController::makekitProducts()` — an entire earlier pagination implementation
@@ -687,4 +721,4 @@ attributes/text (the current code often omits this — don't copy the bad exampl
 
 ---
 
-*Last updated: 2026-09-28 — reflects branch `feature/modifications-28-09-2026`, CI 3.1.13, 61-table DB, Docker stack on 8081/8082/3308.*
+*Last updated: 2026-09-28 — reflects branch `feature/modifications-28-09-2026`, CI 3.1.13, 61-table DB, Docker stack on 8081/8082/3308. Coin model corrected: see §10.*

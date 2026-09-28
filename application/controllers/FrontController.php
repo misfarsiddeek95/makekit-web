@@ -1260,8 +1260,10 @@ class FrontController extends Base_Controller {
       $orderId = 0;
       if ($this->session->userdata('user_logged_in') != null) {
         $cust_id = $this->session->userdata['user_logged_in']['user_id'];
+        $userId = (int)$cust_id;
       }else{
         $cust_id = 0;
+        $userId = 0;
       }
       
       $lasTOredered = $this->Front_model->get_last_order();
@@ -1273,6 +1275,58 @@ class FrontController extends Base_Controller {
 
       if (empty($cartProducts)) {
         throw new Exception("אין מוצרים זמינים בעגלה לקופה.");
+      }
+
+      // Award-category products are paid for with makekit coins, not shekels.
+      // The coin cost of a line is its unit price times its quantity, and the
+      // cart already holds the effective unit price with tiered discounts
+      // applied. Work out the whole coin cost up front so an unaffordable cart
+      // is rejected before a single row is written.
+      $coinProductIds = [];
+      $coinTotal = 0;
+
+      $cartProductIds = [];
+      foreach ($cartProducts as $cartItem) {
+        $cartProductIds[] = (int)$cartItem['id'];
+      }
+
+      $coinProducts = $this->Front_model->get_coin_products($cartProductIds);
+      foreach ($coinProducts as $coinProduct) {
+        $coinProductIds[(int)$coinProduct->pro_id] = true;
+      }
+
+      foreach ($cartProducts as $cartItem) {
+        if (!isset($coinProductIds[(int)$cartItem['id']])) {
+          continue;
+        }
+
+        $cartQty = isset($cartItem['qty']) ? (int)$cartItem['qty'] : 0;
+        if ($cartQty < 1) {
+          continue;
+        }
+
+        $coinTotal += (float)$cartItem['price'] * $cartQty;
+      }
+
+      if ($coinTotal > 0) {
+        if ($userId <= 0) {
+          throw new Exception("יש להתחבר לחשבון לפני רכישת פרסים במייקיטים.");
+        }
+
+        $coinUser = $this->Front_model->get_data_with_conditions_and_joins('external_users', ['points_earned', 'points_spent'], [], array(array('field' => 'id', 'value' => $userId)), 1);
+
+        if (!$coinUser) {
+          throw new Exception("לא נמצא חשבון משתמש לביצוע הרכישה.");
+        }
+
+        $availablePoints = (float)$coinUser->points_earned - (float)$coinUser->points_spent;
+
+        if ($availablePoints < $coinTotal) {
+          $needed = fmod($coinTotal, 1) == 0 ? (int)$coinTotal : $coinTotal;
+          $have = fmod($availablePoints, 1) == 0 ? (int)$availablePoints : $availablePoints;
+
+          throw new Exception("אין לך מספיק מייקיטים. נדרשים {$needed} מייקיטים ויש לך {$have}.");
+        }
       }
 
       $shippingMethod = $this->input->post('shipping');
@@ -1447,25 +1501,21 @@ class FrontController extends Base_Controller {
         $pro_condition = array(
           array('field' => 'pro_id', 'value' => $item['id']),
         );
-        $getProduct = $this->Front_model->get_data_with_conditions_and_joins('products', ['minimum_eligiblity_value', 'quantity'],[],$pro_condition,1);
+        $getProduct = $this->Front_model->get_data_with_conditions_and_joins('products', ['quantity'],[],$pro_condition,1);
 
         // update the product quantity after placing the order successfully.
         $this->Front_model->upsert($item['id'],['quantity' => ($getProduct->quantity - $item['qty'])], 'products', 'pro_id');
 
-        // If category is awards, then update the external_users table's points_spent field.
-        $isAward = $item['options']['category_url'] == 'awards'; // check is this AWARDS
-        if ($isAward) {
-          $userId = $this->session->userdata['user_logged_in']['user_id']; // logged in user
-          $user_condition = array(
-            array('field' => 'id', 'value' => $userId),
-          );
-          $userDetail = $this->Front_model->get_data_with_conditions_and_joins('external_users', ['points_spent'],[],$user_condition,1);
+        // Award-category products cost makekit coins rather than shekels. The
+        // balance was already verified before the order was written, so here we
+        // just commit the spend for this line.
+        if (isset($coinProductIds[(int)$item['id']])) {
+          $lineQty = isset($item['qty']) ? (int)$item['qty'] : 0;
+          $lineCost = (float)$item['price'] * $lineQty;
 
-          $u_data = array(
-            'points_spent' => $userDetail->points_spent + $getProduct->minimum_eligiblity_value
-          );
-          
-          $this->Front_model->update('id', $userId, 'external_users', $u_data);
+          if ($lineCost > 0) {
+            $this->Front_model->deduct_points($userId, $lineCost);
+          }
         }
 
         // item row for email (RTL)
